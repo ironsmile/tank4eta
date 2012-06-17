@@ -1,14 +1,15 @@
 #!/usr/bin/env python
 #-*- coding: utf8 -*-
 
-from app2 import Wall
+from app import Wall
 
 MAP_X = 640
 MAP_Y = 480
 SQUARE_SIZE = 32
 
-class MapSizeException(Exception):
-    pass
+class MapSizeException(Exception): pass
+
+class MapLogicException(Exception): pass
 
 class Map (object):
     
@@ -20,7 +21,7 @@ class Map (object):
             raise MapSizeException("Map sizes cannot be divided by box size")
         self.x_boxes = MAP_X / SQUARE_SIZE
         self.y_boxes = MAP_Y / SQUARE_SIZE
-        self.player_start = (0, 0)
+        self.player_starts = []
     
     def real_coords (self, x, y):
         return (
@@ -43,11 +44,13 @@ class Map (object):
                 if square == 'w':
                     self.objects.append( Wall(self.real_coords(x,y)) )
                 if square == 'p':
-                    self.player_start = self.real_coords(x,y)
+                    self.player_starts.append(self.real_coords(x,y))
                 x += 1
             
             y += 1
         
+        if len(self.player_starts) < 1:
+            raise MapLogicException("No player starting positions found")
         """
         end of load
         """        
