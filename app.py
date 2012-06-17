@@ -80,10 +80,10 @@ while 42:
     
     tx, ty = tank_position
     
-    if tank_movement == MOVEMENT_RIGHT: tank_position = (tx + 3, ty)
-    elif tank_movement == MOVEMENT_LEFT: tank_position = (tx - 3, ty)
-    elif tank_movement == MOVEMENT_UP: tank_position = (tx, ty - 3)
-    elif tank_movement == MOVEMENT_DOWN: tank_position = (tx, ty + 3)
+    if   tank_movement == MOVEMENT_RIGHT: tank_position = (tx + 3, ty)
+    elif tank_movement == MOVEMENT_LEFT: tank_position  = (tx - 3, ty)
+    elif tank_movement == MOVEMENT_UP: tank_position    = (tx, ty - 3)
+    elif tank_movement == MOVEMENT_DOWN: tank_position  = (tx, ty + 3)
     
     screen.fill((0,0,0))
     

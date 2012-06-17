@@ -1,0 +1,17 @@
+#!/usr/bin/env python
+#-*- coding: utf8 -*-
+
+FRAMES = 30
+MOVE_SPEED = 3
+BULLET_SPEED = 8
+
+DIRECTION_NONE  = -1
+DIRECTION_DOWN  = 1
+DIRECTION_LEFT  = 2
+DIRECTION_UP    = 4
+DIRECTION_RIGHT = 8
+
+AXIS_X = 0
+AXIS_Y = 1
+
+
