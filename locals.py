@@ -21,4 +21,10 @@ MAPS_DIR = 'maps'
 SOUNDS_DIR = 'sounds'
 TEXTURES_DIR = 'textures'
 
+JOY_CENTERED = (0,0)
+JOY_UP       = (0,1)
+JOY_DOWN     = (0,-1)
+JOY_RIGHT    = (1,0)
+JOY_LEFT     = (-1,0)
+
 

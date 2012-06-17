@@ -24,7 +24,6 @@ def texture_path (texture):
 def map_path (mapf):
     return os.path.join(MAPS_DIR, mapf)
 
-
 class Tank (MovableObject):
     
     image = texture_path('tank.png')
@@ -71,6 +70,29 @@ class Tank (MovableObject):
                 self.stop()
             elif event.key == K_SPACE:
                 self.fire()
+    
+    def process_events_joystick (self, event):
+        if event.type not in [JOYBUTTONDOWN, JOYHATMOTION]: return
+        if event.type == JOYBUTTONDOWN and event.button in [0,1,2,3]:
+            self.fire()
+            return
+        
+        if not event.type == JOYHATMOTION: return
+        
+        if event.value == JOY_CENTERED:
+            self.stop()
+        elif event.value == JOY_RIGHT: 
+            self.change_axis(AXIS_X)
+            self.move(DIRECTION_RIGHT)
+        elif event.value == JOY_LEFT: 
+            self.change_axis(AXIS_X)
+            self.move(DIRECTION_LEFT)
+        elif event.value == JOY_UP: 
+            self.change_axis(AXIS_Y)
+            self.move(DIRECTION_UP)
+        elif event.value == JOY_DOWN: 
+            self.change_axis(AXIS_Y)
+            self.move(DIRECTION_DOWN)
     
     def update(self, delta = None):
         if self.direction != DIRECTION_NONE and not self.engine_working:
@@ -123,20 +145,31 @@ def main ():
     
     screen = pygame.display.set_mode(game_map.resolution)
     pygame.mixer.init()
+    
+    has_joysticks = False
+    pygame.joystick.init()
+    for i in xrange(pygame.joystick.get_count()):
+        has_joysticks = True
+        j = pygame.joystick.Joystick(i)
+        j.init()
+    
     clock = pygame.time.Clock()
     
     tank = Tank(game_map.player_starts.pop(), game_map)
+    process_events = tank.process_event
+    if has_joysticks:
+        process_events = tank.process_events_joystick
+        
+        
     tanks = pygame.sprite.RenderPlain(tank)
-    
     walls = pygame.sprite.RenderPlain(*game_map.objects)
     
     while 42:
         deltat = clock.tick(FRAMES)
         for event in pygame.event.get():
-            print event
-            if not hasattr(event, 'key'): continue
-            if event.key == K_ESCAPE: return
-            tank.process_event(event)
+            if not hasattr(event, 'key') and not hasattr(event, 'joy'): continue
+            if hasattr(event, 'key') and event.key == K_ESCAPE: return
+            process_events(event)
         
         screen.fill(BACKGROUND_COLOUR)
         tanks.update(deltat)
