@@ -27,6 +27,7 @@ class MovableObject (Object):
         self.calculate_images()
         self.set_movement_speed(MOVE_SPEED)
         self.moving_on_axis = None
+        self.facing = DIRECTION_NONE
         self.map = game_map
     
     def set_movement_speed (self, speed):
@@ -41,8 +42,8 @@ class MovableObject (Object):
         self.images = {
             DIRECTION_DOWN : self.image_src,
             DIRECTION_LEFT : pygame.transform.rotate(self.image_src, 270),
-            DIRECTION_UP   : pygame.transform.rotate(self.image_src, 180),
-            DIRECTION_RIGHT: pygame.transform.rotate(self.image_src, 90),
+            DIRECTION_UP : pygame.transform.rotate(self.image_src, 180),
+            DIRECTION_RIGHT : pygame.transform.rotate(self.image_src, 90),
         }
 
     

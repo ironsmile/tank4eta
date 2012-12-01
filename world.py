@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #-*- coding: utf8 -*-
 
-from app import Wall
+from stuff_on_map import *
 
 MAP_X = 640
 MAP_Y = 480
@@ -53,6 +53,50 @@ class Map (object):
             raise MapLogicException("No player starting positions found")
         """
         end of load
-        """        
+        """
+
+class World (object):
+    
+    def __init__ (self, map, players):
+        self.players = players
+        self.map = map
+        self.drawables = []
+    
+    def tick (self, deltat, events):
+        players_tanks = []
+        bullets = []
+        for player in self.players:
+            player.process_events(events)
+            players_tanks.append(player.tank)
+            bullets += player.tank.bullets
+        
+        tanks = pygame.sprite.RenderPlain(*players_tanks)
+        walls = pygame.sprite.RenderPlain(*self.map.objects)
+        
+        bullet_stoppers = pygame.sprite.RenderPlain(players_tanks + self.map.objects)
+        
+        bullets_spr = pygame.sprite.RenderPlain(*bullets)
+        collisions = pygame.sprite.groupcollide(bullets_spr, bullet_stoppers, False, False)
+        #bullets_spr.update(deltat, collisions)
+        for bullet in collisions:
+            bullet.owner.bullets.remove(bullet)
+            bullets.remove(bullet)
+        tanks.update(deltat)
+        
+        bullets_spr = pygame.sprite.RenderPlain(*bullets)
+        bullets_spr.update(deltat)
+        
+        collisions = pygame.sprite.groupcollide(tanks, walls, False, False)
+        for tank in collisions:
+            tank.undo()
+        
+        for tank in tanks:
+            collisions = pygame.sprite.spritecollide(tank, [t for t in tanks if t != tank], False)
+            if len(collisions):
+                tank.undo()
+        
+        self.drawables = [tanks, walls, bullets_spr]
+
+
 
 
