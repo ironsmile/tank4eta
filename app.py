@@ -15,7 +15,7 @@ import pygame.joystick
 import controllers
 
 
-PLAYERS = 2
+PLAYERS = 1
 
 
 def main():
@@ -46,6 +46,8 @@ def main():
         player.controller = controllers.Keyboard()
     
     for i, position in enumerate(play_map.player_starts):
+        if i >= PLAYERS:
+            break
         tank = Tank(position, play_map)
         players[i].tank = tank
     
