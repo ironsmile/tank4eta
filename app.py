@@ -17,7 +17,8 @@ import controllers
 
 PLAYERS = 2
 
-def main ():
+
+def main():
     os.chdir(os.path.dirname(os.path.realpath(__file__)))
     pygame.mixer.init()
     
@@ -33,13 +34,15 @@ def main ():
     
     pygame.joystick.init()
     for i in xrange(pygame.joystick.get_count()):
-        if i >= len(players): break
+        if i >= len(players):
+            break
         j = pygame.joystick.Joystick(i)
         j.init()
         players[i].controller = controllers.Gamepad(j)
     
     for player in players:
-        if player.controller is not None: continue
+        if player.controller is not None:
+            continue
         player.controller = controllers.Keyboard()
     
     for i, position in enumerate(play_map.player_starts):
@@ -63,7 +66,5 @@ def main ():
         render.draw()
             
     
-
 if __name__ == '__main__':
     main()
-

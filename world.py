@@ -7,13 +7,18 @@ MAP_X = 640
 MAP_Y = 480
 SQUARE_SIZE = 32
 
-class MapSizeException(Exception): pass
 
-class MapLogicException(Exception): pass
+class MapSizeException(Exception):
+    pass
+
+
+class MapLogicException(Exception):
+    pass
+
 
 class Map (object):
     
-    def __init__ (self):
+    def __init__(self):
         self.objects = []
         self.resolution = (MAP_X, MAP_Y)
         self.box_size = SQUARE_SIZE
@@ -23,13 +28,13 @@ class Map (object):
         self.y_boxes = MAP_Y / SQUARE_SIZE
         self.player_starts = []
     
-    def real_coords (self, x, y):
+    def real_coords(self, x, y):
         return (
                     x * self.box_size - self.box_size / 2,
                     y * self.box_size - self.box_size / 2
-                ) 
+                )
     
-    def load (self, map_file):
+    def load(self, map_file):
         #!TODO: add try+catch, stat of map file for 0 bytes, too large
         mapf = open(map_file, 'r')
         map_str = mapf.read()
@@ -42,9 +47,9 @@ class Map (object):
             x = 1
             for square in row:
                 if square == 'w':
-                    self.objects.append( Wall(self.real_coords(x,y)) )
+                    self.objects.append(Wall(self.real_coords(x, y)))
                 if square == 'p':
-                    self.player_starts.append(self.real_coords(x,y))
+                    self.player_starts.append(self.real_coords(x, y))
                 x += 1
             
             y += 1
@@ -55,14 +60,15 @@ class Map (object):
         end of load
         """
 
+
 class World (object):
     
-    def __init__ (self, map, players):
+    def __init__(self, map, players):
         self.players = players
         self.map = map
-        self.drawables = []
+        self._drawables = []
     
-    def tick (self, deltat, events):
+    def tick(self, deltat, events):
         players_tanks = []
         bullets = []
         for player in self.players:
@@ -95,8 +101,7 @@ class World (object):
             if len(collisions):
                 tank.undo()
         
-        self.drawables = [tanks, walls, bullets_spr]
+        self._drawables = [tanks, walls, bullets_spr]
 
-
-
-
+    def get_drawables(self):
+        return self._drawables

@@ -15,17 +15,17 @@ AXIS_X = 0
 AXIS_Y = 1
 
 #BACKGROUND_COLOUR = (46,52,54)
-BACKGROUND_COLOUR = (0,0,0)
+BACKGROUND_COLOUR = (0, 0, 0)
 
-MAPS_DIR = 'maps'
-SOUNDS_DIR = 'sounds'
-TEXTURES_DIR = 'textures'
+MAPS_DIR = 'data/maps'
+SOUNDS_DIR = 'data/sounds'
+TEXTURES_DIR = 'data/textures'
 
-JOY_CENTERED = (0,0)
-JOY_UP       = (0,1)
-JOY_DOWN     = (0,-1)
-JOY_RIGHT    = (1,0)
-JOY_LEFT     = (-1,0)
+JOY_CENTERED = (0, 0)
+JOY_UP       = (0, 1)
+JOY_DOWN     = (0, -1)
+JOY_RIGHT    = (1, 0)
+JOY_LEFT     = (-1, 0)
 
 
 EVENT_FIRE = 0
@@ -34,5 +34,3 @@ EVENT_MOVE_RIGHT = 2
 EVENT_MOVE_UP = 3
 EVENT_MOVE_DOWN = 4
 EVENT_STOP = 5
-
-

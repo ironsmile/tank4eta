@@ -8,8 +8,8 @@ import socket
 
 class GameClient (object):
     
-    def __init__ (self):
+    def __init__(self):
         self.socket = None
     
-    def connect (self, server_ip):
+    def connect(self, server_ip):
         pass
