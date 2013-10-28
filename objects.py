@@ -86,6 +86,15 @@ class MovableObject (Object):
             dx, dy = self.movements[self.direction]
             self.rect.center = (x+dx, y+dy)
 
+    @property
+    def moving (self):
+        return self.direction != DIRECTION_NONE
+
+    @property
+    def stopped (self):
+        return not self.moving
+
+
 class NonMovableObject (Object):
     passable = False
     movable = False

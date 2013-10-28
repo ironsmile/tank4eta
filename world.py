@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 #-*- coding: utf8 -*-
 
+import ai
+import random
 from stuff_on_map import *
 
 MAP_X = 640
@@ -27,6 +29,7 @@ class Map (object):
         self.x_boxes = MAP_X / SQUARE_SIZE
         self.y_boxes = MAP_Y / SQUARE_SIZE
         self.player_starts = []
+        self.enemy_starts = []
     
     def real_coords(self, x, y):
         return (
@@ -50,6 +53,8 @@ class Map (object):
                     self.objects.append(Wall(self.real_coords(x, y)))
                 if square == 'p':
                     self.player_starts.append(self.real_coords(x, y))
+                if square == 'e':
+                    self.enemy_starts.append(self.real_coords(x, y))
                 x += 1
             
             y += 1
@@ -67,26 +72,41 @@ class World (object):
         self.players = players
         self.map = map
         self._drawables = []
+        self.enemies = []
+        self.ai = ai.AI()
     
     def tick(self, deltat, events):
         players_tanks = []
         bullets = []
+
+        if len(self.enemies) == 0 and random.randint(0, 100) < 0.05:
+            self.spawn_enemy()
+
         for player in self.players:
             player.process_events(events)
             players_tanks.append(player.tank)
             bullets += player.tank.bullets
         
-        tanks = pygame.sprite.RenderPlain(*players_tanks)
+        self.ai.tick(self.enemies)
+
+        tanks = pygame.sprite.RenderPlain(*(players_tanks + self.enemies))
         walls = pygame.sprite.RenderPlain(*self.map.objects)
         
-        bullet_stoppers = pygame.sprite.RenderPlain(players_tanks + self.map.objects)
+        bullet_stoppers = players_tanks + self.map.objects + self.enemies
+        bullet_stoppers = pygame.sprite.RenderPlain(bullet_stoppers)
         
         bullets_spr = pygame.sprite.RenderPlain(*bullets)
         collisions = pygame.sprite.groupcollide(bullets_spr, bullet_stoppers, False, False)
         #bullets_spr.update(deltat, collisions)
         for bullet in collisions:
             bullet.owner.bullets.remove(bullet)
+            bullet.explode_sound()
             bullets.remove(bullet)
+            collided_with = collisions[bullet]
+            for enemy in self.enemies:
+                if enemy in collided_with:
+                    self.enemies.remove(enemy)
+
         tanks.update(deltat)
         
         bullets_spr = pygame.sprite.RenderPlain(*bullets)
@@ -102,6 +122,11 @@ class World (object):
                 tank.undo()
         
         self._drawables = [tanks, walls, bullets_spr]
+
+    def spawn_enemy(self):
+        for position in self.map.enemy_starts:
+            enemy = EnemyTank(position, self.map)
+            self.enemies.append(enemy)
 
     def get_drawables(self):
         return self._drawables

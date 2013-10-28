@@ -20,7 +20,7 @@ PLAYERS = 1
 
 def main():
     os.chdir(os.path.dirname(os.path.realpath(__file__)))
-    pygame.mixer.init()
+    pygame.mixer.init(buffer=512)
     
     play_map = world.Map()
     play_map.load(map_path("first_map.map"))

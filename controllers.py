@@ -81,6 +81,8 @@ class Keyboard (object):
                 elif event.key == self.scheme.down:
                     event_queue.append(EVENT_MOVE_DOWN)
                     self.direction = EVENT_MOVE_DOWN
+                elif event.key == self.scheme.fire:
+                    event_queue.append(EVENT_FIRE)
             else:
                 if event.key == self.scheme.right and self.direction == EVENT_MOVE_RIGHT:
                     event_queue.append(EVENT_STOP)
@@ -90,8 +92,6 @@ class Keyboard (object):
                     event_queue.append(EVENT_STOP)
                 elif event.key == self.scheme.down and self.direction == EVENT_MOVE_DOWN:
                     event_queue.append(EVENT_STOP)
-                elif event.key == self.scheme.fire:
-                    event_queue.append(EVENT_FIRE)
         
         return event_queue
 
