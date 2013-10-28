@@ -9,10 +9,12 @@ from player import Player
 from render import Render
 from event_manage import EventManager
 import os
+import sys
 import world
 import pygame
 import pygame.joystick
 import controllers
+import time
 
 
 PLAYERS = 1
@@ -58,14 +60,21 @@ def main():
     game_world = world.World(play_map, players)
     render = Render(game_world)
     eventer = EventManager()
-    
+
     clock = pygame.time.Clock()
     
     while 42:
         deltat = clock.tick(FRAMES)
         events = eventer.get_events()
-        game_world.tick(deltat, events)
+        game_state = game_world.tick(deltat, events)
+        if game_state == GAME_OVER:
+            break
         render.draw()
+
+    pygame.mixer.stop()
+    render.draw_end_screen()
+    time.sleep(3)
+    sys.exit(0)
             
     
 if __name__ == '__main__':

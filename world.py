@@ -84,10 +84,18 @@ class World (object):
 
         for player in self.players:
             player.process_events(events)
+            if player.tank is None:
+                continue
             players_tanks.append(player.tank)
             bullets += player.tank.bullets
         
+        if len(players_tanks) < 1:
+            return GAME_OVER
+
         self.ai.tick(self.enemies)
+
+        for enemy in self.enemies:
+            bullets += enemy.bullets
 
         tanks = pygame.sprite.RenderPlain(*(players_tanks + self.enemies))
         walls = pygame.sprite.RenderPlain(*self.map.objects)
@@ -103,9 +111,17 @@ class World (object):
             bullet.explode_sound()
             bullets.remove(bullet)
             collided_with = collisions[bullet]
-            for enemy in self.enemies:
-                if enemy in collided_with:
-                    self.enemies.remove(enemy)
+
+            for collided in collided_with:
+                if not isinstance(collided, BasicTank):
+                    continue
+                if isinstance(collided, EnemyTank) and collided is not bullet.owner:
+                    self.enemies.remove(collided)
+                if isinstance(collided, Tank):
+                    tanks.remove(collided)
+                    for player in self.players:
+                        if player.tank is collided:
+                            player.tank = None
 
         tanks.update(deltat)
         
@@ -122,6 +138,7 @@ class World (object):
                 tank.undo()
         
         self._drawables = [tanks, walls, bullets_spr]
+        return GAME_CONTINUE
 
     def spawn_enemy(self):
         for position in self.map.enemy_starts:
