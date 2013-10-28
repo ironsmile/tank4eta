@@ -15,14 +15,17 @@ class Render (object):
         self.render_surface = pygame.Surface(self.world.map.resolution)
     
     def draw(self):
-        self.screen.fill(BACKGROUND_COLOUR)
+        self.draw_on_render_surface()
+        self.draw_on_screen()
+
+    def draw_on_render_surface(self):
         self.render_surface.fill(BACKGROUND_COLOUR)
         
         for obj_group in self.world.get_drawables():
             obj_group.draw(self.render_surface)
 
+    def draw_on_screen(self):
         pygame.transform.smoothscale(self.render_surface, RESOLUTION, self.screen)
-        
         pygame.display.flip()
 
     def draw_end_screen(self):
