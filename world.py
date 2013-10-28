@@ -7,7 +7,7 @@ from stuff_on_map import *
 
 MAP_X = 640
 MAP_Y = 480
-SQUARE_SIZE = 32
+SQUARE_SIZE = 32 
 
 
 class MapSizeException(Exception):
@@ -147,3 +147,6 @@ class World (object):
 
     def get_drawables(self):
         return self._drawables
+
+    def objects_at(self, coords):
+        return []
