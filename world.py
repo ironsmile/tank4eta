@@ -79,7 +79,7 @@ class World (object):
         players_tanks = []
         bullets = []
 
-        if len(self.enemies) == 0 and random.randint(0, 100) < 0.05:
+        if len(self.enemies) < 4 and random.randint(0, 100) < 0.05:
             self.spawn_enemy()
 
         for player in self.players:
@@ -141,9 +141,10 @@ class World (object):
         return GAME_CONTINUE
 
     def spawn_enemy(self):
-        for position in self.map.enemy_starts:
-            enemy = EnemyTank(position, self.map)
-            self.enemies.append(enemy)
+        index = random.randint(0, len(self.map.enemy_starts)-1)
+        position = self.map.enemy_starts[index]
+        enemy = EnemyTank(position, self.map)
+        self.enemies.append(enemy)
 
     def get_drawables(self):
         return self._drawables

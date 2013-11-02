@@ -66,6 +66,10 @@ def main():
     while 42:
         deltat = clock.tick(FRAMES)
         events = eventer.get_events()
+        if eventer.game_stopped():
+            break
+        if eventer.toggled_full_screen():
+            render.toggle_full_screen()
         game_state = game_world.tick(deltat, events)
         if game_state == GAME_OVER:
             break
@@ -74,6 +78,7 @@ def main():
     pygame.mixer.stop()
     render.draw_end_screen()
     time.sleep(3)
+    render.quit()
     sys.exit(0)
             
     
