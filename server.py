@@ -4,13 +4,19 @@
 from locals import *
 from utils import sock_send_all, sock_recv_all
 
+import json
 import time
 import socket
+import struct
 import threading
+import traceback
 
 SERVER_PORT = 4983
 SERVER_HELLO = 'Hello Tanks'
 SERVER_HELLO_REPLY = 'Hello Server'
+
+class DummyPlayer (object):
+    pass
 
 
 class GameServer (object):
@@ -23,15 +29,22 @@ class GameServer (object):
         self.socket = None
         
         self.events = []
+        self.server_global_lock = threading.Lock()
         
     def bind_socket(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.socket.bind(socket.gethostname(), SERVER_PORT)
+        hostname = '127.0.0.1'
+        address = (hostname, SERVER_PORT)
+        self.socket.bind(address)
+        self.debug("Bound to address (%s, %d)" % address)
         self.socket.listen(5)
     
     def start(self):
+        self.debug("Binding socket")
         self.bind_socket()
+        self.debug("Accept loop")
         self.accept_loop()
+        self.debug("Game loop")
         self.game_loop()
     
     def accept_loop(self):
@@ -47,6 +60,8 @@ class GameServer (object):
             
             self.start_client(cl_sock)
             
+            # op! Race condition. The thread which adds to the count
+            # may be slower than this if.
             if len(self.players) >= self._players_count:
                 break
     
@@ -64,7 +79,7 @@ class GameServer (object):
                 self.exited_clients.remove(c)
             
             time.sleep(1)
-            print self.events
+            self.debug("Events: %s" % str(self.events))
             self.events = []
     
     def start_client(self, cl_sock):
@@ -79,6 +94,11 @@ class GameServer (object):
         player.id = id
         self.players.append(player)
         return id
+
+    def stop(self):
+        for cl in self.clients:
+            cl.stop()
+            cl.join()
     
 
 class ServerClientThread (threading.Thread):
@@ -93,12 +113,17 @@ class ServerClientThread (threading.Thread):
         try:
             self.srv_client.run()
         except Exception as err:
+            traceback.print_exc()
             self.srv_client.debug("Exception: %s" % str(err))
+            self.srv_client.socket.close()
         
-        # LOOOCK!
+        self.srv_client.srv.server_global_lock.acquire()
         self.srv_client.srv.clients.remove(self)
         self.srv_client.srv.exited_clients.append(self)
-        # LOOOCK!
+        self.srv_client.srv.server_global_lock.release()
+
+    def stop(self):
+        self.srv_client.stop()
 
 
 class ServerClient (object):
@@ -116,22 +141,56 @@ class ServerClient (object):
         self.populate_players()
         if len(self.players) < 1:
             self.debug("This thread does not have any players. Exiting.")
+            self.socket.close()
             return
         self.event_loop()
     
     def populate_players(self):
-        self.send_message({'msg': 'get_num_players'})
+        # self.send_message({'msg': 'get_num_players'})
         players_count = self.receive_message()
+
+        self.debug("Players count received: %s" % str(players_count))
         
         if players_count is None or players_count < 1:
             return
         
         for i in xrange(players_count):
-            player = None
-            # LOOOCK!
+            player = DummyPlayer()
+            self.srv.server_global_lock.acquire()
             self.srv.add_player(player)
-            # LOOOCK!
+            self.srv.server_global_lock.release()
             self.players.append(player)
             
     def event_loop(self):
-        pass
+        while 42:
+            message = self.receive_message()
+            self.debug(message)
+
+    def send_message(self, msg):
+        encoded_msg = json.dumps(msg)
+        message = struct.pack('I%ds' % len(encoded_msg), len(encoded_msg), encoded_msg)
+        self.socket.sendall(message)
+
+    def receive_message(self):
+        expected = sock_recv_all(self.socket, 4)
+        (expected_bytes, ) = struct.unpack('I', expected)
+        if expected_bytes < 0 or expected_bytes > 10e3:
+            self.debug("Expected bytes: %d" % expected_bytes)
+            return
+        message_unpacked = sock_recv_all(self.socket, expected_bytes)
+        (message_raw,) = struct.unpack('%ds' % expected_bytes, message_unpacked)
+        return json.loads(message_raw)
+
+    def stop(self):
+        self.socket.close()
+
+if __name__ == '__main__':
+    try:
+        server = GameServer(players_count=1)
+        server.start()
+    except Exception:
+        traceback.print_exc()
+        server.stop()
+    except KeyboardInterrupt:
+        print "Ctrl+C - Stopping"
+        server.stop()

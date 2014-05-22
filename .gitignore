@@ -2,3 +2,6 @@
 data/*
 *.sublime-workspace
 *.sublime-project
+.tags_sorted_by_file
+.tags
+

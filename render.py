@@ -21,6 +21,7 @@ class Render (object):
         self.world = world
         self.render_resolution = self.world.map.resolution
         self.render_surface = pygame.Surface(self.render_resolution)
+        print "Render resolution", self.render_resolution
     
         self.toggle_full_screen(force_fullscreen_to=self.fullscreen, initial=True)
 
