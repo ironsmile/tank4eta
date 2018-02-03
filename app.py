@@ -21,15 +21,19 @@ PLAYERS = 2
 
 
 def main():
+    start_game(PLAYERS, "map2.map")
+
+
+def start_game(players_count, map_name):
     os.chdir(os.path.dirname(os.path.realpath(__file__)))
     pygame.mixer.init(buffer=512)
 
     play_map = world.Map()
-    play_map.load(map_path("map2.map"))
+    play_map.load(map_path(map_name))
 
     players = []
 
-    for i in xrange(PLAYERS):
+    for i in xrange(players_count):
         player = Player()
         player.name = 'Player %d' % i
         players.append(player)
@@ -48,7 +52,7 @@ def main():
         player.controller = controllers.Keyboard()
 
     for i, position in enumerate(play_map.player_starts):
-        if i >= PLAYERS:
+        if i >= players_count:
             break
         tank = Tank(position, play_map)
         players[i].tank = tank
