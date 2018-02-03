@@ -38,6 +38,7 @@ def start_game(players_count, map_name):
         player.name = 'Player %d' % i
         players.append(player)
 
+    keyboard_controllers = controllers.keyboard_controls()
     pygame.joystick.init()
     for i in xrange(pygame.joystick.get_count()):
         if i >= len(players):
@@ -49,7 +50,7 @@ def start_game(players_count, map_name):
     for player in players:
         if player.controller is not None:
             continue
-        player.controller = controllers.Keyboard()
+        player.controller = keyboard_controllers.next()
 
     for i, position in enumerate(play_map.player_starts):
         if i >= players_count:

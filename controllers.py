@@ -6,10 +6,10 @@ from pygame.locals import *
 
 
 class Gamepad (object):
-    
+
     def __init__(self, joystick):
         self.joystick = joystick
-    
+
     def process_events(self, events):
         event_queue = []
         for event in events:
@@ -20,10 +20,10 @@ class Gamepad (object):
             if event.type == JOYBUTTONDOWN and event.button in [0, 1, 2, 3]:
                 event_queue.append(EVENT_FIRE)
                 continue
-            
+
             if not event.type == JOYHATMOTION:
                 continue
-            
+
             if event.value == JOY_CENTERED:
                 event_queue.append(EVENT_STOP)
             elif event.value == JOY_RIGHT:
@@ -34,7 +34,7 @@ class Gamepad (object):
                 event_queue.append(EVENT_MOVE_UP)
             elif event.value == JOY_DOWN:
                 event_queue.append(EVENT_MOVE_DOWN)
-        
+
         return event_queue
 
 
@@ -49,25 +49,19 @@ class KeyboardScheme (object):
 
 
 class Keyboard (object):
-    
-    def __init__(self):
+
+    def __init__(self, scheme):
         self.direction = None
-        self.scheme = KeyboardScheme({
-            'left': K_LEFT,
-            'right': K_RIGHT,
-            'up': K_UP,
-            'down': K_DOWN,
-            'fire': K_SPACE,
-        })
-    
+        self.scheme = scheme
+
     def process_events(self, events):
-        
+
         event_queue = []
         for event in events:
             if not hasattr(event, 'key'):
                 continue
             down = event.type == KEYDOWN
-            
+
             if down:
                 if event.key == self.scheme.right:
                     event_queue.append(EVENT_MOVE_RIGHT)
@@ -92,11 +86,34 @@ class Keyboard (object):
                     event_queue.append(EVENT_STOP)
                 elif event.key == self.scheme.down and self.direction == EVENT_MOVE_DOWN:
                     event_queue.append(EVENT_STOP)
-        
+
         return event_queue
 
 
 class Network (object):
-    
+
     def __init__(self):
         pass
+
+
+def keyboard_controls():
+    schemas = [
+        KeyboardScheme({
+            'left': K_LEFT,
+            'right': K_RIGHT,
+            'up': K_UP,
+            'down': K_DOWN,
+            'fire': K_SPACE,
+        }),
+
+        KeyboardScheme({
+            'left': K_a,
+            'right': K_d,
+            'up': K_w,
+            'down': K_s,
+            'fire': K_t,
+        }),
+    ]
+
+    for scheme in schemas:
+        yield Keyboard(scheme)
