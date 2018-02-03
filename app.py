@@ -23,17 +23,17 @@ PLAYERS = 2
 def main():
     os.chdir(os.path.dirname(os.path.realpath(__file__)))
     pygame.mixer.init(buffer=512)
-    
+
     play_map = world.Map()
     play_map.load(map_path("map2.map"))
-    
+
     players = []
-    
+
     for i in xrange(PLAYERS):
         player = Player()
         player.name = 'Player %d' % i
         players.append(player)
-    
+
     pygame.joystick.init()
     for i in xrange(pygame.joystick.get_count()):
         if i >= len(players):
@@ -41,28 +41,28 @@ def main():
         j = pygame.joystick.Joystick(i)
         j.init()
         players[i].controller = controllers.Gamepad(j)
-    
+
     for player in players:
         if player.controller is not None:
             continue
         player.controller = controllers.Keyboard()
-    
+
     for i, position in enumerate(play_map.player_starts):
         if i >= PLAYERS:
             break
         tank = Tank(position, play_map)
         players[i].tank = tank
-    
+
     for player in players:
         if player.tank is None:
             raise Exception("Not enough start points for players!")
-    
+
     game_world = world.World(play_map, players)
     render = Render(game_world)
     eventer = EventManager()
 
     clock = pygame.time.Clock()
-    
+
     while 42:
         deltat = clock.tick(FRAMES)
         events = eventer.get_events()
@@ -80,7 +80,7 @@ def main():
     time.sleep(3)
     render.quit()
     sys.exit(0)
-            
-    
+
+
 if __name__ == '__main__':
     main()
