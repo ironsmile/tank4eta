@@ -17,11 +17,8 @@ import controllers
 import time
 
 
-PLAYERS = 2
-
-
 def main():
-    start_game(PLAYERS, "map2.map")
+    start_game(players_count=2, map_name="map2.map")
 
 
 def start_game(players_count, map_name):
