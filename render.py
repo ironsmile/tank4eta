@@ -11,7 +11,7 @@ FULLSCREEN = False
 
 class Render (object):
 
-    def __init__(self, world): 
+    def __init__(self, world):
         pygame.display.init()
         self.fullscreen = FULLSCREEN
 
@@ -22,7 +22,7 @@ class Render (object):
         self.render_resolution = self.world.map.resolution
         self.render_surface = pygame.Surface(self.render_resolution)
         print "Render resolution", self.render_resolution
-    
+
         self.toggle_full_screen(force_fullscreen_to=self.fullscreen, initial=True)
 
     def draw(self):
@@ -32,7 +32,7 @@ class Render (object):
 
     def draw_on_render_surface(self):
         self.render_surface.fill(BACKGROUND_COLOUR)
-        
+
         for obj_group in self.world.get_drawables():
             obj_group.draw(self.render_surface)
 
@@ -50,11 +50,11 @@ class Render (object):
         pygame.font.init()
         font = pygame.font.SysFont("Sans Serif", 30)
         msg = "GAME OVER"
-        self.screen.blit(font.render(msg, 1, (255,255,255)), 
+        self.screen.blit(font.render(msg, 1, (255, 255, 255)),
                             ((self.screen.get_width() / 2) - 100,
                             (self.screen.get_height() / 2) - 10))
         pygame.display.flip()
-    
+
     def debug_display(self, display, name=None):
         print "-" * 10
         if name is None:
