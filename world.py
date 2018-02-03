@@ -148,10 +148,25 @@ class World (object):
         return GAME_CONTINUE
 
     def spawn_enemy(self):
-        index = random.randint(0, len(self.map.enemy_starts)-1)
-        position = self.map.enemy_starts[index]
-        enemy = EnemyTank(position, self.map)
-        self.enemies.append(enemy)
+        player_objects = []
+        for player in self.players:
+            if player.tank is None:
+                continue
+            player_objects.append(player.tank)
+            player_objects += player.tank.bullets
+
+        not_spawnable_locations = self.enemies + player_objects
+
+        for i in xrange(10):
+            index = random.randint(0, len(self.map.enemy_starts) - 1)
+            position = self.map.enemy_starts[index]
+            new_enemy = EnemyTank(position, self.map)
+            collisions = pygame.sprite.groupcollide([new_enemy], not_spawnable_locations, False, False)
+            if len(collisions):
+                # we should not spawn an enemy on top of an other enemy
+                continue
+            self.enemies.append(new_enemy)
+            break
 
     def get_drawables(self):
         return self._drawables
