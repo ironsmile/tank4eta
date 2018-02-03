@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 #-*- coding: utf8 -*-
 
+import random
+
 from objects import *
 from pygame.locals import *
 from locals import *
@@ -48,15 +50,20 @@ class BasicTank (MovableObject):
         self.fire()
 
 class EnemyTank (BasicTank):
-
-    image = texture_path("enemy-1.png")
+ 
     max_bullets = 1
 
     def __init__ (self, position, game_map):
+        num = random.randint(1,2)
+        self.image = texture_path("enemy-%d.png" % num)
         MovableObject.__init__(self, self.image, position, game_map)
+        self.explosion_sound = pygame.mixer.Sound( sound_path('explosion_enemy.wav') )
         self.move(DIRECTION_DOWN)
         self.stop()
         self.bullets = []
+
+    def explode_sound (self):
+        self.explosion_sound.play()
 
     def process_events (self, events):
         print "EnemyTank processing event. If you see me do something."
@@ -67,6 +74,13 @@ class Tank (BasicTank):
     max_bullets = 2
     
     def __init__ (self, position, game_map):
+        textures = {
+            1: 'tank.png',
+            2: 'tank-yasen.png',
+        }
+        num = random.randint(1,2)
+        texture_image = textures[num]
+        self.image = texture_path(texture_image)
         MovableObject.__init__(self, self.image, position, game_map)
         self.engine_working = False
         self.engine = pygame.mixer.Sound( sound_path('didi_engine_01.wav') )

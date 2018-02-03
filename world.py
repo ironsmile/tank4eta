@@ -117,6 +117,7 @@ class World (object):
                     continue
                 if isinstance(collided, EnemyTank) and collided is not bullet.owner:
                     self.enemies.remove(collided)
+                    collided.explode_sound()
                 if isinstance(collided, Tank):
                     tanks.remove(collided)
                     for player in self.players:

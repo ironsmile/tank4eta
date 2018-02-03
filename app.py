@@ -17,7 +17,7 @@ import controllers
 import time
 
 
-PLAYERS = 1
+PLAYERS = 2
 
 
 def main():
