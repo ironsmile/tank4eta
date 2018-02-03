@@ -7,7 +7,7 @@ from stuff_on_map import *
 
 MAP_X = 640
 MAP_Y = 480
-SQUARE_SIZE = 32 
+SQUARE_SIZE = 32
 
 
 class MapSizeException(Exception):
@@ -19,7 +19,7 @@ class MapLogicException(Exception):
 
 
 class Map (object):
-    
+
     def __init__(self):
         self.objects = []
         self.resolution = (MAP_X, MAP_Y)
@@ -30,19 +30,19 @@ class Map (object):
         self.y_boxes = MAP_Y / SQUARE_SIZE
         self.player_starts = []
         self.enemy_starts = []
-    
+
     def real_coords(self, x, y):
         return (
                     x * self.box_size - self.box_size / 2,
                     y * self.box_size - self.box_size / 2
                 )
-    
+
     def load(self, map_file):
         #!TODO: add try+catch, stat of map file for 0 bytes, too large
         mapf = open(map_file, 'r')
         map_str = mapf.read()
         mapf.close()
-        
+
         y = 1
         for row in map_str.splitlines():
             if y > self.y_boxes or len(row) > self.x_boxes:
@@ -56,9 +56,9 @@ class Map (object):
                 if square == 'e':
                     self.enemy_starts.append(self.real_coords(x, y))
                 x += 1
-            
+
             y += 1
-        
+
         if len(self.player_starts) < 1:
             raise MapLogicException("No player starting positions found")
         """
@@ -67,14 +67,14 @@ class Map (object):
 
 
 class World (object):
-    
+
     def __init__(self, map, players):
         self.players = players
         self.map = map
         self._drawables = []
         self.enemies = []
         self.ai = ai.AI()
-    
+
     def tick(self, deltat, events):
         players_tanks = []
         bullets = []
@@ -88,7 +88,7 @@ class World (object):
                 continue
             players_tanks.append(player.tank)
             bullets += player.tank.bullets
-        
+
         if len(players_tanks) < 1:
             return GAME_OVER
 
@@ -99,10 +99,10 @@ class World (object):
 
         tanks = pygame.sprite.RenderPlain(*(players_tanks + self.enemies))
         walls = pygame.sprite.RenderPlain(*self.map.objects)
-        
+
         bullet_stoppers = players_tanks + self.map.objects + self.enemies + bullets
         bullet_stoppers = pygame.sprite.RenderPlain(bullet_stoppers)
-        
+
         bullets_spr = pygame.sprite.RenderPlain(*bullets)
         collisions = pygame.sprite.groupcollide(bullets_spr, bullet_stoppers, False, False)
         # bullets_spr.update(deltat, collisions)
@@ -131,19 +131,19 @@ class World (object):
                             player.tank = None
 
         tanks.update(deltat)
-        
+
         bullets_spr = pygame.sprite.RenderPlain(*bullets)
         bullets_spr.update(deltat)
-        
+
         collisions = pygame.sprite.groupcollide(tanks, walls, False, False)
         for tank in collisions:
             tank.undo()
-        
+
         for tank in tanks:
             collisions = pygame.sprite.spritecollide(tank, [t for t in tanks if t != tank], False)
             if len(collisions):
                 tank.undo()
-        
+
         self._drawables = [tanks, walls, bullets_spr]
         return GAME_CONTINUE
 
