@@ -3,4 +3,7 @@
 *.sublime-project
 .tags_sorted_by_file
 .tags
-
+dist/*
+build/*
+**/.DS_Store
+app.spec
