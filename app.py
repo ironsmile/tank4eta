@@ -25,7 +25,7 @@ def main():
     pygame.mixer.init(buffer=512)
     
     play_map = world.Map()
-    play_map.load(map_path("first_map.map"))
+    play_map.load(map_path("map2.map"))
     
     players = []
     

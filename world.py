@@ -100,19 +100,24 @@ class World (object):
         tanks = pygame.sprite.RenderPlain(*(players_tanks + self.enemies))
         walls = pygame.sprite.RenderPlain(*self.map.objects)
         
-        bullet_stoppers = players_tanks + self.map.objects + self.enemies
+        bullet_stoppers = players_tanks + self.map.objects + self.enemies + bullets
         bullet_stoppers = pygame.sprite.RenderPlain(bullet_stoppers)
         
         bullets_spr = pygame.sprite.RenderPlain(*bullets)
         collisions = pygame.sprite.groupcollide(bullets_spr, bullet_stoppers, False, False)
-        #bullets_spr.update(deltat, collisions)
+        # bullets_spr.update(deltat, collisions)
+
         for bullet in collisions:
+            collided_with = collisions[bullet]
+            if len(collided_with) == 1 and bullet in collided_with:
+                continue
             bullet.owner.bullets.remove(bullet)
             bullet.explode_sound()
             bullets.remove(bullet)
-            collided_with = collisions[bullet]
 
             for collided in collided_with:
+                if collided == bullet:
+                    continue
                 if not isinstance(collided, BasicTank):
                     continue
                 if isinstance(collided, EnemyTank) and collided is not bullet.owner:
@@ -122,6 +127,7 @@ class World (object):
                     tanks.remove(collided)
                     for player in self.players:
                         if player.tank is collided:
+                            player.tank.explode_sound()
                             player.tank = None
 
         tanks.update(deltat)

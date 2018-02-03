@@ -68,22 +68,34 @@ class EnemyTank (BasicTank):
     def process_events (self, events):
         print "EnemyTank processing event. If you see me do something."
 
+tank_number = 1
+
 class Tank (BasicTank):
     
     image = texture_path('tank.png')
     max_bullets = 2
     
     def __init__ (self, position, game_map):
+        global tank_number
+        num = (tank_number % 2) + 1
+        tank_number += 1
+
+        sounds = {
+            1: 'didi_engine_01.wav',
+            2: 'doycho.wav',
+        }
+
         textures = {
             1: 'tank.png',
-            2: 'tank-yasen.png',
+            2: 'tank-of-love.png',
         }
-        num = random.randint(1,2)
+
         texture_image = textures[num]
         self.image = texture_path(texture_image)
         MovableObject.__init__(self, self.image, position, game_map)
         self.engine_working = False
-        self.engine = pygame.mixer.Sound( sound_path('didi_engine_01.wav') )
+        self.engine = pygame.mixer.Sound( sound_path(sounds[num]) )
+        self.explosion_sound = pygame.mixer.Sound( sound_path('player_death.wav') )
         self.move(DIRECTION_UP)
         self.stop()
         self.bullets = []
@@ -95,7 +107,10 @@ class Tank (BasicTank):
             EVENT_MOVE_DOWN : self._move_down,
             EVENT_STOP : self._stop,
         }
-    
+
+    def explode_sound (self):
+        self.explosion_sound.play()
+
     def process_events (self, events):
         for event in events:
             self.event_map[event]()
