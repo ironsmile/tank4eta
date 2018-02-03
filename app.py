@@ -81,6 +81,7 @@ def start_game(players_count, map_name):
     render.draw_end_screen()
     time.sleep(3)
     render.quit()
+    pygame.quit()
     sys.exit(0)
 
 
