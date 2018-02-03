@@ -72,18 +72,17 @@ class EnemyTank(BasicTank):
         print "EnemyTank processing event. If you see me do something."
 
 
-tank_number = 1
+_player_tank_number = 0
 
 
 class Tank(BasicTank):
 
-    image = texture_path('tank.png')
     max_bullets = 2
 
     def __init__(self, position, game_map):
-        global tank_number
-        num = (tank_number % 2) + 1
-        tank_number += 1
+        global _player_tank_number
+        num = (_player_tank_number % 2) + 1
+        _player_tank_number += 1
 
         sounds = {
             1: 'didi_engine_01.wav',
