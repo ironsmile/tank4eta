@@ -1,0 +1,2 @@
+pyinstaller.exe --add-data 'data;data' -n tank4eta --noconsole -i .\etc\icon.ico .\app.py
+
