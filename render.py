@@ -14,6 +14,7 @@ class Render (object):
 
     def __init__(self):
         pygame.display.init()
+        pygame.display.set_caption("tank4eta")
         self.fullscreen = FULLSCREEN
 
         self.ndi = pygame.display.Info()
@@ -25,7 +26,7 @@ class Render (object):
 
         self.toggle_full_screen(force_fullscreen_to=self.fullscreen, initial=True)
 
-    def draw(self, drawables):
+    def draw(self, drawables=[]):
         self.draw_on_render_surface(drawables)
         self.draw_on_aspect_surface()
         self.draw_on_screen()
@@ -53,6 +54,10 @@ class Render (object):
         self.screen.blit(font.render(msg, 1, (255, 255, 255)),
                             ((self.screen.get_width() / 2) - 100,
                             (self.screen.get_height() / 2) - 10))
+        pygame.display.flip()
+
+    def clear_screen(self):
+        self.screen.fill(BACKGROUND_COLOUR)
         pygame.display.flip()
 
     def debug_display(self, display, name=None):
