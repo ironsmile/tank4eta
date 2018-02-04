@@ -46,7 +46,7 @@ w     p    p       w
 wwwwwwwwwwwwwwwwwwww
 ```
 
-Every single character represents some object on the map. The game world is composed of rectangles and a character represents such an rectangle. New lines should be in unix format, that is to say just the newline character - `\n`. Here is a breakdown of the meaning of all characters:
+Every single character represents some object on the map. The game world is composed of rectangles and a character represents such a rectangle. New lines should be in unix format, that is to say just the newline character - `\n`. Here is a breakdown of the meaning of all characters:
 
 * `p` - spot on which a player tank can spawn
 * `e` - spot on which an enemy tank can spawn
@@ -64,4 +64,4 @@ In creating this I've used the following open parts:
 * [Ubuntu font](https://design.ubuntu.com/font/)
 * Scott Barlow's excellent [menu library](https://code.google.com/archive/p/python-pygame-menu-class/)
 
-All the professional sounds in this game are the result of long and meticulous work by me and my closes people. So I am thankful for all the help I've received in this department!
+All the professional sounds in this game are the result of long and meticulous work by me and my closest people. So I am thankful for all the help I've received in this department!
