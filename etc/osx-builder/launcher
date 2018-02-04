@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 cd "${0%/*}"
-./app
+./tank4eta
 

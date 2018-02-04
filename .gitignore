@@ -7,3 +7,4 @@ dist/*
 build/*
 **/.DS_Store
 app.spec
+tank4eta.spec

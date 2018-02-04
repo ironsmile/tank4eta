@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+pyinstaller --add-data data:data -n tank4eta --noconsole --osx-bundle-identifier com.doycho.tank4eta -i etc/icon.icns app.py
+cp etc/osx-builder/launcher dist/tank4eta.app/Contents/MacOS/
+sed -i 's/MacOS\/tank4eta/MacOS\/launcher/' dist/tank4eta.app/Contents/Info.plist
+
