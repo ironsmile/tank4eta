@@ -185,3 +185,10 @@ class Wall (NonMovableObject):
 
     def __init__(self, position):
         NonMovableObject.__init__(self, position)
+
+
+class Water (NonMovableObject):
+    image = pygame.image.load(texture_path('water.png'))
+
+    def __init__(self, position):
+        NonMovableObject.__init__(self, position)

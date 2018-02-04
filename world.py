@@ -21,6 +21,7 @@ class MapLogicException(Exception):
 class Map (object):
 
     def __init__(self):
+        self.unpassable = []
         self.objects = []
         self.box_size = SQUARE_SIZE
         if MAP_X % SQUARE_SIZE or MAP_Y % SQUARE_SIZE:
@@ -54,6 +55,8 @@ class Map (object):
                     self.player_starts.append(self.real_coords(x, y))
                 if square == 'e':
                     self.enemy_starts.append(self.real_coords(x, y))
+                if square == '~':
+                    self.unpassable.append(Water(self.real_coords(x, y)))
                 x += 1
 
             y += 1
@@ -107,7 +110,7 @@ class World (object):
             bullets += enemy.bullets
 
         tanks = pygame.sprite.RenderPlain(*(players_tanks + self.enemies))
-        walls = pygame.sprite.RenderPlain(*self.map.objects)
+        unpassable = pygame.sprite.RenderPlain(*[self.map.objects + self.map.unpassable])
 
         bullet_stoppers = players_tanks + self.map.objects + self.enemies + bullets
         bullet_stoppers = pygame.sprite.RenderPlain(bullet_stoppers)
@@ -145,7 +148,7 @@ class World (object):
         bullets_spr = pygame.sprite.RenderPlain(*bullets)
         bullets_spr.update(deltat)
 
-        collisions = pygame.sprite.groupcollide(tanks, walls, False, False)
+        collisions = pygame.sprite.groupcollide(tanks, unpassable, False, False)
         for tank in collisions:
             tank.undo()
 
@@ -154,7 +157,7 @@ class World (object):
             if len(collisions):
                 tank.undo()
 
-        self._drawables = [tanks, walls, bullets_spr]
+        self._drawables = [tanks, unpassable, bullets_spr]
         return GAME_CONTINUE
 
     def spawn_enemy(self):
