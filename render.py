@@ -4,6 +4,7 @@
 import time
 import pygame
 import pygame.font
+import world
 from locals import *
 
 RESOLUTION = (1024, 768)
@@ -11,29 +12,28 @@ FULLSCREEN = False
 
 class Render (object):
 
-    def __init__(self, world):
+    def __init__(self):
         pygame.display.init()
         self.fullscreen = FULLSCREEN
 
         self.ndi = pygame.display.Info()
         self.debug_display(self.ndi, "native")
 
-        self.world = world
-        self.render_resolution = self.world.map.resolution
+        self.render_resolution = (world.MAP_X, world.MAP_Y)
         self.render_surface = pygame.Surface(self.render_resolution)
         print "Render resolution", self.render_resolution
 
         self.toggle_full_screen(force_fullscreen_to=self.fullscreen, initial=True)
 
-    def draw(self):
-        self.draw_on_render_surface()
+    def draw(self, drawables):
+        self.draw_on_render_surface(drawables)
         self.draw_on_aspect_surface()
         self.draw_on_screen()
 
-    def draw_on_render_surface(self):
+    def draw_on_render_surface(self, drawables):
         self.render_surface.fill(BACKGROUND_COLOUR)
 
-        for obj_group in self.world.get_drawables():
+        for obj_group in drawables:
             obj_group.draw(self.render_surface)
 
     def draw_on_aspect_surface(self):

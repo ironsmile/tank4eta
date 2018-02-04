@@ -18,13 +18,24 @@ import time
 
 
 def main():
-    start_game(players_count=2, map_name="map2.map")
-
-
-def start_game(players_count, map_name):
     os.chdir(os.path.dirname(os.path.realpath(__file__)))
+    pygame.init()
     pygame.mixer.init(buffer=512)
+    render = Render()
 
+    main_menu()
+    main_loop(render, players_count=2, map_name="map2.map")
+
+    pygame.mixer.stop()
+    pygame.quit()
+    sys.exit(0)
+
+
+def main_menu():
+    pass
+
+
+def main_loop(render, players_count, map_name):
     play_map = world.Map()
     play_map.load(map_path(map_name))
 
@@ -60,8 +71,8 @@ def start_game(players_count, map_name):
             raise Exception("Not enough start points for players!")
 
     game_world = world.World(play_map, players)
-    render = Render(game_world)
     eventer = EventManager()
+    pygame.event.set_blocked(pygame.MOUSEMOTION)
 
     clock = pygame.time.Clock()
 
@@ -75,14 +86,11 @@ def start_game(players_count, map_name):
         game_state = game_world.tick(deltat, events)
         if game_state == GAME_OVER:
             break
-        render.draw()
+        render.draw(game_world.get_drawables())
 
-    pygame.mixer.stop()
     render.draw_end_screen()
     time.sleep(3)
     render.quit()
-    pygame.quit()
-    sys.exit(0)
 
 
 if __name__ == '__main__':

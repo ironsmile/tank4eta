@@ -22,7 +22,6 @@ class Map (object):
 
     def __init__(self):
         self.objects = []
-        self.resolution = (MAP_X, MAP_Y)
         self.box_size = SQUARE_SIZE
         if MAP_X % SQUARE_SIZE or MAP_Y % SQUARE_SIZE:
             raise MapSizeException("Map sizes cannot be divided by box size")
@@ -123,7 +122,7 @@ class World (object):
                 if isinstance(collided, EnemyTank) and collided is not bullet.owner:
                     self.enemies.remove(collided)
                     collided.explode_sound()
-                if isinstance(collided, Tank):
+                if isinstance(collided, Tank) and collided is not bullet.owner:
                     tanks.remove(collided)
                     for player in self.players:
                         if player.tank is collided:
