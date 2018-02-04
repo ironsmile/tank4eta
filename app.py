@@ -11,6 +11,7 @@ from event_manage import EventManager
 from menu import cMenu, EVENT_CHANGE_STATE
 import os
 import sys
+import glob
 import world
 import pygame
 import pygame.joystick
@@ -21,40 +22,54 @@ import time
 def main():
     os.chdir(os.path.dirname(os.path.realpath(__file__)))
     pygame.init()
-    pygame.mixer.init(buffer=512)
 
     # Ignore mouse motion (greatly reduces resources when not needed)
     pygame.event.set_blocked(pygame.MOUSEMOTION)
 
+    available_maps = glob.glob(os.path.join(MAPS_DIR, '*.map'))
+    available_maps = map(lambda m: os.path.basename(m), available_maps)
+
     render = Render()
 
     while 42:
-        selected = main_menu(render)
+        selected = main_menu(render, available_maps)
         if selected['exit']:
             break
         if selected['toggle_fullscreen']:
             render.toggle_full_screen()
             continue
+        pygame.mixer.init(buffer=512)
         main_loop(render, players_count=selected['players_count'], map_name=selected['map'])
+        pygame.mixer.stop()
 
     render.quit()
-    pygame.mixer.stop()
     pygame.quit()
     sys.exit(0)
 
 
-def main_menu(render):
+def main_menu(render, available_maps):
     OPTION_DEFAULT_STATE = 0
     OPTION_ONE_PLAYER = 1
     OPTION_TWO_PLAYERS = 2
-    OPTION_EXIT = 3
+    OPTION_SELECT_MAP = 3
+    OPTION_EXIT = 4
 
     selected = {
         'players_count': 1,
-        'map': 'map2.map',
+        'map': available_maps[0],
         'exit': False,
         'toggle_fullscreen': False
     }
+
+    def show_map_name():
+        explain_text = 'Selected map: %s' % selected['map'][:-4]
+        map_font = pygame.font.Font(None, 24)
+        selected_map_text = map_font.render(explain_text, True, (160, 160, 160))
+        text_x = (render.resolution[0] - selected_map_text.get_width()) / 2
+        text_y = 530
+        render.screen.blit(selected_map_text, (text_x, text_y))
+
+    map_names = map(lambda m: m[:-4], available_maps)
 
     # cleanup the display from any leftover stuff
     render.clear_screen()
@@ -62,11 +77,19 @@ def main_menu(render):
     menu = cMenu(50, 50, 20, 5, 'vertical', 100, render.screen, [
         ('1 player', OPTION_ONE_PLAYER, None),
         ('2 players', OPTION_TWO_PLAYERS, None),
+        ('Change Map', OPTION_SELECT_MAP, None),
         ('Exit', OPTION_EXIT, None),
     ])
     menu.set_center(True, True)
     menu.set_alignment('center', 'center')
     menu.set_refresh_whole_surface_on_load(True)
+
+    mapSelectMenu = cMenu(50, 50, 20, 5, 'vertical', 100, render.screen, zip(
+        map_names, available_maps, [None] * len(available_maps)
+    ))
+    mapSelectMenu.set_center(True, True)
+    mapSelectMenu.set_alignment('center', 'center')
+    mapSelectMenu.set_refresh_whole_surface_on_load(True)
 
     # Create the state variables (make them different so that the user event is
     # triggered at the start of the "while 1" loop so that the initial display
@@ -87,6 +110,9 @@ def main_menu(render):
             pygame.event.post(pygame.event.Event(EVENT_CHANGE_STATE, key=OPTION_DEFAULT_STATE))
             prev_state = state
 
+            if state == OPTION_SELECT_MAP or state in available_maps:
+                render.clear_screen()
+
         # Get the next event
         e = pygame.event.wait()
 
@@ -105,12 +131,19 @@ def main_menu(render):
         if e.type == pygame.KEYDOWN or e.type == EVENT_CHANGE_STATE:
             if state == OPTION_DEFAULT_STATE:
                 changed_regions_list, state = menu.update(e, state)
+                show_map_name()
             elif state == OPTION_ONE_PLAYER:
                 selected['players_count'] = 1
                 break
             elif state == OPTION_TWO_PLAYERS:
                 selected['players_count'] = 2
                 break
+            elif state == OPTION_SELECT_MAP:
+                changed_regions_list, state = mapSelectMenu.update(e, state)
+            elif state in available_maps:
+                selected['map'] = state
+                changed_regions_list, state = menu.update(e, state)
+                show_map_name()
             else:
                 selected['exit'] = True
                 break
