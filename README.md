@@ -2,6 +2,8 @@
 
 A small BattleCity like game I am building for fun. It is written in Python 2. It should be easy to port it to python 3 at some point in the future.
 
+![Game screenshot](etc/screenshot.png)
+
 ### How to Run
 
 **Option 1** - You can grab an already built binary from the GitHub's [release page](https://github.com/ironsmile/tank4eta/releases). But I am limited how many different targets I can support with builds.
