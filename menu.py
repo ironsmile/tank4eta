@@ -74,6 +74,7 @@
 #---[ Imports ]-----------------------------------------------------------------
 #-------------------------------------------------------------------------------
 import pygame
+import fonts
 
 
 #-------------------------------------------------------------------------------
@@ -140,7 +141,7 @@ class cMenu:
                 buttonList):
       ## menu items
       self.menu_items = []                      # List of menu items
-      self.font = pygame.font.Font(None, 32)    # Font to use
+      self.font = fonts.serif_normal            # Font to use
 
       self.x = x                                # Top left corner (of surface)
       self.y = y                                # relative to the screen/window
