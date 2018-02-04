@@ -29,10 +29,17 @@ def main():
     available_maps = glob.glob(os.path.join(MAPS_DIR, '*.map'))
     available_maps = map(lambda m: os.path.basename(m), available_maps)
 
+    selected = {
+        'players_count': 1,
+        'map': available_maps[0],
+        'exit': False,
+        'toggle_fullscreen': False
+    }
+
     render = Render()
 
     while 42:
-        selected = main_menu(render, available_maps)
+        selected = main_menu(render, available_maps, selected)
         if selected['exit']:
             break
         if selected['toggle_fullscreen']:
@@ -47,26 +54,19 @@ def main():
     sys.exit(0)
 
 
-def main_menu(render, available_maps):
+def main_menu(render, available_maps, selected):
     OPTION_DEFAULT_STATE = 0
     OPTION_ONE_PLAYER = 1
     OPTION_TWO_PLAYERS = 2
     OPTION_SELECT_MAP = 3
     OPTION_EXIT = 4
 
-    selected = {
-        'players_count': 1,
-        'map': available_maps[0],
-        'exit': False,
-        'toggle_fullscreen': False
-    }
-
     def show_map_name():
         explain_text = 'Selected map: %s' % selected['map'][:-4]
         map_font = pygame.font.Font(None, 24)
         selected_map_text = map_font.render(explain_text, True, (160, 160, 160))
-        text_x = (render.resolution[0] - selected_map_text.get_width()) / 2
-        text_y = 530
+        text_x = (render.screen.get_width() - selected_map_text.get_width()) / 2
+        text_y = render.screen.get_height() - selected_map_text.get_width() - 50
         render.screen.blit(selected_map_text, (text_x, text_y))
 
     map_names = map(lambda m: m[:-4], available_maps)
