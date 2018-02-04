@@ -1,31 +1,32 @@
 #!/usr/bin/env python
 #-*- coding: utf8 -*-
 
+import os
+
 FRAMES = 30
 MOVE_SPEED = 3
 BULLET_SPEED = 8
 
-DIRECTION_NONE  = -1
-DIRECTION_DOWN  = 1
-DIRECTION_LEFT  = 2
-DIRECTION_UP    = 4
+DIRECTION_NONE = -1
+DIRECTION_DOWN = 1
+DIRECTION_LEFT = 2
+DIRECTION_UP = 4
 DIRECTION_RIGHT = 8
 
 AXIS_X = 0
 AXIS_Y = 1
 
-#BACKGROUND_COLOUR = (46,52,54)
-BACKGROUND_COLOUR = (0, 0, 0)
+BACKGROUND_COLOUR = (46, 52, 54)
 
-MAPS_DIR = 'data/maps'
-SOUNDS_DIR = 'data/sounds'
-TEXTURES_DIR = 'data/textures'
+MAPS_DIR = os.path.join('data', 'maps')
+SOUNDS_DIR = os.path.join('data', 'sounds')
+TEXTURES_DIR = os.path.join('data', 'textures')
 
 JOY_CENTERED = (0, 0)
-JOY_UP       = (0, 1)
-JOY_DOWN     = (0, -1)
-JOY_RIGHT    = (1, 0)
-JOY_LEFT     = (-1, 0)
+JOY_UP = (0, 1)
+JOY_DOWN = (0, -1)
+JOY_RIGHT = (1, 0)
+JOY_LEFT = (-1, 0)
 
 
 EVENT_FIRE = 0
