@@ -46,14 +46,19 @@ class Render (object):
         pygame.transform.smoothscale(self.aspect_surface, self.resolution, self.screen)
         pygame.display.flip()
 
-    def draw_end_screen(self):
+    def draw_end_game_screen(self, text, stats_text):
         self.screen.fill(BACKGROUND_COLOUR)
         pygame.font.init()
         font = pygame.font.SysFont("Sans Serif", 30)
-        msg = "GAME OVER"
-        self.screen.blit(font.render(msg, 1, (255, 255, 255)),
-                            ((self.screen.get_width() / 2) - 100,
-                            (self.screen.get_height() / 2) - 10))
+        title_text_rect = font.render(text, 1, (255, 255, 255))
+        self.screen.blit(title_text_rect,
+            ((self.screen.get_width() - title_text_rect.get_width()) / 2,
+            (self.screen.get_height() - title_text_rect.get_height()) / 2))
+
+        stats_text_rect = font.render(stats_text, 1, (160, 160, 160))
+        self.screen.blit(stats_text_rect,
+            ((self.screen.get_width() - stats_text_rect.get_width()) / 2,
+            (self.screen.get_height() - stats_text_rect.get_height()) / 2 + 50))
         pygame.display.flip()
 
     def clear_screen(self):

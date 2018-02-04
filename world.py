@@ -73,12 +73,22 @@ class World (object):
         self._drawables = []
         self.enemies = []
         self.ai = ai.AI()
+        self.enemies_killed = 0
+        self.enemeis_to_kill = 20
+
+    def get_end_game_stats(self):
+        return "Enemies killed: %d / %d" % (self.enemies_killed, self.enemeis_to_kill)
 
     def tick(self, deltat, events):
+        if self.enemies_killed >= self.enemeis_to_kill:
+            return GAME_WON
+
         players_tanks = []
         bullets = []
+        alive_enemies = len(self.enemies)
 
-        if len(self.enemies) < 4 and random.randint(0, 100) < 0.05:
+        if alive_enemies < 4 and random.randint(0, 100) < 0.05 and \
+                (self.enemies_killed + alive_enemies) < self.enemeis_to_kill:
             self.spawn_enemy()
 
         for player in self.players:
@@ -122,6 +132,7 @@ class World (object):
                 if isinstance(collided, EnemyTank) and collided is not bullet.owner:
                     self.enemies.remove(collided)
                     collided.explode_sound()
+                    self.enemies_killed += 1
                 if isinstance(collided, Tank) and collided is not bullet.owner:
                     tanks.remove(collided)
                     for player in self.players:

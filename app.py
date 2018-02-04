@@ -198,15 +198,24 @@ def main_loop(render, players_count, map_name):
         deltat = clock.tick(FRAMES)
         events = eventer.get_events()
         if eventer.game_stopped():
+            stats = game_world.get_end_game_stats()
+            render.draw_end_game_screen("You Gave Up! Why?", stats)
             break
+
         if eventer.toggled_full_screen():
             render.toggle_full_screen()
+
         game_state = game_world.tick(deltat, events)
         if game_state == GAME_OVER:
+            stats = game_world.get_end_game_stats()
+            render.draw_end_game_screen("GAME OVER. You've lost!", stats)
+            break
+        if game_state == GAME_WON:
+            stats = game_world.get_end_game_stats()
+            render.draw_end_game_screen("Yey! You've won!", stats)
             break
         render.draw(game_world.get_drawables())
 
-    render.draw_end_screen()
     time.sleep(3)
 
 
