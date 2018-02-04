@@ -67,6 +67,7 @@ class Keyboard (object):
             if not hasattr(event, 'key'):
                 continue
             down = event.type == KEYDOWN
+            # import pdb; pdb.set_trace()
             
             if down:
                 if event.key == self.scheme.right:

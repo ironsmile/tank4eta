@@ -36,16 +36,19 @@ def main():
     
     pygame.joystick.init()
     for i in xrange(pygame.joystick.get_count()):
+        continue
         if i >= len(players):
             break
         j = pygame.joystick.Joystick(i)
         j.init()
         players[i].controller = controllers.Gamepad(j)
+        print "Player %d is controlled by gamepad %s" % (i, str(j))
     
-    for player in players:
+    for i, player in enumerate(players):
         if player.controller is not None:
             continue
         player.controller = controllers.Keyboard()
+        print "Player %d is controlled by keyboard" % i
     
     for i, position in enumerate(play_map.player_starts):
         if i >= PLAYERS:
