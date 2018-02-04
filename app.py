@@ -9,6 +9,7 @@ from player import Player
 from render import Render
 from event_manage import EventManager
 from menu import cMenu, EVENT_CHANGE_STATE
+from fonts import serif_normal
 import os
 import sys
 import glob
@@ -63,10 +64,9 @@ def main_menu(render, available_maps, selected):
 
     def show_map_name():
         explain_text = 'Selected map: %s' % selected['map'][:-4]
-        map_font = pygame.font.Font(None, 24)
-        selected_map_text = map_font.render(explain_text, True, (160, 160, 160))
+        selected_map_text = serif_normal.render(explain_text, True, (160, 160, 160))
         text_x = (render.screen.get_width() - selected_map_text.get_width()) / 2
-        text_y = render.screen.get_height() - selected_map_text.get_width() - 50
+        text_y = render.screen.get_height() - selected_map_text.get_height() - 50
         render.screen.blit(selected_map_text, (text_x, text_y))
 
     map_names = map(lambda m: m[:-4], available_maps)
@@ -80,6 +80,7 @@ def main_menu(render, available_maps, selected):
         ('Change Map', OPTION_SELECT_MAP, None),
         ('Exit', OPTION_EXIT, None),
     ])
+    menu.set_font(serif_normal)
     menu.set_center(True, True)
     menu.set_alignment('center', 'center')
     menu.set_refresh_whole_surface_on_load(True)
@@ -87,6 +88,7 @@ def main_menu(render, available_maps, selected):
     mapSelectMenu = cMenu(50, 50, 20, 5, 'vertical', 100, render.screen, zip(
         map_names, available_maps, [None] * len(available_maps)
     ))
+    mapSelectMenu.set_font(serif_normal)
     mapSelectMenu.set_center(True, True)
     mapSelectMenu.set_alignment('center', 'center')
     mapSelectMenu.set_refresh_whole_surface_on_load(True)

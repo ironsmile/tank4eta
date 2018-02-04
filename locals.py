@@ -39,3 +39,5 @@ EVENT_STOP = 5
 GAME_CONTINUE = 0
 GAME_WON = 1
 GAME_OVER = -1
+
+FONT_SERIF_PATH = os.path.join('data', 'fonts', 'ubuntu', 'Ubuntu-R.ttf')

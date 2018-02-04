@@ -5,6 +5,7 @@ import time
 import pygame
 import pygame.font
 import world
+import fonts
 from locals import *
 
 RESOLUTION = (1024, 768)
@@ -48,14 +49,12 @@ class Render (object):
 
     def draw_end_game_screen(self, text, stats_text):
         self.screen.fill(BACKGROUND_COLOUR)
-        pygame.font.init()
-        font = pygame.font.SysFont("Sans Serif", 30)
-        title_text_rect = font.render(text, 1, (255, 255, 255))
+        title_text_rect = fonts.serif_big.render(text, 1, (255, 255, 255))
         self.screen.blit(title_text_rect,
             ((self.screen.get_width() - title_text_rect.get_width()) / 2,
             (self.screen.get_height() - title_text_rect.get_height()) / 2))
 
-        stats_text_rect = font.render(stats_text, 1, (160, 160, 160))
+        stats_text_rect = fonts.serif_normal.render(stats_text, 1, (160, 160, 160))
         self.screen.blit(stats_text_rect,
             ((self.screen.get_width() - stats_text_rect.get_width()) / 2,
             (self.screen.get_height() - stats_text_rect.get_height()) / 2 + 50))
