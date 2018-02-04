@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+pyinstaller \
+    --add-data data:data \
+    --add-data README.md:README.md \
+    --add-data etc/osx-builder/icon.png:./ \
+    --add-data etc/icon.ico:./ \
+    -n tank4eta \
+    --noconsole \
+    app.py
+
