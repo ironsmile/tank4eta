@@ -46,7 +46,7 @@ w     p    p       w
 wwwwwwwwwwwwwwwwwwww
 ```
 
-Every single character represents some object on the map. The game world is composed of rectangles and a character represents such an rectangle. Here is a breakdown of the meaning of all characters:
+Every single character represents some object on the map. The game world is composed of rectangles and a character represents such an rectangle. New lines should be in unix format, that is to say just the newline character - `\n`. Here is a breakdown of the meaning of all characters:
 
 * `p` - spot on which a player tank can spawn
 * `e` - spot on which an enemy tank can spawn
