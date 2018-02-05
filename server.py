@@ -87,7 +87,7 @@ class GameServer (object):
         sc.start()
     
     def debug(self, msg):
-        print msg
+        print(msg)
     
     def add_player(self, player):
         id = len(self.players)
@@ -154,7 +154,7 @@ class ServerClient (object):
         if players_count is None or players_count < 1:
             return
         
-        for i in xrange(players_count):
+        for i in range(players_count):
             player = DummyPlayer()
             self.srv.server_global_lock.acquire()
             self.srv.add_player(player)
@@ -192,5 +192,5 @@ if __name__ == '__main__':
         traceback.print_exc()
         server.stop()
     except KeyboardInterrupt:
-        print "Ctrl+C - Stopping"
+        print("Ctrl+C - Stopping")
         server.stop()

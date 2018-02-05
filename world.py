@@ -153,7 +153,8 @@ class World (object):
             tank.undo()
 
         for tank in tanks:
-            collisions = pygame.sprite.spritecollide(tank, [t for t in tanks if t != tank], False)
+            other_tanks = [t for t in tanks if t != tank]
+            collisions = pygame.sprite.spritecollide(tank, other_tanks, False)
             if len(collisions):
                 tank.undo()
 
@@ -170,11 +171,16 @@ class World (object):
 
         not_spawnable_locations = self.enemies + player_objects
 
-        for i in xrange(10):
+        for i in range(10):
             index = random.randint(0, len(self.map.enemy_starts) - 1)
             position = self.map.enemy_starts[index]
             new_enemy = EnemyTank(position, self.map)
-            collisions = pygame.sprite.groupcollide([new_enemy], not_spawnable_locations, False, False)
+            collisions = pygame.sprite.groupcollide(
+                [new_enemy],
+                not_spawnable_locations,
+                False,
+                False
+            )
             if len(collisions):
                 # we should not spawn an enemy on top of an other enemy
                 continue

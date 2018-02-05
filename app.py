@@ -28,7 +28,7 @@ def main():
     pygame.event.set_blocked(pygame.MOUSEMOTION)
 
     available_maps = glob.glob(os.path.join(MAPS_DIR, '*.map'))
-    available_maps = map(lambda m: os.path.basename(m), available_maps)
+    available_maps = [os.path.basename(m) for m in available_maps]
 
     selected = {
         'players_count': 1,
@@ -69,7 +69,7 @@ def main_menu(render, available_maps, selected):
         text_y = render.screen.get_height() - selected_map_text.get_height() - 50
         render.screen.blit(selected_map_text, (text_x, text_y))
 
-    map_names = map(lambda m: m[:-4], available_maps)
+    map_names = [m[:-4] for m in available_maps]
 
     # cleanup the display from any leftover stuff
     render.clear_screen()
@@ -85,9 +85,9 @@ def main_menu(render, available_maps, selected):
     menu.set_alignment('center', 'center')
     menu.set_refresh_whole_surface_on_load(True)
 
-    mapSelectMenu = cMenu(50, 50, 20, 5, 'vertical', 100, render.screen, zip(
+    mapSelectMenu = cMenu(50, 50, 20, 5, 'vertical', 100, render.screen, list(zip(
         map_names, available_maps, [None] * len(available_maps)
-    ))
+    )))
     mapSelectMenu.set_font(serif_normal)
     mapSelectMenu.set_center(True, True)
     mapSelectMenu.set_alignment('center', 'center')
@@ -162,14 +162,14 @@ def main_loop(render, players_count, map_name):
 
     players = []
 
-    for i in xrange(players_count):
+    for i in range(players_count):
         player = Player()
         player.name = 'Player %d' % i
         players.append(player)
 
     keyboard_controllers = controllers.keyboard_controls()
     pygame.joystick.init()
-    for i in xrange(pygame.joystick.get_count()):
+    for i in range(pygame.joystick.get_count()):
         if i >= len(players):
             break
         j = pygame.joystick.Joystick(i)
@@ -179,7 +179,7 @@ def main_loop(render, players_count, map_name):
     for player in players:
         if player.controller is not None:
             continue
-        player.controller = keyboard_controllers.next()
+        player.controller = next(keyboard_controllers)
 
     for i, position in enumerate(play_map.player_starts):
         if i >= players_count:

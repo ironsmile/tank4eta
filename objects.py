@@ -5,6 +5,7 @@ from pygame.locals import *
 from locals import *
 import pygame
 
+
 class Object (pygame.sprite.Sprite):
     passable = False
     movable = False

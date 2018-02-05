@@ -69,7 +69,7 @@ class EnemyTank(BasicTank):
         self.explosion_sound.play()
 
     def process_events(self, events):
-        print "EnemyTank processing event. If you see me do something."
+        print("EnemyTank processing event. If you see me do something.")
 
 
 _player_tank_number = 0

@@ -17,6 +17,8 @@ AXIS_X = 0
 AXIS_Y = 1
 
 BACKGROUND_COLOUR = (46, 52, 54)
+WHITE = (255, 255, 255)
+SILVER = (160, 160, 160)
 
 MAPS_DIR = os.path.join('data', 'maps')
 SOUNDS_DIR = os.path.join('data', 'sounds')
@@ -27,7 +29,6 @@ JOY_UP = (0, 1)
 JOY_DOWN = (0, -1)
 JOY_RIGHT = (1, 0)
 JOY_LEFT = (-1, 0)
-
 
 EVENT_FIRE = 0
 EVENT_MOVE_LEFT = 1

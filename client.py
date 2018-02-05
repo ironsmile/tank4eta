@@ -67,7 +67,7 @@ class GameClient (object):
         return json.loads(message_raw)
 
     def debug(self, message):
-        print message
+        print(message)
 
 
 if __name__ == '__main__':
@@ -78,5 +78,5 @@ if __name__ == '__main__':
         traceback.print_exc()
         client.socket.close()
     except KeyboardInterrupt:
-        print "Ctrl+C - Stopping"
+        print("Ctrl+C - Stopping")
         client.socket.close()
