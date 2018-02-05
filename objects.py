@@ -20,7 +20,7 @@ class MovableObject (Object):
 
     def __init__(self, image, position, game_map):
         Object.__init__(self)
-        self.image_src = pygame.image.load(image)
+        self.image_src = pygame.image.load(image).convert_alpha()
         self.image = self.image_src
         self.rect = self.image.get_rect()
         self.rect.center = position
