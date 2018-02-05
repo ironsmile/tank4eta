@@ -1,6 +1,6 @@
 ## tank4eta
 
-A small BattleCity like game I am building for fun. It is written in Python 2. It should be easy to port it to python 3 at some point in the future.
+A small BattleCity like game I am building for fun. It is written in Python.
 
 ![Game screenshot](etc/screenshot.png)
 
@@ -8,7 +8,7 @@ A small BattleCity like game I am building for fun. It is written in Python 2. I
 
 **Option 1** - You can grab an already built binary from the GitHub's [release page](https://github.com/ironsmile/tank4eta/releases). But I am limited how many different targets I can support with builds.
 
-**Option 2** - If your OS is not in the list you will have to run it from source. Luckily python is now ubiquitous and PyGame is a breeze to install via pip. First, make sure you have PyGame 1.* installed. The game can be started with `python app.py`. All assets you would need are included in the repo. In short, you have to run the following:
+**Option 2** - If your OS is not in the list you will have to run it from source. Luckily python is now ubiquitous and PyGame (with extended image support) is a breeze to install via pip. First, make sure you have Python3 and PyGame 1.9.* installed. The game can be started with `python app.py`. All assets you would need are included in the repo. In short, you have to run the following:
 
 ```
 pip install pygame
@@ -16,6 +16,39 @@ git clone https://github.com/ironsmile/tank4eta.git
 cd tank4eta
 python app.py
 ```
+
+**Under OSX/MacOS**
+
+OSX needs some special attention. Due to python3 not being a Framework build or something. I don't really understand what that means. But few extra steps should be taken in order to get a proper PyGame installation.
+
+First, you need to get a python3 under [virtualenv](https://virtualenv.pypa.io/en/stable/). Then you need [homebrew](https://brew.sh/). With all of the tools under your belt we're ready to paste some commands!
+
+We will need to build our own version of PyGame. Which requires some SDL stuff. Let's install them:
+
+```
+brew install sdl sdl_image sdl_mixer \
+            sdl_ttf smpeg portmidi \
+            libpng libjpeg mercurial
+```
+
+Then we should get ourselves the PyGame source and build it. I've used version 1.9.3 with success.
+
+```
+hg clone https://bitbucket.org/pygame/pygame
+cd pygame
+hg checkout 1.9.3
+python setup.py build
+python setup.py install
+```
+
+Great! You now have a functioning PyGame. One last step remaining! Due to the Frameworks stuff I don't understand the PyGame window would not work properly just yet. Luckily there is a workaround.
+
+```
+pip install venvdotapp
+venvdotapp
+```
+
+And you are ready to go!
 
 ### Controls
 

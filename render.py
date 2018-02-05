@@ -24,7 +24,7 @@ class Render (object):
 
         self.render_resolution = (world.MAP_X, world.MAP_Y)
         self.render_surface = pygame.Surface(self.render_resolution)
-        print "Render resolution", self.render_resolution
+        print("Render resolution", self.render_resolution)
 
         self.toggle_full_screen(
             force_fullscreen_to=self.fullscreen,
@@ -73,16 +73,16 @@ class Render (object):
         pygame.display.flip()
 
     def debug_display(self, display, name=None):
-        print "-" * 10
+        print("-" * 10)
         if name is None:
-            print "Debugging unknown display"
+            print("Debugging unknown display")
         else:
-            print "Debugging %s display" % name
-        print "Hardware acceleration: %d" % display.hw
-        print "Can be windowed: %d" % display.wm
-        print "Video memory: %d" % display.video_mem
-        print "Width, Height: %dx%d" % (display.current_w, display.current_h)
-        print "-" * 10
+            print("Debugging %s display" % name)
+        print("Hardware acceleration: %d" % display.hw)
+        print("Can be windowed: %d" % display.wm)
+        print("Video memory: %d" % display.video_mem)
+        print("Width, Height: %dx%d" % (display.current_w, display.current_h))
+        print("-" * 10)
 
     def get_aspect_surface(self):
         render_w, render_h = self.render_resolution
@@ -98,7 +98,7 @@ class Render (object):
             aspect_h = render_h
             aspect = (aspect_w, aspect_h)
 
-        print "Aspect surface is %dx%d" % aspect
+        print("Aspect surface is %dx%d" % aspect)
         self.aspect_resolution = aspect
         return pygame.Surface(aspect)
 
@@ -116,10 +116,10 @@ class Render (object):
             self.fullscreen = not force_fullscreen_to
 
         if not self.fullscreen:
-            print "Going into fullscreen"
+            print("Going into fullscreen")
             self.fullscreen = True
         else:
-            print "Going into windowed mode"
+            print("Going into windowed mode")
             self.fullscreen = False
 
         if self.fullscreen:
