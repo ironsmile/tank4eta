@@ -21,19 +21,18 @@ class Render (object):
 
         self.ndi = pygame.display.Info()
         self.debug_display(self.ndi, "native")
-
         self.render_resolution = (world.MAP_X, world.MAP_Y)
-        self.render_surface = pygame.Surface(self.render_resolution)
-        print("Render resolution", self.render_resolution)
 
         self.toggle_full_screen(
             force_fullscreen_to=self.fullscreen,
             initial=True
         )
 
+        self.render_surface = pygame.Surface(self.render_resolution, pygame.HWSURFACE)
+        print("Render resolution", self.render_resolution)
+
     def draw(self, drawables=[]):
         self.draw_on_render_surface(drawables)
-        self.draw_on_aspect_surface()
         self.draw_on_screen()
 
     def draw_on_render_surface(self, drawables):
@@ -42,16 +41,18 @@ class Render (object):
         for obj_group in drawables:
             obj_group.draw(self.render_surface)
 
-    def draw_on_aspect_surface(self):
-        dst_x = (self.aspect_resolution[0] - self.render_resolution[0]) / 2
-        dst_y = (self.aspect_resolution[1] - self.render_resolution[1]) / 2
-        self.aspect_surface.blit(self.render_surface, (dst_x, dst_y))
-
     def draw_on_screen(self):
-        pygame.transform.smoothscale(
-            self.aspect_surface,
-            self.resolution,
-            self.screen
+        # !TODO: here should always be smoothscale but apprantly there is a bug where
+        # when scaling to bigger images cuases a corruption when the target
+        # is a subsurface
+        scale_fnc = pygame.transform.smoothscale
+        if self.fullscreen:
+            scale_fnc = pygame.transform.scale
+
+        scale_fnc(
+            self.render_surface,
+            self.aspect_resolution,
+            self.aspect_surface
         )
         pygame.display.flip()
 
@@ -88,19 +89,26 @@ class Render (object):
         render_w, render_h = self.render_resolution
         display_w, display_h = self.resolution
 
-        render_ration = float(render_w) / render_h
+        render_ratio = float(render_w) / render_h
         display_ratio = float(display_w) / display_h
 
-        if render_ration == display_ratio:
-            aspect = (render_w, render_h)
+        if abs(render_ratio - display_ratio) < 0.00001:
+            return self.screen
         else:
-            aspect_w = int(display_ratio * render_h)
-            aspect_h = render_h
+            aspect_w = int(render_ratio * display_h)
+            aspect_h = display_h
             aspect = (aspect_w, aspect_h)
 
+        sub_x = int((display_w - aspect_w) / 2)
+        sub_y = int((display_h - aspect_h) / 2)
+        pos = (sub_x, sub_y)
+
         print("Aspect surface is %dx%d" % aspect)
-        self.aspect_resolution = aspect
-        return pygame.Surface(aspect)
+        print("Aspect surface is on coords (%d, %d)" % pos)
+
+        return self.screen.subsurface(
+            pygame.Rect(pos, aspect)
+        )
 
     def quit(self):
         pygame.display.quit()
@@ -132,10 +140,12 @@ class Render (object):
             self.resolution = RESOLUTION
             self.screen = pygame.display.set_mode(
                 self.resolution,
-                pygame.DOUBLEBUF
+                pygame.DOUBLEBUF | pygame.HWSURFACE
             )
 
         self.display_info = pygame.display.Info()
         self.debug_display(self.display_info, "game")
 
-        self.aspect_surface = self.get_aspect_surface()
+        aserf = self.get_aspect_surface()
+        self.aspect_surface = aserf
+        self.aspect_resolution = (aserf.get_width(), aserf.get_height())
