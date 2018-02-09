@@ -59,17 +59,9 @@ def main_menu(render, available_maps, selected):
     OPTION_DEFAULT_STATE = 0
     OPTION_ONE_PLAYER = 1
     OPTION_TWO_PLAYERS = 2
-    OPTION_SELECT_MAP = 3
     OPTION_EXIT = 4
 
     selected['toggle_fullscreen'] = False
-
-    def show_map_name():
-        explain_text = 'Selected map: %s' % selected['map'][:-4]
-        selected_map_text = serif_normal.render(explain_text, True, (160, 160, 160))
-        text_x = (render.screen.get_width() - selected_map_text.get_width()) / 2
-        text_y = render.screen.get_height() - selected_map_text.get_height() - 50
-        render.screen.blit(selected_map_text, (text_x, text_y))
 
     map_names = [m[:-4] for m in available_maps]
 
@@ -79,13 +71,18 @@ def main_menu(render, available_maps, selected):
     menu = cMenu(50, 50, 20, 5, 'vertical', 100, render.screen, [
         ('1 player', OPTION_ONE_PLAYER, None),
         ('2 players', OPTION_TWO_PLAYERS, None),
-        ('Change Map', OPTION_SELECT_MAP, None),
         ('Exit', OPTION_EXIT, None),
     ])
     menu.set_font(serif_normal)
     menu.set_center(True, True)
     menu.set_alignment('center', 'center')
     menu.set_refresh_whole_surface_on_load(True)
+
+    def show_instruction(instruction):
+        selected_map_text = serif_normal.render(instruction, True, SILVER)
+        text_x = (render.screen.get_width() - selected_map_text.get_width()) / 2
+        text_y = 40
+        render.screen.blit(selected_map_text, (text_x, text_y))
 
     mapSelectMenu = cMenu(50, 50, 20, 5, 'vertical', 100, render.screen, list(zip(
         map_names, available_maps, [None] * len(available_maps)
@@ -106,16 +103,22 @@ def main_menu(render, available_maps, selected):
     # a small portion of it changed!)
     changed_regions_list = []
 
+    back_menu = None
+
     # the meny while loop
     while 42:
         # Check if the state has changed, if it has, then post a user event to
         # the queue to force the menu to be shown at least once
         if prev_state != state:
-            pygame.event.post(pygame.event.Event(EVENT_CHANGE_STATE, key=OPTION_DEFAULT_STATE))
+            pygame.event.post(pygame.event.Event(
+                EVENT_CHANGE_STATE,
+                key=OPTION_DEFAULT_STATE
+            ))
             prev_state = state
+            render.clear_screen()
 
-            if state == OPTION_SELECT_MAP or state in available_maps:
-                render.clear_screen()
+            if state in [OPTION_ONE_PLAYER, OPTION_TWO_PLAYERS]:
+                show_instruction('Select Level')
 
         # Get the next event
         e = pygame.event.wait()
@@ -129,25 +132,27 @@ def main_menu(render, available_maps, selected):
             selected['toggle_fullscreen'] = True
             break
 
+        if e.type == KEYUP and e.key == K_ESCAPE and back_menu is not None:
+            state = OPTION_DEFAULT_STATE
+
         # Update the menu, based on which "state" we are in - When using the menu
         # in a more complex program, definitely make the states global variables
         # so that you can refer to them by a name
         if e.type == pygame.KEYDOWN or e.type == EVENT_CHANGE_STATE:
             if state == OPTION_DEFAULT_STATE:
+                back_menu = None
                 changed_regions_list, state = menu.update(e, state)
-                show_map_name()
             elif state == OPTION_ONE_PLAYER:
                 selected['players_count'] = 1
-                break
+                back_menu = menu
+                changed_regions_list, state = mapSelectMenu.update(e, state)
             elif state == OPTION_TWO_PLAYERS:
                 selected['players_count'] = 2
-                break
-            elif state == OPTION_SELECT_MAP:
+                back_menu = menu
                 changed_regions_list, state = mapSelectMenu.update(e, state)
             elif state in available_maps:
                 selected['map'] = state
-                changed_regions_list, state = menu.update(e, state)
-                show_map_name()
+                break
             else:
                 selected['exit'] = True
                 break
