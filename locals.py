@@ -19,6 +19,7 @@ AXIS_Y = 1
 BACKGROUND_COLOUR = (46, 52, 54)
 WHITE = (255, 255, 255)
 SILVER = (160, 160, 160)
+YELLOW = (255, 255, 0)
 
 MAPS_DIR = os.path.join('data', 'maps')
 SOUNDS_DIR = os.path.join('data', 'sounds')

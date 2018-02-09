@@ -19,6 +19,8 @@ class Render (object):
         pygame.display.set_caption("tank4eta")
         self.fullscreen = FULLSCREEN
 
+        self.show_fps = True
+        self.fps = 0
         self.ndi = pygame.display.Info()
         self.debug_display(self.ndi, "native")
         self.render_resolution = (world.MAP_X, world.MAP_Y)
@@ -33,6 +35,7 @@ class Render (object):
 
     def draw(self, drawables=[]):
         self.draw_on_render_surface(drawables)
+        self.draw_fps()
         self.draw_on_screen()
 
     def draw_on_render_surface(self, drawables):
@@ -40,6 +43,13 @@ class Render (object):
 
         for obj_group in drawables:
             obj_group.draw(self.render_surface)
+
+    def draw_fps(self):
+        if not self.show_fps:
+            return
+        fps_text = "{0}".format(int(self.fps))
+        fps_rect = fonts.serif_normal.render(fps_text, 1, YELLOW)
+        self.render_surface.blit(fps_rect, (0, 0))
 
     def draw_on_screen(self):
         # !TODO: here should always be smoothscale but apprantly there is a bug where
@@ -109,6 +119,9 @@ class Render (object):
         return self.screen.subsurface(
             pygame.Rect(pos, aspect)
         )
+
+    def update_fps(self, clock):
+        self.fps = clock.get_fps()
 
     def quit(self):
         pygame.display.quit()

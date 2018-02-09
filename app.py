@@ -216,6 +216,7 @@ def main_loop(render, players_count, map_name):
             stats = game_world.get_end_game_stats()
             render.draw_end_game_screen("Yey! You've won!", stats)
             break
+        render.update_fps(clock)
         render.draw(game_world.get_drawables())
 
     time.sleep(3)
