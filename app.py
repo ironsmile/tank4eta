@@ -62,6 +62,8 @@ def main_menu(render, available_maps, selected):
     OPTION_SELECT_MAP = 3
     OPTION_EXIT = 4
 
+    selected['toggle_fullscreen'] = False
+
     def show_map_name():
         explain_text = 'Selected map: %s' % selected['map'][:-4]
         selected_map_text = serif_normal.render(explain_text, True, (160, 160, 160))
