@@ -3,7 +3,7 @@
 
 import os
 
-FRAMES = 30
+FRAMES = 60
 MOVE_SPEED = 3
 BULLET_SPEED = 8
 
