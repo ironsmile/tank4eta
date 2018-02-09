@@ -6,7 +6,7 @@ from pygame.locals import *
 
 
 class EventManager (object):
-    
+
     def __init__(self):
         self._stopped = False
         self._toggle_full_screen = False
