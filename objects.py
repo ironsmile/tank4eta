@@ -77,14 +77,15 @@ class MovableObject (Object):
     def stop(self):
         self.direction = DIRECTION_NONE
 
-    def update(self, delta=None):
+    def update(self, delta):
 
         self.previous_position = self.rect.center
+        dt = delta / 33.3
 
         if self.direction != DIRECTION_NONE:
             x, y = self.rect.center
             dx, dy = self.movements[self.direction]
-            self.rect.center = (x + dx, y + dy)
+            self.rect.center = (x + round(dx * dt), y + round(dy * dt))
 
     @property
     def moving(self):

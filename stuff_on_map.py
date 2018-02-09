@@ -172,12 +172,10 @@ class Bullet(MovableObject):
     def process_event(self, event):
         pass
 
-    def update(self, delta=None, collisions=[]):
-        if self in collisions:
+    def update(self, delta, collisions=[]):
+        if self in collisions and self.owner is not None:
             self.owner.bullets.remove(self)
-        x, y = self.rect.center
-        dx, dy = self.movements[self.direction]
-        self.rect.center = (x + dx, y + dy)
+        MovableObject.update(self, delta)
 
 
 class Wall (NonMovableObject):
