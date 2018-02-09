@@ -81,6 +81,7 @@ class World (object):
         self.ai = ai.AI()
         self.enemies_killed = 0
         self.enemeis_to_kill = 20
+        self.orphaned_bullets = []
 
     def get_end_game_stats(self):
         return "Enemies killed: %d / %d" % (self.enemies_killed, self.enemeis_to_kill)
@@ -90,7 +91,7 @@ class World (object):
             return GAME_WON
 
         players_tanks = []
-        bullets = []
+        bullets = self.orphaned_bullets[:]
         alive_enemies = len(self.enemies)
 
         if alive_enemies < 4 and random.randint(0, 100) < 0.05 and \
@@ -126,7 +127,10 @@ class World (object):
             collided_with = collisions[bullet]
             if len(collided_with) == 1 and bullet in collided_with:
                 continue
-            bullet.owner.bullets.remove(bullet)
+            if bullet.owner is None:
+                self.orphaned_bullets.remove(bullet)
+            else:
+                bullet.owner.bullets.remove(bullet)
             bullet.explode_sound()
             bullets.remove(bullet)
 
@@ -135,11 +139,18 @@ class World (object):
                     continue
                 if not isinstance(collided, BasicTank):
                     continue
-                if isinstance(collided, EnemyTank) and collided is not bullet.owner:
+                if collided is bullet.owner:
+                    continue
+
+                for orphan in collided.bullets:
+                    orphan.owner = None
+                    self.orphaned_bullets.append(orphan)
+
+                if isinstance(collided, EnemyTank):
                     self.enemies.remove(collided)
                     collided.explode_sound()
                     self.enemies_killed += 1
-                if isinstance(collided, Tank) and collided is not bullet.owner:
+                if isinstance(collided, Tank):
                     tanks.remove(collided)
                     for player in self.players:
                         if player.tank is collided:
