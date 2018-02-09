@@ -32,10 +32,8 @@ class Map (object):
         self.enemy_starts = []
 
     def real_coords(self, x, y):
-        return (
-                    x * self.box_size - self.box_size / 2,
-                    y * self.box_size - self.box_size / 2
-                )
+        return (x * self.box_size - self.box_size / 2,
+                y * self.box_size - self.box_size / 2)
 
     def load(self, map_file):
         #!TODO: add try+catch, stat of map file for 0 bytes, too large
