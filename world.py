@@ -67,7 +67,8 @@ class Map (object):
         """
 
     def load_texture(self, path):
-        return pygame.image.load(path).convert_alpha()
+        texture = pygame.image.load(path).convert_alpha()
+        return texture
 
 
 class World (object):

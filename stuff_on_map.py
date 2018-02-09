@@ -55,12 +55,15 @@ class BasicTank(MovableObject):
 class EnemyTank(BasicTank):
 
     max_bullets = 1
+    explosion_sound = None
 
     def __init__(self, position, game_map):
         num = random.randint(1, 2)
         self.image = texture_path("enemy-%d.png" % num)
         MovableObject.__init__(self, self.image, position, game_map)
-        self.explosion_sound = pygame.mixer.Sound(sound_path('explosion_enemy.wav'))
+        if EnemyTank.explosion_sound is None:
+            path = sound_path('explosion_enemy.wav')
+            EnemyTank.explosion_sound = pygame.mixer.Sound(path)
         self.move(DIRECTION_DOWN)
         self.stop()
         self.bullets = []
@@ -135,6 +138,8 @@ class Tank(BasicTank):
 class Bullet(MovableObject):
 
     bullet_img = texture_path('bullet.png')
+    fire_sound = None
+    explosion_sound = None
 
     def __init__(self, owner):
         self.owner = owner
@@ -145,8 +150,13 @@ class Bullet(MovableObject):
         self.rect = self.image.get_rect()
         self.rect.center = owner.rect.center
         self.position_front_of_owner()
-        self.fire_sound = pygame.mixer.Sound(sound_path('didi_gunfire_01.wav'))
-        self.explosion_sound = pygame.mixer.Sound(sound_path('didi_explode_01.wav'))
+
+        if Bullet.fire_sound is None:
+            Bullet.fire_sound = pygame.mixer.Sound(sound_path('didi_gunfire_01.wav'))
+
+        if Bullet.explosion_sound is None:
+            Bullet.explosion_sound = pygame.mixer.Sound(sound_path('didi_explode_01.wav'))
+
         self.fire_sound.play(loops=0, maxtime=0, fade_ms=0)
 
     def position_front_of_owner(self):
@@ -180,15 +190,21 @@ class Bullet(MovableObject):
 
 class Wall (NonMovableObject):
 
+    image = None
+
     def __init__(self, position, game_map):
-        path = texture_path('wall.png')
-        self.image = game_map.load_texture(path)
+        if Wall.image is None:
+            path = texture_path('wall.png')
+            Wall.image = game_map.load_texture(path)
         NonMovableObject.__init__(self, position, game_map)
 
 
 class Water (NonMovableObject):
 
+    image = None
+
     def __init__(self, position, game_map):
-        path = texture_path('water.png')
-        self.image = game_map.load_texture(path)
+        if Water.image is None:
+            path = texture_path('water.png')
+            Water.image = game_map.load_texture(path)
         NonMovableObject.__init__(self, position, game_map)
