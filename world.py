@@ -20,6 +20,8 @@ class MapLogicException(Exception):
 
 class Map (object):
 
+    textures = {}
+
     def __init__(self):
         self.unpassable = []
         self.objects = []
@@ -67,7 +69,10 @@ class Map (object):
         """
 
     def load_texture(self, path):
+        if path in self.textures:
+            return self.textures[path]
         texture = pygame.image.load(path).convert_alpha()
+        self.textures[path] = texture
         return texture
 
 
