@@ -47,14 +47,15 @@ class Map (object):
                 raise MapSizeException("Map size in file corrupted")
             x = 1
             for square in row:
+                coords = self.real_coords(x, y)
                 if square == 'w':
-                    self.objects.append(Wall(self.real_coords(x, y)))
+                    self.objects.append(Wall(coords, self))
                 if square == 'p':
-                    self.player_starts.append(self.real_coords(x, y))
+                    self.player_starts.append(coords)
                 if square == 'e':
-                    self.enemy_starts.append(self.real_coords(x, y))
+                    self.enemy_starts.append(coords)
                 if square == '~':
-                    self.unpassable.append(Water(self.real_coords(x, y)))
+                    self.unpassable.append(Water(coords, self))
                 x += 1
 
             y += 1
@@ -64,6 +65,9 @@ class Map (object):
         """
         end of load
         """
+
+    def load_texture(self, path):
+        return pygame.image.load(path).convert_alpha()
 
 
 class World (object):

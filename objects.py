@@ -20,7 +20,7 @@ class MovableObject (Object):
 
     def __init__(self, image, position, game_map):
         Object.__init__(self)
-        self.image_src = pygame.image.load(image).convert_alpha()
+        self.image_src = game_map.load_texture(image)
         self.image = self.image_src
         self.rect = self.image.get_rect()
         self.rect.center = position
@@ -100,7 +100,8 @@ class NonMovableObject (Object):
     passable = False
     movable = False
 
-    def __init__(self, position):
+    def __init__(self, position, game_map):
         Object.__init__(self)
         self.rect = pygame.Rect(self.image.get_rect())
         self.rect.center = position
+        self.map = game_map
