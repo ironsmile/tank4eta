@@ -201,6 +201,11 @@ def main_loop(render, players_count, map_name):
     while 42:
         deltat = clock.tick(FRAMES)
         events = eventer.get_events()
+        if eventer.quitted():
+            render.quit()
+            pygame.quit()
+            sys.exit(0)
+
         if eventer.game_stopped():
             stats = game_world.get_end_game_stats()
             render.draw_end_game_screen("You Gave Up! Why?", stats)

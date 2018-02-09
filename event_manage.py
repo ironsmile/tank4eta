@@ -10,6 +10,7 @@ class EventManager (object):
     def __init__(self):
         self._stopped = False
         self._toggle_full_screen = False
+        self._quitted = False
 
     def get_events(self):
         ret = []
@@ -17,6 +18,8 @@ class EventManager (object):
         self._toggle_full_screen = False
 
         for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self._quitted = True
             if hasattr(event, 'key'):
                 if event.key == K_ESCAPE:
                     self._stopped = True
@@ -32,3 +35,6 @@ class EventManager (object):
 
     def toggled_full_screen(self):
         return self._toggle_full_screen
+
+    def quitted(self):
+        return self._quitted
