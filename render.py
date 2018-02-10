@@ -58,9 +58,10 @@ class Render (object):
             return
         fps_text = "{0}".format(int(self.fps))
         fps_sprite = fonts.serif_normal.render(fps_text, 1, YELLOW)
-        self.aspect_surface.blit(self.background, (0, 0), fps_sprite.get_rect())
+        fps_rect = fps_sprite.get_rect()
+        self.aspect_surface.blit(self.background, (0, 0), fps_rect)
         self.aspect_surface.blit(fps_sprite, (0, 0))
-        return fps_sprite.get_rect()
+        return fps_rect
 
     def draw_end_game_screen(self, text, stats_text):
         self.screen.fill(BACKGROUND_COLOUR)
