@@ -5,8 +5,6 @@ import ai
 import random
 from stuff_on_map import *
 
-MAP_X = 1280
-MAP_Y = 960
 SQUARE_SIZE = 64
 
 
@@ -26,12 +24,11 @@ class Map (object):
         self.unpassable = []
         self.objects = []
         self.box_size = SQUARE_SIZE
-        if MAP_X % SQUARE_SIZE or MAP_Y % SQUARE_SIZE:
-            raise MapSizeException("Map sizes cannot be divided by box size")
-        self.x_boxes = MAP_X / SQUARE_SIZE
-        self.y_boxes = MAP_Y / SQUARE_SIZE
+        self.x_boxes = 0
+        self.y_boxes = 0
         self.player_starts = []
         self.enemy_starts = []
+        self.render_resolution = (0, 0)
 
     def real_coords(self, x, y):
         return (x * self.box_size - self.box_size / 2,
@@ -45,8 +42,10 @@ class Map (object):
 
         y = 1
         for row in map_str.splitlines():
-            if y > self.y_boxes or len(row) > self.x_boxes:
-                raise MapSizeException("Map size in file corrupted")
+            if y > self.y_boxes:
+                self.y_boxes = y
+            if len(row) > self.x_boxes:
+                self.x_boxes = len(row)
             x = 1
             for square in row:
                 coords = self.real_coords(x, y)
@@ -64,6 +63,12 @@ class Map (object):
 
         if len(self.player_starts) < 1:
             raise MapLogicException("No player starting positions found")
+
+        if self.y_boxes < 5 or self.x_boxes < 5:
+            raise MapSizeException("A map must be at least 5x5 boxes")
+
+        self.render_resolution = (self.x_boxes * SQUARE_SIZE,
+                                  self.y_boxes * SQUARE_SIZE)
         """
         end of load
         """

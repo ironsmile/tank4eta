@@ -4,7 +4,6 @@
 import time
 import pygame
 import pygame.font
-import world
 import fonts
 from locals import *
 
@@ -23,15 +22,18 @@ class Render (object):
         self.fps = 0
         self.ndi = pygame.display.Info()
         self.debug_display(self.ndi, "native")
-        self.render_resolution = (world.MAP_X, world.MAP_Y)
-
+        self.screen = None
         self.toggle_full_screen(
             force_fullscreen_to=self.fullscreen,
             initial=True
         )
+        self.set_render_resolution(RESOLUTION)
 
+    def set_render_resolution(self, resolution, initial=False):
+        self.render_resolution = resolution
         self.render_surface = pygame.Surface(self.render_resolution, pygame.HWSURFACE)
         print("Render resolution", self.render_resolution)
+        self.create_aspect_surface()
 
     def draw(self, drawables=[]):
         self.draw_on_render_surface(drawables)
@@ -95,7 +97,7 @@ class Render (object):
         print("Width, Height: %dx%d" % (display.current_w, display.current_h))
         print("-" * 10)
 
-    def get_aspect_surface(self):
+    def create_aspect_surface(self):
         render_w, render_h = self.render_resolution
         display_w, display_h = self.resolution
 
@@ -103,7 +105,9 @@ class Render (object):
         display_ratio = float(display_w) / display_h
 
         if abs(render_ratio - display_ratio) < 0.00001:
-            return self.screen
+            self.aspect_surface = self.screen
+            self.aspect_resolution = (display_w, display_h)
+            return
         else:
             aspect_w = int(render_ratio * display_h)
             aspect_h = display_h
@@ -116,9 +120,11 @@ class Render (object):
         print("Aspect surface is %dx%d" % aspect)
         print("Aspect surface is on coords (%d, %d)" % pos)
 
-        return self.screen.subsurface(
+        aserf = self.screen.subsurface(
             pygame.Rect(pos, aspect)
         )
+        self.aspect_surface = aserf
+        self.aspect_resolution = (aserf.get_width(), aserf.get_height())
 
     def update_fps(self, clock):
         self.fps = clock.get_fps()
@@ -159,6 +165,5 @@ class Render (object):
         self.display_info = pygame.display.Info()
         self.debug_display(self.display_info, "game")
 
-        aserf = self.get_aspect_surface()
-        self.aspect_surface = aserf
-        self.aspect_resolution = (aserf.get_width(), aserf.get_height())
+        if not initial:
+            self.create_aspect_surface()

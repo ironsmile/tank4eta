@@ -166,6 +166,7 @@ def main_menu(render, available_maps, selected):
 def main_loop(render, players_count, map_name):
     play_map = world.Map()
     play_map.load(map_path(map_name))
+    render.set_render_resolution(play_map.render_resolution)
 
     players = []
 
