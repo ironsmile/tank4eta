@@ -5,3 +5,9 @@
 * Ememy objective - player flag
 * Edge of the world stops players
 * More terrains
+
+-- bugs --
+
+* pixle alignment
+* toggle full screen ingame
+* play one map size then an other

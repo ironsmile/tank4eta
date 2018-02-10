@@ -198,6 +198,7 @@ def game_loop(render, players_count, map_name):
             raise Exception("Not enough start points for players!")
 
     game_world = world.World(play_map, players)
+    game_world.init()
     eventer = EventManager()
 
     clock = pygame.time.Clock()

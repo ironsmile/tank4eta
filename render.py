@@ -23,6 +23,7 @@ class Render (object):
         self.ndi = pygame.display.Info()
         self.debug_display(self.ndi, "native")
         self.screen = None
+        self.background = None
         self.toggle_full_screen(
             force_fullscreen_to=self.fullscreen,
             initial=True
@@ -31,42 +32,35 @@ class Render (object):
 
     def set_render_resolution(self, resolution, initial=False):
         self.render_resolution = resolution
-        self.render_surface = pygame.Surface(self.render_resolution, pygame.HWSURFACE)
-        print("Render resolution", self.render_resolution)
         self.create_aspect_surface()
 
-    def draw(self, drawables=[]):
-        self.draw_on_render_surface(drawables)
+    def set_background(self, sprite):
+        self.background.fill(BACKGROUND_COLOUR)
+        sprite.draw(self.background)
+        self.aspect_surface.blit(self.background, (0, 0))
+
+    def clear(self, sprites=[]):
+        for obj_group in sprites:
+            obj_group.clear(self.aspect_surface, self.background)
+
+    def draw(self, sprites=[]):
+        changed = []
+        for obj_group in sprites:
+            changed += obj_group.draw(self.aspect_surface)
+        self.update(changed)
+
+    def update(self, changed):
         self.draw_fps()
-        self.draw_on_screen()
-
-    def draw_on_render_surface(self, drawables):
-        self.render_surface.fill(BACKGROUND_COLOUR)
-
-        for obj_group in drawables:
-            obj_group.draw(self.render_surface)
+        pygame.display.update(changed)
 
     def draw_fps(self):
         if not self.show_fps:
             return
         fps_text = "{0}".format(int(self.fps))
-        fps_rect = fonts.serif_normal.render(fps_text, 1, YELLOW)
-        self.render_surface.blit(fps_rect, (0, 0))
-
-    def draw_on_screen(self):
-        # !TODO: here should always be smoothscale but apprantly there is a bug where
-        # when scaling to bigger images cuases a corruption when the target
-        # is a subsurface
-        scale_fnc = pygame.transform.smoothscale
-        if self.fullscreen:
-            scale_fnc = pygame.transform.scale
-
-        scale_fnc(
-            self.render_surface,
-            self.aspect_resolution,
-            self.aspect_surface
-        )
-        pygame.display.flip()
+        fps_sprite = fonts.serif_normal.render(fps_text, 1, YELLOW)
+        self.aspect_surface.blit(self.background, (0, 0), fps_sprite.get_rect())
+        self.aspect_surface.blit(fps_sprite, (0, 0))
+        return fps_sprite.get_rect()
 
     def draw_end_game_screen(self, text, stats_text):
         self.screen.fill(BACKGROUND_COLOUR)
@@ -107,6 +101,7 @@ class Render (object):
         if abs(render_ratio - display_ratio) < 0.00001:
             self.aspect_surface = self.screen
             self.aspect_resolution = (display_w, display_h)
+            self.background = self.aspect_surface.copy()
             return
         else:
             aspect_w = int(render_ratio * display_h)
@@ -125,6 +120,7 @@ class Render (object):
         )
         self.aspect_surface = aserf
         self.aspect_resolution = (aserf.get_width(), aserf.get_height())
+        self.background = self.aspect_surface.copy()
 
     def update_fps(self, clock):
         self.fps = clock.get_fps()

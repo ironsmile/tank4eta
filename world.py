@@ -23,21 +23,21 @@ class Map (object):
     def __init__(self, map_file, render):
         self.unpassable = []
         self.objects = []
-        self._unplaced_objects = []
         self.box_size = SQUARE_SIZE
         self.x_boxes = 0
         self.y_boxes = 0
         self.player_starts = []
         self.enemy_starts = []
         self.map_str = None
-        self.load(map_file)
+        self.scale_factor = 1
         self.render = render
-        self.render.set_render_resolution(self.render_resolution)
+        self.load(map_file)
+        self.render.set_render_resolution(self.map_resolution)
         self.place_objects()
 
     def real_coords(self, x, y):
-        return (x * self.box_size - self.box_size / 2,
-                y * self.box_size - self.box_size / 2)
+        return ((x * self.box_size - self.box_size / 2) * self.scale_factor,
+                (y * self.box_size - self.box_size / 2) * self.scale_factor)
 
     def load(self, map_file):
         #!TODO: add try+catch, stat of map file for 0 bytes, too large
@@ -56,11 +56,11 @@ class Map (object):
         if self.y_boxes < 5 or self.x_boxes < 5:
             raise MapSizeException("A map must be at least 5x5 boxes")
 
-        self.render_resolution = (self.x_boxes * SQUARE_SIZE,
-                                  self.y_boxes * SQUARE_SIZE)
-        """
-        end of load
-        """
+        self.map_resolution = (self.x_boxes * SQUARE_SIZE,
+                               self.y_boxes * SQUARE_SIZE)
+        aspect_w = self.render.aspect_resolution[0]
+        map_w = self.map_resolution[0]
+        self.scale_factor = aspect_w / map_w
 
     def place_objects(self):
         y = 1
@@ -85,11 +85,19 @@ class Map (object):
     def load_texture(self, path):
         if path in self.textures:
             return self.textures[path]
-        texture = pygame.image.load(path)
-        # if texture.get_width() != self.box_size or texture.get_height() != self.box_size:
-        #     texture = pygame.transform.smoothscale(texture, (self.box_size, self.box_size))
-        self.textures[path] = texture.convert_alpha()
+        texture = pygame.image.load(path).convert_alpha()
+        if self.scale_factor != 1:
+            new_w = round(self.scale_to_screen(texture.get_width()))
+            new_h = round(self.scale_to_screen(texture.get_height()))
+            texture = pygame.transform.smoothscale(
+                texture,
+                (new_w, new_h)
+            )
+        self.textures[path] = texture
         return self.textures[path]
+
+    def scale_to_screen(self, val):
+        return val * self.scale_factor
 
 
 class World (object):
@@ -102,7 +110,16 @@ class World (object):
         self.ai = ai.AI()
         self.enemies_killed = 0
         self.enemeis_to_kill = 20
-        self.orphaned_bullets = []
+
+        self._bullets = pygame.sprite.RenderUpdates()
+        self._unpassable = pygame.sprite.RenderUpdates()
+        self._movable = pygame.sprite.RenderUpdates()
+
+    def init(self):
+        for player in self.players:
+            self._movable.add(player.tank)
+        self._unpassable.add(*[self.map.objects + self.map.unpassable])
+        self.map.render.set_background(self._unpassable)
 
     def get_end_game_stats(self):
         return "Enemies killed: %d / %d" % (self.enemies_killed, self.enemeis_to_kill)
@@ -111,8 +128,12 @@ class World (object):
         if self.enemies_killed >= self.enemeis_to_kill:
             return GAME_WON
 
+        bullets = self._bullets
+        unpassable = self._unpassable
+
+        self.map.render.clear([bullets, self._movable])
+
         players_tanks = []
-        bullets = self.orphaned_bullets[:]
         alive_enemies = len(self.enemies)
 
         if alive_enemies < 4 and random.randint(0, 100) < 0.05 and \
@@ -124,7 +145,7 @@ class World (object):
             if player.tank is None:
                 continue
             players_tanks.append(player.tank)
-            bullets += player.tank.bullets
+            bullets.add(*player.tank.bullets)
 
         if len(players_tanks) < 1:
             return GAME_OVER
@@ -132,25 +153,20 @@ class World (object):
         self.ai.tick(self.enemies)
 
         for enemy in self.enemies:
-            bullets += enemy.bullets
+            bullets.add(*enemy.bullets)
 
-        tanks = pygame.sprite.RenderPlain(*(players_tanks + self.enemies))
-        unpassable = pygame.sprite.RenderPlain(*[self.map.objects + self.map.unpassable])
+        tanks = pygame.sprite.RenderUpdates(*(players_tanks + self.enemies))
 
-        bullet_stoppers = players_tanks + self.map.objects + self.enemies + bullets
-        bullet_stoppers = pygame.sprite.RenderPlain(bullet_stoppers)
+        bullet_stoppers = players_tanks + self.map.objects + self.enemies + bullets.sprites()
+        bullet_stoppers = pygame.sprite.Group(bullet_stoppers)
 
-        bullets_spr = pygame.sprite.RenderPlain(*bullets)
-        collisions = pygame.sprite.groupcollide(bullets_spr, bullet_stoppers, False, False)
-        # bullets_spr.update(deltat, collisions)
+        collisions = pygame.sprite.groupcollide(bullets, bullet_stoppers, False, False)
 
         for bullet in collisions:
             collided_with = collisions[bullet]
             if len(collided_with) == 1 and bullet in collided_with:
                 continue
-            if bullet.owner is None:
-                self.orphaned_bullets.remove(bullet)
-            else:
+            if bullet.owner is not None:
                 bullet.owner.bullets.remove(bullet)
             bullet.explode_sound()
             bullets.remove(bullet)
@@ -165,7 +181,8 @@ class World (object):
 
                 for orphan in collided.bullets:
                     orphan.owner = None
-                    self.orphaned_bullets.append(orphan)
+
+                self._movable.remove(collided)
 
                 if isinstance(collided, EnemyTank):
                     self.enemies.remove(collided)
@@ -179,9 +196,7 @@ class World (object):
                             player.tank = None
 
         tanks.update(deltat)
-
-        bullets_spr = pygame.sprite.RenderPlain(*bullets)
-        bullets_spr.update(deltat)
+        bullets.update(deltat)
 
         collisions = pygame.sprite.groupcollide(tanks, unpassable, False, False)
         for tank in collisions:
@@ -193,7 +208,7 @@ class World (object):
             if len(collisions):
                 tank.undo()
 
-        self._drawables = [tanks, unpassable, bullets_spr]
+        self._drawables = [self._movable, bullets]
         return GAME_CONTINUE
 
     def spawn_enemy(self):
@@ -204,21 +219,20 @@ class World (object):
             player_objects.append(player.tank)
             player_objects += player.tank.bullets
 
-        not_spawnable_locations = self.enemies + player_objects
-
         for i in range(10):
             index = random.randint(0, len(self.map.enemy_starts) - 1)
             position = self.map.enemy_starts[index]
             new_enemy = EnemyTank(position, self.map)
             collisions = pygame.sprite.groupcollide(
                 [new_enemy],
-                not_spawnable_locations,
+                self._movable,
                 False,
                 False
             )
             if len(collisions):
                 # we should not spawn an enemy on top of an other enemy
                 continue
+            self._movable.add(new_enemy)
             self.enemies.append(new_enemy)
             break
 

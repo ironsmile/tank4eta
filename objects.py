@@ -61,13 +61,14 @@ class MovableObject (Object):
         self.moving_on_axis = new_axis
 
     def round_position_coord(self, num):
-        resid = num % (self.map.box_size / 2)
+        box_size = self.map.scale_to_screen(self.map.box_size)
+        resid = num % (box_size / 2)
         if resid == 0:
             return num
-        if resid < (self.map.box_size / 4):
+        if resid < (box_size / 4):
             return num - resid
         else:
-            return num + (self.map.box_size / 2) - resid
+            return num + (box_size / 2) - resid
 
     def move(self, direction):
         self.direction = direction
@@ -85,7 +86,9 @@ class MovableObject (Object):
         if self.direction != DIRECTION_NONE:
             x, y = self.rect.center
             dx, dy = self.movements[self.direction]
-            self.rect.center = (x + round(dx * dt), y + round(dy * dt))
+            dx = round(self.map.scale_to_screen(dx * dt))
+            dy = round(self.map.scale_to_screen(dy * dt))
+            self.rect.center = (x + dx, y + dy)
 
     @property
     def moving(self):
