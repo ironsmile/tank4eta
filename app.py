@@ -128,6 +128,13 @@ def main_menu(render, available_maps, selected):
             selected['exit'] = True
             break
 
+        mods = pygame.key.get_mods()
+        metaPressed = mods & pygame.KMOD_META
+
+        if e.type == pygame.KEYDOWN and e.key == pygame.K_q and metaPressed:
+            selected['exit'] = True
+            break
+
         if e.type == KEYUP and e.key == K_F11:
             selected['toggle_fullscreen'] = True
             break

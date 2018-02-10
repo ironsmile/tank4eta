@@ -17,9 +17,18 @@ class EventManager (object):
         self._stopped = False
         self._toggle_full_screen = False
 
+        mods = pygame.key.get_mods()
+        metaPressed = mods & pygame.KMOD_META
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self._quitted = True
+                return
+
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_q and metaPressed:
+                self._quitted = True
+                return
+
             if hasattr(event, 'key'):
                 if event.key == K_ESCAPE:
                     self._stopped = True
