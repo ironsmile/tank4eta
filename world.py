@@ -20,15 +20,20 @@ class Map (object):
 
     textures = {}
 
-    def __init__(self):
+    def __init__(self, map_file, render):
         self.unpassable = []
         self.objects = []
+        self._unplaced_objects = []
         self.box_size = SQUARE_SIZE
         self.x_boxes = 0
         self.y_boxes = 0
         self.player_starts = []
         self.enemy_starts = []
-        self.render_resolution = (0, 0)
+        self.map_str = None
+        self.load(map_file)
+        self.render = render
+        self.render.set_render_resolution(self.render_resolution)
+        self.place_objects()
 
     def real_coords(self, x, y):
         return (x * self.box_size - self.box_size / 2,
@@ -37,15 +42,29 @@ class Map (object):
     def load(self, map_file):
         #!TODO: add try+catch, stat of map file for 0 bytes, too large
         mapf = open(map_file, 'r')
-        map_str = mapf.read()
+        self.map_str = mapf.read()
         mapf.close()
 
         y = 1
-        for row in map_str.splitlines():
+        for row in self.map_str.splitlines():
             if y > self.y_boxes:
                 self.y_boxes = y
             if len(row) > self.x_boxes:
                 self.x_boxes = len(row)
+            y += 1
+
+        if self.y_boxes < 5 or self.x_boxes < 5:
+            raise MapSizeException("A map must be at least 5x5 boxes")
+
+        self.render_resolution = (self.x_boxes * SQUARE_SIZE,
+                                  self.y_boxes * SQUARE_SIZE)
+        """
+        end of load
+        """
+
+    def place_objects(self):
+        y = 1
+        for row in self.map_str.splitlines():
             x = 1
             for square in row:
                 coords = self.real_coords(x, y)
@@ -60,18 +79,8 @@ class Map (object):
                 x += 1
 
             y += 1
-
         if len(self.player_starts) < 1:
             raise MapLogicException("No player starting positions found")
-
-        if self.y_boxes < 5 or self.x_boxes < 5:
-            raise MapSizeException("A map must be at least 5x5 boxes")
-
-        self.render_resolution = (self.x_boxes * SQUARE_SIZE,
-                                  self.y_boxes * SQUARE_SIZE)
-        """
-        end of load
-        """
 
     def load_texture(self, path):
         if path in self.textures:
