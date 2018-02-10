@@ -47,7 +47,7 @@ def main():
             render.toggle_full_screen()
             continue
         pygame.mixer.init(buffer=512)
-        main_loop(render, players_count=selected['players_count'], map_name=selected['map'])
+        game_loop(render, players_count=selected['players_count'], map_name=selected['map'])
         pygame.mixer.stop()
 
     render.quit()
@@ -163,7 +163,7 @@ def main_menu(render, available_maps, selected):
     return selected
 
 
-def main_loop(render, players_count, map_name):
+def game_loop(render, players_count, map_name):
     play_map = world.Map()
     play_map.load(map_path(map_name))
     render.set_render_resolution(play_map.render_resolution)
