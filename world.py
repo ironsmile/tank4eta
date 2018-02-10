@@ -5,9 +5,9 @@ import ai
 import random
 from stuff_on_map import *
 
-MAP_X = 640
-MAP_Y = 480
-SQUARE_SIZE = 32
+MAP_X = 1280
+MAP_Y = 960
+SQUARE_SIZE = 64
 
 
 class MapSizeException(Exception):
@@ -71,9 +71,11 @@ class Map (object):
     def load_texture(self, path):
         if path in self.textures:
             return self.textures[path]
-        texture = pygame.image.load(path).convert_alpha()
-        self.textures[path] = texture
-        return texture
+        texture = pygame.image.load(path)
+        # if texture.get_width() != self.box_size or texture.get_height() != self.box_size:
+        #     texture = pygame.transform.smoothscale(texture, (self.box_size, self.box_size))
+        self.textures[path] = texture.convert_alpha()
+        return self.textures[path]
 
 
 class World (object):
