@@ -84,17 +84,19 @@ class Tank(BasicTank):
 
     def __init__(self, position, game_map):
         global _player_tank_number
-        num = (_player_tank_number % 2) + 1
+        num = (_player_tank_number % 3) + 1
         _player_tank_number += 1
 
         sounds = {
             1: 'didi_engine_01.wav',
             2: 'doycho.wav',
+            3: 'didi_engine_01.wav',
         }
 
         textures = {
-            1: 'tank.png',
+            1: 'panzer.png',
             2: 'tank-of-love.png',
+            3: 'tank.png',
         }
 
         texture_image = textures[num]
