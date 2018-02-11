@@ -18,9 +18,8 @@ class MapLogicException(Exception):
 
 class Map (object):
 
-    textures = {}
-
     def __init__(self, map_file, render):
+        self.textures = {}
         self.unpassable = []
         self.objects = []
         self.box_size = SQUARE_SIZE

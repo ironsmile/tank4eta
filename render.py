@@ -22,6 +22,7 @@ class Render (object):
         self.fps = 0
         self.ndi = pygame.display.Info()
         self.debug_display(self.ndi, "native")
+        self.render_resolution = None
         self.screen = None
         self.background = None
         self.toggle_full_screen(
@@ -31,6 +32,8 @@ class Render (object):
         self.set_render_resolution(RESOLUTION)
 
     def set_render_resolution(self, resolution, initial=False):
+        if self.render_resolution == resolution:
+            return
         self.render_resolution = resolution
         self.create_aspect_surface()
 

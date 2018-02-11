@@ -190,21 +190,15 @@ class Bullet(MovableObject):
 
 class Wall (NonMovableObject):
 
-    image = None
-
     def __init__(self, position, game_map):
-        if Wall.image is None:
-            path = texture_path('wall.png')
-            Wall.image = game_map.load_texture(path)
+        path = texture_path('wall.png')
+        Wall.image = game_map.load_texture(path)
         NonMovableObject.__init__(self, position, game_map)
 
 
 class Water (NonMovableObject):
 
-    image = None
-
     def __init__(self, position, game_map):
-        if Water.image is None:
-            path = texture_path('water.png')
-            Water.image = game_map.load_texture(path)
+        path = texture_path('water.png')
+        Water.image = game_map.load_texture(path)
         NonMovableObject.__init__(self, position, game_map)
