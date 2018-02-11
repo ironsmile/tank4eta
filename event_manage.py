@@ -33,9 +33,6 @@ class EventManager (object):
                 if event.key == K_ESCAPE:
                     self._stopped = True
                     continue
-                elif event.key == K_F11 and event.type == KEYUP:
-                    self._toggle_full_screen = True
-                    continue
             ret.append(event)
         return ret
 

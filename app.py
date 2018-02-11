@@ -223,9 +223,6 @@ def game_loop(render, players_count, map_name):
             render.draw_end_game_screen("You Gave Up! Why?", stats)
             break
 
-        if eventer.toggled_full_screen():
-            render.toggle_full_screen()
-
         game_state = game_world.tick(deltat, events)
         if game_state == GAME_OVER:
             stats = game_world.get_end_game_stats()
