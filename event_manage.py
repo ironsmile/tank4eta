@@ -29,10 +29,10 @@ class EventManager (object):
                 self._quitted = True
                 return
 
-            if hasattr(event, 'key'):
-                if event.key == K_ESCAPE:
-                    self._stopped = True
-                    continue
+            if event.type == pygame.KEYDOWN and event.key in [K_ESCAPE, K_PAUSE]:
+                self._stopped = True
+                continue
+
             ret.append(event)
         return ret
 
