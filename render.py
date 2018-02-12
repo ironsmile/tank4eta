@@ -40,6 +40,9 @@ class Render (object):
     def set_background(self, sprite):
         self.background.fill(BACKGROUND_COLOUR)
         sprite.draw(self.background)
+        self.draw_background()
+
+    def draw_background(self):
         self.aspect_surface.blit(self.background, (0, 0))
 
     def clear(self, sprites=[]):
@@ -167,3 +170,9 @@ class Render (object):
 
         if not initial:
             self.create_aspect_surface()
+
+    def show_menu_instruction(self, instruction):
+        text_obj = fonts.serif_normal.render(instruction, True, SILVER)
+        text_x = (self.screen.get_width() - text_obj.get_width()) / 2
+        text_y = 40
+        self.screen.blit(text_obj, (text_x, text_y))

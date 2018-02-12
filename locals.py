@@ -43,3 +43,6 @@ GAME_WON = 1
 GAME_OVER = -1
 
 FONT_SERIF_PATH = os.path.join('data', 'fonts', 'ubuntu', 'Ubuntu-R.ttf')
+
+PAUSE_MENU_QUIT = 1
+PAUSE_MENU_RESUME = 2

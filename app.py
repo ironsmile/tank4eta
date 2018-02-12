@@ -54,7 +54,6 @@ def main():
     pygame.quit()
     sys.exit(0)
 
-
 def main_menu(render, available_maps, selected):
     OPTION_DEFAULT_STATE = 0
     OPTION_ONE_PLAYER = 1
@@ -77,12 +76,6 @@ def main_menu(render, available_maps, selected):
     menu.set_center(True, True)
     menu.set_alignment('center', 'center')
     menu.set_refresh_whole_surface_on_load(True)
-
-    def show_instruction(instruction):
-        selected_map_text = serif_normal.render(instruction, True, SILVER)
-        text_x = (render.screen.get_width() - selected_map_text.get_width()) / 2
-        text_y = 40
-        render.screen.blit(selected_map_text, (text_x, text_y))
 
     mapSelectMenu = cMenu(50, 50, 20, 5, 'vertical', 100, render.screen, list(zip(
         map_names, available_maps, [None] * len(available_maps)
@@ -118,7 +111,7 @@ def main_menu(render, available_maps, selected):
             render.clear_screen()
 
             if state in [OPTION_ONE_PLAYER, OPTION_TWO_PLAYERS]:
-                show_instruction('Select Level')
+                render.show_menu_instruction('Select Level')
 
         # Get the next event
         e = pygame.event.wait()
@@ -219,9 +212,17 @@ def game_loop(render, players_count, map_name):
             sys.exit(0)
 
         if eventer.game_stopped():
-            stats = game_world.get_end_game_stats()
-            render.draw_end_game_screen("You Gave Up! Why?", stats)
-            break
+            pygame.mixer.pause()
+            selected = pause_menu(render)
+            if selected == PAUSE_MENU_QUIT:
+                stats = game_world.get_end_game_stats()
+                render.draw_end_game_screen("You Gave Up! Why?", stats)
+                break
+            else:
+                render.draw_background()
+                pygame.mixer.unpause()
+                clock.tick()
+                continue
 
         game_state = game_world.tick(deltat, events)
         if game_state == GAME_OVER:
@@ -237,6 +238,56 @@ def game_loop(render, players_count, map_name):
 
     time.sleep(3)
 
+def pause_menu(render):
+    OPTION_DEFAULT_STATE = 0
+
+    render.clear_screen()
+
+    menu = cMenu(50, 50, 20, 5, 'vertical', 100, render.screen, [
+        ('Resume', PAUSE_MENU_RESUME, None),
+        ('Quit Game', PAUSE_MENU_QUIT, None),
+    ])
+    menu.set_font(serif_normal)
+    menu.set_center(True, True)
+    menu.set_alignment('center', 'center')
+    menu.set_refresh_whole_surface_on_load(True)
+
+    # cleanup the display from any leftover stuff
+    render.show_menu_instruction('Game Paused')
+
+    state = OPTION_DEFAULT_STATE
+    prev_state = PAUSE_MENU_RESUME
+    changed_regions_list = []
+
+    while 42:
+        # Check if the state has changed, if it has, then post a user event to
+        # the queue to force the menu to be shown at least once
+        if prev_state != state:
+            pygame.event.post(pygame.event.Event(
+                EVENT_CHANGE_STATE,
+                key=OPTION_DEFAULT_STATE
+            ))
+            prev_state = state
+
+        # Get the next event
+        e = pygame.event.wait()
+
+        # Quit if the user presses the exit button
+        if e.type == pygame.QUIT:
+            render.quit()
+            pygame.quit()
+            sys.exit(0)
+
+        if e.type == pygame.KEYDOWN or e.type == EVENT_CHANGE_STATE:
+            if state == OPTION_DEFAULT_STATE:
+                back_menu = None
+                changed_regions_list, state = menu.update(e, state)
+            elif state == PAUSE_MENU_RESUME:
+                return PAUSE_MENU_RESUME
+            elif state == PAUSE_MENU_QUIT:
+                return PAUSE_MENU_QUIT
+
+        pygame.display.update(changed_regions_list)
 
 if __name__ == '__main__':
     main()
