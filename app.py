@@ -19,6 +19,7 @@ import pygame.joystick
 import controllers
 import time
 
+eventer = EventManager()
 
 def main():
     os.chdir(os.path.dirname(os.path.realpath(__file__)))
@@ -114,19 +115,7 @@ def main_menu(render, available_maps, selected):
                 render.show_menu_instruction('Select Level')
 
         # Get the next event
-        e = pygame.event.wait()
-
-        # Quit if the user presses the exit button
-        if e.type == pygame.QUIT:
-            selected['exit'] = True
-            break
-
-        mods = pygame.key.get_mods()
-        metaPressed = mods & pygame.KMOD_META
-
-        if e.type == pygame.KEYDOWN and e.key == pygame.K_q and metaPressed:
-            selected['exit'] = True
-            break
+        e = eventer.wait()
 
         if e.type == KEYUP and e.key == K_F11:
             selected['toggle_fullscreen'] = True
@@ -199,17 +188,12 @@ def game_loop(render, players_count, map_name):
 
     game_world = world.World(play_map, players)
     game_world.init()
-    eventer = EventManager()
 
     clock = pygame.time.Clock()
 
     while 42:
         deltat = clock.tick(FRAMES)
         events = eventer.get_events()
-        if eventer.quitted():
-            render.quit()
-            pygame.quit()
-            sys.exit(0)
 
         if eventer.game_stopped():
             pygame.mixer.pause()
@@ -268,13 +252,7 @@ def pause_menu(render):
             prev_state = state
 
         # Get the next event
-        e = pygame.event.wait()
-
-        # Quit if the user presses the exit button
-        if e.type == pygame.QUIT:
-            render.quit()
-            pygame.quit()
-            sys.exit(0)
+        e = eventer.wait()
 
         if e.type == pygame.KEYDOWN or e.type == EVENT_CHANGE_STATE:
             if state == OPTION_DEFAULT_STATE:
