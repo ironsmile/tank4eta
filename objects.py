@@ -61,7 +61,7 @@ class MovableObject (Object):
         self.moving_on_axis = new_axis
 
     def round_position_coord(self, num):
-        box_size = self.map.scale_to_screen(self.map.box_size)
+        box_size = self.map.scaled_box_size
         resid = num % (box_size / 2)
         if resid == 0:
             return num

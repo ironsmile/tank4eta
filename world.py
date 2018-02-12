@@ -2,6 +2,7 @@
 #-*- coding: utf8 -*-
 
 import ai
+import math
 import random
 from stuff_on_map import *
 
@@ -23,6 +24,7 @@ class Map (object):
         self.unpassable = []
         self.objects = []
         self.box_size = SQUARE_SIZE
+        self.scaled_box_size = SQUARE_SIZE
         self.x_boxes = 0
         self.y_boxes = 0
         self.player_starts = []
@@ -31,12 +33,13 @@ class Map (object):
         self.scale_factor = 1
         self.render = render
         self.load(map_file)
-        self.render.set_render_resolution(self.map_resolution)
+        self.render.set_render_resolution(self.scaled_resolution)
         self.place_objects()
 
     def real_coords(self, x, y):
-        return ((x * self.box_size - self.box_size / 2) * self.scale_factor,
-                (y * self.box_size - self.box_size / 2) * self.scale_factor)
+        bs = self.scaled_box_size
+        return ((x * bs - bs / 2),
+                (y * bs - bs / 2))
 
     def load(self, map_file):
         #!TODO: add try+catch, stat of map file for 0 bytes, too large
@@ -55,11 +58,18 @@ class Map (object):
         if self.y_boxes < 5 or self.x_boxes < 5:
             raise MapSizeException("A map must be at least 5x5 boxes")
 
-        self.map_resolution = (self.x_boxes * SQUARE_SIZE,
-                               self.y_boxes * SQUARE_SIZE)
+        self.map_resolution = (self.x_boxes * self.box_size,
+                               self.y_boxes * self.box_size)
         aspect_w = self.render.aspect_resolution[0]
         map_w = self.map_resolution[0]
         self.scale_factor = aspect_w / map_w
+
+        # Make sure the scaling always results in boxes of integer size. If not some
+        # collisions would misalign.
+        self.scaled_box_size = math.floor(self.box_size * self.scale_factor)
+        self.scale_factor = self.scaled_box_size / self.box_size
+        self.scaled_resolution = (self.x_boxes * self.scaled_box_size,
+                                  self.y_boxes * self.scaled_box_size)
 
     def place_objects(self):
         y = 1
@@ -85,7 +95,13 @@ class Map (object):
         if path in self.textures:
             return self.textures[path]
         texture = pygame.image.load(path).convert_alpha()
-        if self.scale_factor != 1:
+        if self.scaled_box_size != self.box_size and texture.get_width() == self.box_size and \
+                texture.get_height == self.box_size:
+            texture = pygame.transform.smoothscale(
+                texture,
+                (self.scaled_box_size, self.scaled_box_size)
+            )
+        elif self.scale_factor != 1:
             new_w = round(self.scale_to_screen(texture.get_width()))
             new_h = round(self.scale_to_screen(texture.get_height()))
             texture = pygame.transform.smoothscale(

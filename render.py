@@ -31,7 +31,7 @@ class Render (object):
         )
         self.set_render_resolution(RESOLUTION)
 
-    def set_render_resolution(self, resolution, initial=False):
+    def set_render_resolution(self, resolution):
         if self.render_resolution == resolution:
             return
         self.render_resolution = resolution
@@ -103,17 +103,10 @@ class Render (object):
         display_w, display_h = self.resolution
 
         render_ratio = float(render_w) / render_h
-        display_ratio = float(display_w) / display_h
 
-        if abs(render_ratio - display_ratio) < 0.00001:
-            self.aspect_surface = self.screen
-            self.aspect_resolution = (display_w, display_h)
-            self.background = self.aspect_surface.copy()
-            return
-        else:
-            aspect_w = int(render_ratio * display_h)
-            aspect_h = display_h
-            aspect = (aspect_w, aspect_h)
+        aspect_w = int(render_ratio * display_h)
+        aspect_h = display_h
+        aspect = (aspect_w, aspect_h)
 
         sub_x = int((display_w - aspect_w) / 2)
         sub_y = int((display_h - aspect_h) / 2)
@@ -126,8 +119,21 @@ class Render (object):
             pygame.Rect(pos, aspect)
         )
         self.aspect_surface = aserf
-        self.aspect_resolution = (aserf.get_width(), aserf.get_height())
+        self.aspect_resolution = aspect
         self.background = self.aspect_surface.copy()
+
+        if self.render_resolution == aspect:
+            return
+
+        # Since the render resolution is always floored it is guaranteed to be
+        # less or equal to the aspect resolution. We the following we are centering
+        # the picture in the aspect surface
+        ox = int((aspect_w - render_w) / 2)
+        oy = int((aspect_h - render_h) / 2)
+
+        self.aspect_surface = self.aspect_surface.subsurface(
+            pygame.Rect((ox, oy), self.render_resolution)
+        )
 
     def update_fps(self, clock):
         self.fps = clock.get_fps()
