@@ -241,8 +241,6 @@ def game_loop(render, players_count, map_name):
 def pause_menu(render):
     OPTION_DEFAULT_STATE = 0
 
-    render.clear_screen()
-
     menu = cMenu(50, 50, 20, 5, 'vertical', 100, render.screen, [
         ('Resume', PAUSE_MENU_RESUME, None),
         ('Quit Game', PAUSE_MENU_QUIT, None),
