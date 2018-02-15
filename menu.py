@@ -73,6 +73,7 @@
 #-------------------------------------------------------------------------------
 #---[ Imports ]-----------------------------------------------------------------
 #-------------------------------------------------------------------------------
+import logging
 import pygame
 import fonts
 
@@ -234,7 +235,7 @@ class cMenu:
          self.orientation = new_orientation
          self.update_buttons = True
       else:
-         print('WARNING:  cMenu.set_orientation:  Invalid argument '\
+         logging.warning('WARNING:  cMenu.set_orientation:  Invalid argument '\
                'new_orientation (value: %d)' % new_orientation)
 
    ## ---[ set_change_number ]--------------------------------------------------
@@ -505,7 +506,7 @@ class cMenu:
             offset_height = (max_height - button['rect'][3])
          else:
             offset_height = 0
-            print('WARNING:  cMenu.position_buttons:  Vertical Alignment '\
+            logging.warning('WARNING:  cMenu.position_buttons:  Vertical Alignment '\
                   '(value: %s) not recognized!  Left alignment will be used'\
                                                     % self.alignment['vertical'])
 
@@ -518,7 +519,7 @@ class cMenu:
             offset_width = (max_width - button['rect'][2])
          else:
             offset_width = 0
-            print('WARNING:  cMenu.position_buttons:  Horizontal Alignment '\
+            logging.warning('WARNING:  cMenu.position_buttons:  Horizontal Alignment '\
                   '(value: %s) not recognized!  Left alignment will be used'\
                                                   % self.alignment['horizontal'])
 
@@ -686,7 +687,7 @@ class cMenu:
          # Print a warning if the buttons are partially/completely off the
          # surface
          if not self.draw_surface.get_rect().contains(self.contained_rect):
-            print('WARNING:  cMenu.draw_buttons:  Some buttons are partially '\
+            logging.warning('WARNING:  cMenu.draw_buttons:  Some buttons are partially '\
                   'or completely off of the self.draw_surface!')
 
       # If a rect was provided, redraw the background surface to the area of the

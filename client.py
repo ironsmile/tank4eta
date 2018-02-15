@@ -6,6 +6,7 @@ from utils import sock_send_all, sock_recv_all
 from server import SERVER_PORT, SERVER_HELLO, SERVER_HELLO_REPLY
 
 import traceback
+import logging
 import struct
 import socket
 import time
@@ -67,7 +68,7 @@ class GameClient (object):
         return json.loads(message_raw)
 
     def debug(self, message):
-        print(message)
+        logging.debug(message)
 
 
 if __name__ == '__main__':
@@ -78,5 +79,5 @@ if __name__ == '__main__':
         traceback.print_exc()
         client.socket.close()
     except KeyboardInterrupt:
-        print("Ctrl+C - Stopping")
+        logging.debug("Ctrl+C - Stopping")
         client.socket.close()

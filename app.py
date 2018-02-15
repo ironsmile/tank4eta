@@ -17,6 +17,7 @@ import world
 import pygame
 import pygame.joystick
 import controllers
+import logging
 import time
 
 eventer = EventManager()
@@ -266,4 +267,5 @@ def pause_menu(render):
         pygame.display.update(changed_regions_list)
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.DEBUG)
     main()

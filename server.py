@@ -8,6 +8,7 @@ import json
 import time
 import socket
 import struct
+import logging
 import threading
 import traceback
 
@@ -87,7 +88,7 @@ class GameServer (object):
         sc.start()
     
     def debug(self, msg):
-        print(msg)
+        logging.debug(msg)
     
     def add_player(self, player):
         id = len(self.players)
@@ -192,5 +193,5 @@ if __name__ == '__main__':
         traceback.print_exc()
         server.stop()
     except KeyboardInterrupt:
-        print("Ctrl+C - Stopping")
+        logging.debug("Ctrl+C - Stopping")
         server.stop()

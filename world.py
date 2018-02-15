@@ -122,7 +122,7 @@ class World (object):
         self.map = map
         self._drawables = []
         self.enemies = []
-        self.ai = ai.AI()
+        self.ai = ai.Random(self)
         self.enemies_killed = 0
         self.enemeis_to_kill = 20
 

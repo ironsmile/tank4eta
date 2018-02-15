@@ -2,6 +2,7 @@
 #-*- coding: utf8 -*-
 
 import random
+import logging
 
 from objects import *
 from pygame.locals import *
@@ -72,7 +73,7 @@ class EnemyTank(BasicTank):
         self.explosion_sound.play()
 
     def process_events(self, events):
-        print("EnemyTank processing event. If you see me do something.")
+        logging.error("EnemyTank processing event. If you see me do something.")
 
 
 _player_tank_number = 0

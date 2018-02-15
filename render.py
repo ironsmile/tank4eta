@@ -3,6 +3,7 @@
 
 import time
 import pygame
+import logging
 import pygame.font
 import fonts
 from locals import *
@@ -87,16 +88,16 @@ class Render (object):
         pygame.display.flip()
 
     def debug_display(self, display, name=None):
-        print("-" * 10)
+        logging.debug("-" * 10)
         if name is None:
-            print("Debugging unknown display")
+            logging.debug("Debugging unknown display")
         else:
-            print("Debugging %s display" % name)
-        print("Hardware acceleration: %d" % display.hw)
-        print("Can be windowed: %d" % display.wm)
-        print("Video memory: %d" % display.video_mem)
-        print("Width, Height: %dx%d" % (display.current_w, display.current_h))
-        print("-" * 10)
+            logging.debug("Debugging %s display" % name)
+        logging.debug("Hardware acceleration: %d" % display.hw)
+        logging.debug("Can be windowed: %d" % display.wm)
+        logging.debug("Video memory: %d" % display.video_mem)
+        logging.debug("Width, Height: %dx%d" % (display.current_w, display.current_h))
+        logging.debug("-" * 10)
 
     def create_aspect_surface(self):
         render_w, render_h = self.render_resolution
@@ -112,8 +113,8 @@ class Render (object):
         sub_y = int((display_h - aspect_h) / 2)
         pos = (sub_x, sub_y)
 
-        print("Aspect surface is %dx%d" % aspect)
-        print("Aspect surface is on coords (%d, %d)" % pos)
+        logging.debug("Aspect surface is %dx%d" % aspect)
+        logging.debug("Aspect surface is on coords (%d, %d)" % pos)
 
         aserf = self.screen.subsurface(
             pygame.Rect(pos, aspect)
@@ -152,10 +153,10 @@ class Render (object):
             self.fullscreen = not force_fullscreen_to
 
         if not self.fullscreen:
-            print("Going into fullscreen")
+            logging.debug("Going into fullscreen")
             self.fullscreen = True
         else:
-            print("Going into windowed mode")
+            logging.debug("Going into windowed mode")
             self.fullscreen = False
 
         if self.fullscreen:
