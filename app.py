@@ -17,10 +17,12 @@ import world
 import pygame
 import pygame.joystick
 import controllers
+import textures
 import logging
 import time
 
 eventer = EventManager()
+
 
 def main():
     os.chdir(os.path.dirname(os.path.realpath(__file__)))
@@ -55,6 +57,7 @@ def main():
     render.quit()
     pygame.quit()
     sys.exit(0)
+
 
 def main_menu(render, available_maps, selected):
     OPTION_DEFAULT_STATE = 0
@@ -154,7 +157,9 @@ def main_menu(render, available_maps, selected):
 
 
 def game_loop(render, players_count, map_name):
-    play_map = world.Map(map_path(map_name), render)
+    texture_loader = textures.Loader()
+    play_map = world.Map(map_path(map_name), render, texture_loader)
+    play_map.build_grid()
 
     players = []
 
@@ -180,14 +185,14 @@ def game_loop(render, players_count, map_name):
     for i, position in enumerate(play_map.player_starts):
         if i >= players_count:
             break
-        tank = Tank(position, play_map)
+        tank = Tank(position, texture_loader)
         players[i].tank = tank
 
     for player in players:
         if player.tank is None:
             raise Exception("Not enough start points for players!")
 
-    game_world = world.World(play_map, players)
+    game_world = world.World(play_map, players, texture_loader)
     game_world.init()
 
     clock = pygame.time.Clock()
@@ -223,6 +228,7 @@ def game_loop(render, players_count, map_name):
 
     time.sleep(3)
 
+
 def pause_menu(render):
     OPTION_DEFAULT_STATE = 0
 
@@ -257,7 +263,6 @@ def pause_menu(render):
 
         if e.type == pygame.KEYDOWN or e.type == EVENT_CHANGE_STATE:
             if state == OPTION_DEFAULT_STATE:
-                back_menu = None
                 changed_regions_list, state = menu.update(e, state)
             elif state == PAUSE_MENU_RESUME:
                 return PAUSE_MENU_RESUME
@@ -265,6 +270,7 @@ def pause_menu(render):
                 return PAUSE_MENU_QUIT
 
         pygame.display.update(changed_regions_list)
+
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)

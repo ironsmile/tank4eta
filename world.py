@@ -19,8 +19,7 @@ class MapLogicException(Exception):
 
 class Map (object):
 
-    def __init__(self, map_file, render):
-        self.textures = {}
+    def __init__(self, map_file, render, texture_loader):
         self.unpassable = []
         self.objects = []
         self.box_size = SQUARE_SIZE
@@ -30,10 +29,16 @@ class Map (object):
         self.player_starts = []
         self.enemy_starts = []
         self.map_str = None
+        self.texture_loader = texture_loader
         self.scale_factor = 1
         self.render = render
         self.load(map_file)
         self.render.set_render_resolution(self.scaled_resolution)
+        self.texture_loader.set_dimensions(
+            self.box_size,
+            self.scaled_box_size,
+            self.scale_factor
+        )
         self.place_objects()
 
     def real_coords(self, x, y):
@@ -78,38 +83,18 @@ class Map (object):
             for square in row:
                 coords = self.real_coords(x, y)
                 if square == 'w':
-                    self.objects.append(Wall(coords, self))
+                    self.objects.append(Wall(coords, self.texture_loader))
                 if square == 'p':
                     self.player_starts.append(coords)
                 if square == 'e':
                     self.enemy_starts.append(coords)
                 if square == '~':
-                    self.unpassable.append(Water(coords, self))
+                    self.unpassable.append(Water(coords, self.texture_loader))
                 x += 1
 
             y += 1
         if len(self.player_starts) < 1:
             raise MapLogicException("No player starting positions found")
-
-    def load_texture(self, path):
-        if path in self.textures:
-            return self.textures[path]
-        texture = pygame.image.load(path).convert_alpha()
-        if self.scaled_box_size != self.box_size and texture.get_width() == self.box_size and \
-                texture.get_height == self.box_size:
-            texture = pygame.transform.smoothscale(
-                texture,
-                (self.scaled_box_size, self.scaled_box_size)
-            )
-        elif self.scale_factor != 1:
-            new_w = round(self.scale_to_screen(texture.get_width()))
-            new_h = round(self.scale_to_screen(texture.get_height()))
-            texture = pygame.transform.smoothscale(
-                texture,
-                (new_w, new_h)
-            )
-        self.textures[path] = texture
-        return self.textures[path]
 
     def scale_to_screen(self, val):
         return val * self.scale_factor
@@ -117,9 +102,10 @@ class Map (object):
 
 class World (object):
 
-    def __init__(self, map, players):
+    def __init__(self, game_map, players, texture_loader):
         self.players = players
-        self.map = map
+        self.map = game_map
+        self.texture_loader = texture_loader
         self._drawables = []
         self.enemies = []
         self.ai = ai.Random(self)
@@ -237,7 +223,7 @@ class World (object):
         for i in range(10):
             index = random.randint(0, len(self.map.enemy_starts) - 1)
             position = self.map.enemy_starts[index]
-            new_enemy = EnemyTank(position, self.map)
+            new_enemy = EnemyTank(position, self.texture_loader)
             collisions = pygame.sprite.groupcollide(
                 [new_enemy],
                 self._movable,

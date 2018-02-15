@@ -18,9 +18,9 @@ class MovableObject (Object):
     passable = False
     movable = True
 
-    def __init__(self, image, position, game_map):
+    def __init__(self, image, position, texture_loader):
         Object.__init__(self)
-        self.image_src = game_map.load_texture(image)
+        self.image_src = texture_loader.load_texture(image)
         self.image = self.image_src
         self.rect = self.image.get_rect()
         self.rect.center = position
@@ -29,7 +29,7 @@ class MovableObject (Object):
         self.set_movement_speed(MOVE_SPEED)
         self.moving_on_axis = None
         self.facing = DIRECTION_NONE
-        self.map = game_map
+        self.texture_loader = texture_loader
 
     def set_movement_speed(self, speed):
         self.movements = {
@@ -61,7 +61,7 @@ class MovableObject (Object):
         self.moving_on_axis = new_axis
 
     def round_position_coord(self, num):
-        box_size = self.map.scaled_box_size
+        box_size = self.texture_loader.scaled_size
         resid = num % (box_size / 2)
         if resid == 0:
             return num
@@ -86,8 +86,8 @@ class MovableObject (Object):
         if self.direction != DIRECTION_NONE:
             x, y = self.rect.center
             dx, dy = self.movements[self.direction]
-            dx = round(self.map.scale_to_screen(dx * dt))
-            dy = round(self.map.scale_to_screen(dy * dt))
+            dx = round(self.texture_loader.scale_to_screen(dx * dt))
+            dy = round(self.texture_loader.scale_to_screen(dy * dt))
             self.rect.center = (x + dx, y + dy)
 
     @property
@@ -103,8 +103,8 @@ class NonMovableObject (Object):
     passable = False
     movable = False
 
-    def __init__(self, position, game_map):
+    def __init__(self, position, texture_loader):
         Object.__init__(self)
         self.rect = pygame.Rect(self.image.get_rect())
         self.rect.center = position
-        self.map = game_map
+        self.texture_loader = texture_loader

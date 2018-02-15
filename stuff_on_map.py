@@ -15,8 +15,8 @@ class BasicTank(MovableObject):
     image = ""
     max_bullets = 1
 
-    def __init__(self, position, game_map):
-        MovableObject.__init__(self, self.image, position, game_map)
+    def __init__(self, position, texture_loader):
+        MovableObject.__init__(self, self.image, position, texture_loader)
         self.move(DIRECTION_DOWN)
         self.stop()
         self.bullets = []
@@ -58,10 +58,10 @@ class EnemyTank(BasicTank):
     max_bullets = 1
     explosion_sound = None
 
-    def __init__(self, position, game_map):
+    def __init__(self, position, texture_loader):
         num = random.randint(1, 2)
         self.image = texture_path("enemy-%d.png" % num)
-        MovableObject.__init__(self, self.image, position, game_map)
+        MovableObject.__init__(self, self.image, position, texture_loader)
         if EnemyTank.explosion_sound is None:
             path = sound_path('explosion_enemy.wav')
             EnemyTank.explosion_sound = pygame.mixer.Sound(path)
@@ -83,7 +83,7 @@ class Tank(BasicTank):
 
     max_bullets = 2
 
-    def __init__(self, position, game_map):
+    def __init__(self, position, texture_loader):
         global _player_tank_number
         num = (_player_tank_number % 3) + 1
         _player_tank_number += 1
@@ -102,7 +102,7 @@ class Tank(BasicTank):
 
         texture_image = textures[num]
         self.image = texture_path(texture_image)
-        MovableObject.__init__(self, self.image, position, game_map)
+        MovableObject.__init__(self, self.image, position, texture_loader)
         self.engine_working = False
         self.engine = pygame.mixer.Sound(sound_path(sounds[num]))
         self.explosion_sound = pygame.mixer.Sound(sound_path('player_death.wav'))
@@ -146,7 +146,7 @@ class Bullet(MovableObject):
 
     def __init__(self, owner):
         self.owner = owner
-        MovableObject.__init__(self, self.bullet_img, owner.rect.center, owner.map)
+        MovableObject.__init__(self, self.bullet_img, owner.rect.center, owner.texture_loader)
         self.set_movement_speed(BULLET_SPEED)
         self.direction = owner.facing
         self.move(self.direction)
@@ -193,15 +193,15 @@ class Bullet(MovableObject):
 
 class Wall (NonMovableObject):
 
-    def __init__(self, position, game_map):
+    def __init__(self, position, texture_loader):
         path = texture_path('wall.png')
-        Wall.image = game_map.load_texture(path)
-        NonMovableObject.__init__(self, position, game_map)
+        Wall.image = texture_loader.load_texture(path)
+        NonMovableObject.__init__(self, position, texture_loader)
 
 
 class Water (NonMovableObject):
 
-    def __init__(self, position, game_map):
+    def __init__(self, position, texture_loader):
         path = texture_path('water.png')
-        Water.image = game_map.load_texture(path)
-        NonMovableObject.__init__(self, position, game_map)
+        Water.image = texture_loader.load_texture(path)
+        NonMovableObject.__init__(self, position, texture_loader)
