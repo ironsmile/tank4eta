@@ -73,6 +73,8 @@ class ZombieDriver (Random):
         interesting_objects = []
 
         for player in self.world.players:
+            if player.tank is None:
+                continue
             interesting_objects.append(player.tank.rect)
 
         for enemy in enemies:

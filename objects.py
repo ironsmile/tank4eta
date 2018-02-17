@@ -54,6 +54,7 @@ class MovableObject (Object):
         if new_axis == self.moving_on_axis:
             return
         x, y = self.rect.center
+        self.previous_position = self.rect.center
         if self.moving_on_axis != AXIS_Y:
             self.rect.center = (self.round_position_coord(x), y)
         else:
