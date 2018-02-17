@@ -304,8 +304,8 @@ class World (object):
 
         for tank in tanks:
             other_tanks = [t for t in tanks if t != tank]
-            collisions = pygame.sprite.spritecollide(tank, other_tanks, False)
-            if len(collisions):
+            other = pygame.sprite.spritecollideany(tank, other_tanks)
+            if other is not None:
                 tank.undo()
 
         self._drawables = [self._movable, bullets]
