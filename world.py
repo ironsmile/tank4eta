@@ -4,6 +4,8 @@
 import ai
 import math
 import random
+
+from pathfinding.core.grid import Grid
 from stuff_on_map import *
 
 SQUARE_SIZE = 64
@@ -41,13 +43,72 @@ class Map (object):
         )
         self.place_objects()
 
+    def grid_direction(self, pos, to):
+        '''
+        Does not work for diagonals. The `pos` and `to` must be next to
+        each other.
+        '''
+        if pos == to:
+            return DIRECTION_NONE
+
+        px, py = pos
+        tx, ty = to
+
+        if tx < px:
+            return DIRECTION_LEFT
+
+        if tx > px:
+            return DIRECTION_RIGHT
+
+        if ty > py:
+            return DIRECTION_DOWN
+
+        return DIRECTION_UP
+
+    def _axis_world_to_grid(self, axis_val, boxes_count):
+        '''
+        Finds at which coordinate in the pathfinding grid a particular
+        axis value is.
+        '''
+        box_ind = math.floor(axis_val / self.scaled_box_size)
+        in_box_dist = axis_val - (box_ind * self.scaled_box_size)
+        in_box_coef = in_box_dist / self.scaled_box_size
+
+        grid_ind = box_ind * 2
+
+        if in_box_coef < 0.25 and grid_ind > 0:
+            grid_ind -= 1
+
+        if in_box_coef > 0.75 and grid_ind < (boxes_count * 2 - 1):
+            grid_ind += 1
+
+        return grid_ind
+
+    def world_to_grid_coords(self, x, y):
+        '''
+        Converts from world coordinates to the coordinates on the pathfinding grid. This
+        necessarily looses precision and the wolrd coordinates are rounded to the
+        nearest integer.
+        '''
+        gx = self._axis_world_to_grid(x, self.x_boxes)
+        gy = self._axis_world_to_grid(y, self.y_boxes)
+
+        return (gx, gy)
+
     def real_coords(self, x, y):
+        '''
+        Converts from map file coordinates to real scaled world coordinates on
+        the screen.
+        '''
         bs = self.scaled_box_size
-        return ((x * bs - bs / 2),
-                (y * bs - bs / 2))
+        return (((x + 1) * bs - bs / 2),
+                ((y + 1) * bs - bs / 2))
 
     def load(self, map_file):
-        #!TODO: add try+catch, stat of map file for 0 bytes, too large
+        '''
+        Loads a map file and calculates the game and screen world resolutions.
+        !TODO: add try+catch, stat of map file for 0 bytes, too large
+        '''
         mapf = open(map_file, 'r')
         self.map_str = mapf.read()
         mapf.close()
@@ -63,6 +124,8 @@ class Map (object):
         if self.y_boxes < 5 or self.x_boxes < 5:
             raise MapSizeException("A map must be at least 5x5 boxes")
 
+        self._matrix = [[0] * (self.x_boxes * 2 - 1) for i in range(self.y_boxes * 2 - 1)]
+
         self.map_resolution = (self.x_boxes * self.box_size,
                                self.y_boxes * self.box_size)
         aspect_w = self.render.aspect_resolution[0]
@@ -77,18 +140,20 @@ class Map (object):
                                   self.y_boxes * self.scaled_box_size)
 
     def place_objects(self):
-        y = 1
+        y = 0
         for row in self.map_str.splitlines():
-            x = 1
+            x = 0
             for square in row:
                 coords = self.real_coords(x, y)
                 if square == 'w':
+                    self.populate_matrix(x, y)
                     self.objects.append(Wall(coords, self.texture_loader))
-                if square == 'p':
+                elif square == 'p':
                     self.player_starts.append(coords)
-                if square == 'e':
+                elif square == 'e':
                     self.enemy_starts.append(coords)
-                if square == '~':
+                elif square == '~':
+                    self.populate_matrix(x, y)
                     self.unpassable.append(Water(coords, self.texture_loader))
                 x += 1
 
@@ -96,8 +161,42 @@ class Map (object):
         if len(self.player_starts) < 1:
             raise MapLogicException("No player starting positions found")
 
-    def scale_to_screen(self, val):
-        return val * self.scale_factor
+    def populate_matrix(self, x, y):
+        '''
+        The pathfinding map is bigger than the actual map. This is because objects
+        can move between world boxes. So the pathfinding gird inserts one extra
+        node between every two nodes in the map.
+        '''
+        gx, gy = x * 2, y * 2
+        self._matrix[gy][gx] = 1
+
+        if x > 0 and y > 0:
+            self._matrix[gy - 1][gx - 1] = 1
+
+        if x < self.x_boxes - 1:
+            self._matrix[gy][gx + 1] = 1
+
+        if y < self.y_boxes - 1:
+            self._matrix[gy + 1][gx] = 1
+
+        if x < self.x_boxes - 1 and y < self.y_boxes - 1:
+            self._matrix[gy + 1][gx + 1] = 1
+
+        if x > 0:
+            self._matrix[gy][gx - 1] = 1
+
+        if y < self.y_boxes - 1 and x > 0:
+            self._matrix[gy + 1][gx - 1] = 1
+
+        if y > 0:
+            self._matrix[gy - 1][gx] = 1
+
+        if y > 0 and x < self.x_boxes - 1:
+            self._matrix[gy - 1][gx + 1] = 1
+
+    def build_grid(self):
+        self.grid = Grid(matrix=self._matrix)
+        return self.grid
 
 
 class World (object):
@@ -108,7 +207,7 @@ class World (object):
         self.texture_loader = texture_loader
         self._drawables = []
         self.enemies = []
-        self.ai = ai.Random(self)
+        self.ai = ai.ZombieDriver(self)
         self.enemies_killed = 0
         self.enemeis_to_kill = 20
 
@@ -151,7 +250,7 @@ class World (object):
         if len(players_tanks) < 1:
             return GAME_OVER
 
-        self.ai.tick(self.enemies)
+        self.ai.tick(deltat, self.enemies)
 
         for enemy in self.enemies:
             bullets.add(*enemy.bullets)

@@ -31,19 +31,15 @@ class BasicTank(MovableObject):
         pass
 
     def _move_left(self):
-        self.change_axis(AXIS_X)
         self.move(DIRECTION_LEFT)
 
     def _move_right(self):
-        self.change_axis(AXIS_X)
         self.move(DIRECTION_RIGHT)
 
     def _move_up(self):
-        self.change_axis(AXIS_Y)
         self.move(DIRECTION_UP)
 
     def _move_down(self):
-        self.change_axis(AXIS_Y)
         self.move(DIRECTION_DOWN)
 
     def _stop(self):
@@ -65,15 +61,46 @@ class EnemyTank(BasicTank):
         if EnemyTank.explosion_sound is None:
             path = sound_path('explosion_enemy.wav')
             EnemyTank.explosion_sound = pygame.mixer.Sound(path)
+        self.set_movement_speed(ENEMY_MOVE_SPEED)
         self.move(DIRECTION_DOWN)
         self.stop()
         self.bullets = []
+        self.current_target = None
+        self.current_path = []
+        self.path_duration = 0
 
     def explode_sound(self):
         self.explosion_sound.play()
 
     def process_events(self, events):
         logging.error("EnemyTank processing event. If you see me do something.")
+
+    def has_target(self):
+        return self.current_target is not None
+
+    def set_current_path(self, path):
+        self.current_path = path
+        self.reset_path_duration()
+        if len(path):
+            self.current_target = path[-1]
+        else:
+            self.current_target = None
+
+    def update_path_duration(self, deltat):
+        self.path_duration += deltat
+
+    def reset_path_duration(self):
+        self.path_duration = 0
+
+    def get_path_next(self, grid_pos):
+        while 42:
+            if len(self.current_path) == 0:
+                return None
+            next_node = self.current_path[0]
+            if next_node == grid_pos:
+                self.current_path.remove(next_node)
+                continue
+            return next_node
 
 
 _player_tank_number = 0

@@ -71,6 +71,12 @@ class MovableObject (Object):
             return num + (box_size / 2) - resid
 
     def move(self, direction):
+        if self.direction != direction:
+            axis = AXIS_X
+            if direction == DIRECTION_UP or direction == DIRECTION_DOWN:
+                axis = AXIS_Y
+            self.change_axis(axis)
+
         self.direction = direction
         self.facing = direction
         self.image = self.images[direction]
@@ -89,6 +95,35 @@ class MovableObject (Object):
             dx = round(self.texture_loader.scale_to_screen(dx * dt))
             dy = round(self.texture_loader.scale_to_screen(dy * dt))
             self.rect.center = (x + dx, y + dy)
+
+    def calculate_direction(self, x, y):
+        '''
+        Returns at which direction is the (x, y) point.
+        '''
+        if (x, y) == self.rect.center:
+            return DIRECTION_NONE
+
+        a = False
+        b = False
+
+        cx, cy = (x - self.rect.centerx), (y - self.rect.centery)
+
+        if cy > cx:
+            a = True
+
+        if cy > -cx:
+            b = True
+
+        if a:
+            if b:
+                return DIRECTION_UP
+            else:
+                return DIRECTION_LEFT
+        else:
+            if b:
+                return DIRECTION_RIGHT
+            else:
+                return DIRECTION_DOWN
 
     @property
     def moving(self):

@@ -11,9 +11,9 @@ A small BattleCity like game I am building for fun. It is written in Python.
 **Option 2** - If your OS is not in the list you will have to run it from source. Luckily python is now ubiquitous and PyGame (with extended image support) is a breeze to install via pip. First, make sure you have Python3 and PyGame 1.9.* installed. The game can be started with `python app.py`. All assets you would need are included in the repo. In short, you have to run the following:
 
 ```
-pip install pygame
 git clone https://github.com/ironsmile/tank4eta.git
 cd tank4eta
+pip install -r requirements.txt
 python app.py
 ```
 
@@ -98,5 +98,6 @@ In creating this I've used the following open parts:
 * The [PyGame engine](http://www.pygame.org/)
 * [Ubuntu font](https://design.ubuntu.com/font/)
 * Scott Barlow's excellent [menu library](https://code.google.com/archive/p/python-pygame-menu-class/)
+* [Python Pathfinder](https://github.com/brean/python-pathfinding) by Andreas Bresser
 
 All the professional sounds in this game are the result of long and meticulous work by me and my closest people. So I am thankful for all the help I've received in this department!
