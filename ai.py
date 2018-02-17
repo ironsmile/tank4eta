@@ -65,7 +65,7 @@ class ZombieDriver (Random):
         self.map = world.map
         self.pathfinder = AStarFinder(
             diagonal_movement=DiagonalMovement.never,
-            time_limit=0.005
+            time_limit=0.006
         )
         self.path_cache_duration = 1000
 
