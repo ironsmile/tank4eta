@@ -43,8 +43,26 @@ class Map (object):
         )
         self.place_objects()
 
+    def direction_grid_coords(self, pos, direction):
+        '''
+        Returns the pathfinding grid coordinates of the neighbour square in `direction`
+        relative to `pos`.
+        '''
+        if direction == DIRECTION_NONE:
+            return pos
+
+        if direction == DIRECTION_UP:
+            return (pos[0], pos[1] - 1)
+        elif direction == DIRECTION_DOWN:
+            return (pos[0], pos[1] + 1)
+        elif direction == DIRECTION_LEFT:
+            return (pos[0] - 1, pos[1])
+
+        return (pos[0] + 1, pos[1])
+
     def grid_direction(self, pos, to):
         '''
+        Returns in which direction is `to` relative to `pos`.
         Does not work for diagonals. The `pos` and `to` must be next to
         each other.
         '''
@@ -295,18 +313,22 @@ class World (object):
                             player.tank.explode_sound()
                             player.tank = None
 
-        tanks.update(deltat)
         bullets.update(deltat)
 
-        collisions = pygame.sprite.groupcollide(tanks, unpassable, False, False)
-        for tank in collisions:
-            tank.undo()
-
         for tank in tanks:
+            tank.update(deltat)
+
+            collision = pygame.sprite.spritecollideany(tank, unpassable)
+
+            if collision is not None:
+                tank.undo()
+                continue
+
             other_tanks = [t for t in tanks if t != tank]
             other = pygame.sprite.spritecollideany(tank, other_tanks)
-            if other is not None:
-                tank.undo()
+            if other is None:
+                continue
+            tank.undo()
 
         self._drawables = [self._movable, bullets]
         return GAME_CONTINUE
