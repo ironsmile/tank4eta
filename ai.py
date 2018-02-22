@@ -33,7 +33,7 @@ class Random (object):
 
     def do_random_thing(self, enemy):
         firing_roll = random.randint(0, 100)
-        if firing_roll <= self.fire_chance:
+        if firing_roll < self.fire_chance:
             enemy.fire()
 
         turning_roll = random.randint(0, 100)
@@ -60,6 +60,10 @@ class ZombieDriver (Random):
     thought or self preservation mechanism!
     '''
 
+    fire_chance = 2
+    moving_chance = 80
+    turning_chance = 10
+
     def __init__(self, world):
         self.world = world
         self.map = world.map
@@ -79,6 +83,7 @@ class ZombieDriver (Random):
 
         for enemy in enemies:
             self.process_enemy(enemy, deltat, interesting_objects)
+            self.fire_at_will(enemy, deltat, interesting_objects)
 
     def process_enemy(self, enemy, deltat, interesting_objects):
         enemy.update_path_duration(deltat)
@@ -128,6 +133,13 @@ class ZombieDriver (Random):
 
         enemy.set_current_path(path)
         self.continue_path(enemy, own_grid_pos)
+
+    def fire_at_will(self, enemy, deltat, interesting_objects):
+        if len(enemy.bullets) >= enemy.max_bullets:
+            return
+        for obj in interesting_objects:
+            if enemy.is_facing(self.map, obj):
+                enemy.fire()
 
     def continue_path(self, enemy, grid_pos):
         next_node = enemy.get_path_next(grid_pos)

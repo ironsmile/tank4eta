@@ -43,6 +43,14 @@ class Map (object):
         )
         self.place_objects()
 
+    def is_visible(self, source, direction, target):
+        '''
+        Tests wether an object at `source` can see the `target` while facing `direction`.
+        Water and forest are considered as a see through obojects.
+        !TODO: actually implement it.
+        '''
+        return True
+
     def direction_grid_coords(self, pos, direction):
         '''
         Returns the pathfinding grid coordinates of the neighbour square in `direction`
@@ -254,7 +262,7 @@ class World (object):
         players_tanks = []
         alive_enemies = len(self.enemies)
 
-        if alive_enemies < 4 and random.randint(0, 100) < 0.05 and \
+        if alive_enemies < 6 and random.randint(0, 100) < 0.05 and \
                 (self.enemies_killed + alive_enemies) < self.enemeis_to_kill:
             self.spawn_enemy()
 
@@ -297,6 +305,9 @@ class World (object):
                 if collided is bullet.owner:
                     continue
 
+                if not collided.is_player and not bullet.is_player_bullet:
+                    continue
+
                 for orphan in collided.bullets:
                     orphan.owner = None
 
@@ -316,6 +327,9 @@ class World (object):
         bullets.update(deltat)
 
         for tank in tanks:
+            other_tanks = [t for t in tanks if t != tank]
+            previously_collided = pygame.sprite.spritecollide(tank, other_tanks, False, False)
+
             tank.update(deltat)
 
             collision = pygame.sprite.spritecollideany(tank, unpassable)
@@ -324,11 +338,24 @@ class World (object):
                 tank.undo()
                 continue
 
-            other_tanks = [t for t in tanks if t != tank]
-            other = pygame.sprite.spritecollideany(tank, other_tanks)
-            if other is None:
+            others = pygame.sprite.spritecollide(tank, other_tanks, False, False)
+            if len(others) < 1:
                 continue
-            tank.undo()
+
+            for other in others:
+                if other not in previously_collided:
+                    tank.undo()
+                    break
+
+                dist = math.sqrt(
+                    abs(tank.rect.centerx - other.rect.centerx) ** 2 +
+                    abs(tank.rect.centery - other.rect.centery) ** 2
+                )
+
+                if dist < self.map.scaled_box_size * 0.75:
+                    tank.undo()
+                    break
+
 
         self._drawables = [self._movable, bullets]
         return GAME_CONTINUE

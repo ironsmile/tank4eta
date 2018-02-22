@@ -3,6 +3,7 @@
 
 import random
 import logging
+import random
 
 from objects import *
 from pygame.locals import *
@@ -14,18 +15,28 @@ class BasicTank(MovableObject):
 
     image = ""
     max_bullets = 1
+    is_player = False
 
     def __init__(self, position, texture_loader):
         MovableObject.__init__(self, self.image, position, texture_loader)
         self.move(DIRECTION_DOWN)
         self.stop()
         self.bullets = []
+        self.fire_timeout = 0
 
     def fire(self):
         if len(self.bullets) >= self.max_bullets:
             return
+        self.fire_timeout = 0
         bullet = Bullet(self)
         self.bullets.append(bullet)
+
+    def update(self, deltat):
+        self.fire_timeout += deltat
+        MovableObject.update(self, deltat)
+
+    def is_facing(self, world_map, obj):
+        return world_map.is_visible(self.rect, self.facing, obj)
 
     def process_events(self, events):
         pass
@@ -57,17 +68,23 @@ class EnemyTank(BasicTank):
     def __init__(self, position, texture_loader):
         num = random.randint(1, 2)
         self.image = texture_path("enemy-%d.png" % num)
-        MovableObject.__init__(self, self.image, position, texture_loader)
+        BasicTank.__init__(self, position, texture_loader)
         if EnemyTank.explosion_sound is None:
             path = sound_path('explosion_enemy.wav')
             EnemyTank.explosion_sound = pygame.mixer.Sound(path)
         self.set_movement_speed(ENEMY_MOVE_SPEED)
-        self.move(DIRECTION_DOWN)
-        self.stop()
-        self.bullets = []
         self.current_target = None
         self.current_path = []
         self.path_duration = 0
+        self.next_shot_timeout = random.randint(600, 1300)
+
+    def fire(self):
+        if self.fire_timeout <= self.next_shot_timeout:
+            return
+        bullets_count = len(self.bullets)
+        BasicTank.fire(self)
+        if len(self.bullets) > bullets_count:
+            self.next_shot_timeout = random.randint(600, 1300)
 
     def explode_sound(self):
         self.explosion_sound.play()
@@ -108,6 +125,7 @@ _player_tank_number = 0
 
 class Tank(BasicTank):
 
+    is_player = True
     max_bullets = 2
 
     def __init__(self, position, texture_loader):
@@ -129,13 +147,12 @@ class Tank(BasicTank):
 
         texture_image = textures[num]
         self.image = texture_path(texture_image)
-        MovableObject.__init__(self, self.image, position, texture_loader)
-        self.engine_working = False
         self.engine = pygame.mixer.Sound(sound_path(sounds[num]))
-        self.explosion_sound = pygame.mixer.Sound(sound_path('player_death.wav'))
+        self.engine_working = False
+        BasicTank.__init__(self, position, texture_loader)
         self.move(DIRECTION_UP)
         self.stop()
-        self.bullets = []
+        self.explosion_sound = pygame.mixer.Sound(sound_path('player_death.wav'))
         self.event_map = {
             EVENT_FIRE: self._fire,
             EVENT_MOVE_LEFT: self._move_left,
@@ -173,6 +190,7 @@ class Bullet(MovableObject):
 
     def __init__(self, owner):
         self.owner = owner
+        self.is_player_bullet = owner.is_player
         MovableObject.__init__(self, self.bullet_img, owner.rect.center, owner.texture_loader)
         self.set_movement_speed(BULLET_SPEED)
         self.direction = owner.facing
