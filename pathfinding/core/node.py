@@ -4,13 +4,16 @@ class Node(object):
     basic node, saves X and Y coordinates on some grid and determine if
     it is walkable.
     """
-    def __init__(self, x=0, y=0, walkable=True):
+    def __init__(self, x=0, y=0, walkable=True, see_through=True):
         # Coordinates
         self.x = x
         self.y = y
 
         # Whether this node can be walked through.
         self.walkable = walkable
+
+        # Whether this node is visible for line of sight calculations
+        self.see_through = see_through
 
         # values used in the finder
 

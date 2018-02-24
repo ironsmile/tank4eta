@@ -24,7 +24,9 @@ def build_nodes(width, height, matrix=None):
             # 0, '0', False, None will be walkable
             # while others will be obstacles
             walkable = not use_matrix or matrix[y][x] in [0, '0', False, None]
-            nodes[y][x] = Node(x, y, walkable)
+            # 0, '0', False, None and 2 will be see_through
+            see_through = not use_matrix or matrix[y][x] in [0, '0', False, None, 2]
+            nodes[y][x] = Node(x, y, walkable, see_through)
     return nodes
 
 
