@@ -24,6 +24,7 @@ class Map (object):
     def __init__(self, map_file, render, texture_loader):
         self.unpassable = []
         self.objects = []
+        self.limits_guard = []
         self.box_size = SQUARE_SIZE
         self.scaled_box_size = SQUARE_SIZE
         self.x_boxes = 0
@@ -203,22 +204,20 @@ class Map (object):
                                   self.y_boxes * self.scaled_box_size)
 
     def place_objects(self):
-        unpassable_see_through = 2
-        unpassable_no_see_through = 1
         y = 0
         for row in self.map_str.splitlines():
             x = 0
             for square in row:
                 coords = self.real_coords(x, y)
                 if square == 'w':
-                    self.populate_matrix(x, y, unpassable_no_see_through)
+                    self.populate_matrix(x, y, Terrain.unpassable_no_see_through)
                     self.objects.append(Wall(coords, self.texture_loader))
                 elif square == 'p':
                     self.player_starts.append(coords)
                 elif square == 'e':
                     self.enemy_starts.append(coords)
                 elif square == '~':
-                    self.populate_matrix(x, y, unpassable_see_through)
+                    self.populate_matrix(x, y, Terrain.unpassable_see_through)
                     self.unpassable.append(Water(coords, self.texture_loader))
                 x += 1
 
@@ -226,38 +225,60 @@ class Map (object):
         if len(self.player_starts) < 1:
             raise MapLogicException("No player starting positions found")
 
-    def populate_matrix(self, x, y, terrain=1):
+        limits = []
+
+        for x in range(self.x_boxes):
+            limits.append(self.real_coords(x, -1))
+            limits.append(self.real_coords(x, self.y_boxes))
+
+        for y in range(self.y_boxes):
+            limits.append(self.real_coords(-1, y))
+            limits.append(self.real_coords(self.x_boxes, y))
+
+        for coords in limits:
+            self.limits_guard.append(EndWorldium(coords, self.texture_loader))
+
+    def populate_matrix(self, x, y, terrain=Terrain.unpassable_no_see_through):
         '''
         The pathfinding map is bigger than the actual map. This is because objects
         can move between world boxes. So the pathfinding gird inserts one extra
         node between every two nodes in the map.
         '''
+
+        terrain_num = None
+        if terrain == Terrain.unpassable_no_see_through:
+            terrain_num = 1
+        elif terrain == Terrain.unpassable_see_through:
+            terrain_num = 2
+        else:
+            terrain_num = 0
+
         gx, gy = x * 2, y * 2
-        self._matrix[gy][gx] = terrain
+        self._matrix[gy][gx] = terrain_num
 
         if x > 0 and y > 0:
-            self._matrix[gy - 1][gx - 1] = terrain
+            self._matrix[gy - 1][gx - 1] = terrain_num
 
         if x < self.x_boxes - 1:
-            self._matrix[gy][gx + 1] = terrain
+            self._matrix[gy][gx + 1] = terrain_num
 
         if y < self.y_boxes - 1:
-            self._matrix[gy + 1][gx] = terrain
+            self._matrix[gy + 1][gx] = terrain_num
 
         if x < self.x_boxes - 1 and y < self.y_boxes - 1:
-            self._matrix[gy + 1][gx + 1] = terrain
+            self._matrix[gy + 1][gx + 1] = terrain_num
 
         if x > 0:
-            self._matrix[gy][gx - 1] = terrain
+            self._matrix[gy][gx - 1] = terrain_num
 
         if y < self.y_boxes - 1 and x > 0:
-            self._matrix[gy + 1][gx - 1] = terrain
+            self._matrix[gy + 1][gx - 1] = terrain_num
 
         if y > 0:
-            self._matrix[gy - 1][gx] = terrain
+            self._matrix[gy - 1][gx] = terrain_num
 
         if y > 0 and x < self.x_boxes - 1:
-            self._matrix[gy - 1][gx + 1] = terrain
+            self._matrix[gy - 1][gx + 1] = terrain_num
 
     def build_grid(self):
         self.grid = Grid(matrix=self._matrix)
@@ -277,14 +298,16 @@ class World (object):
         self.enemeis_to_kill = 20
 
         self._bullets = pygame.sprite.RenderUpdates()
-        self._unpassable = pygame.sprite.RenderUpdates()
+        self._visible_terrain = pygame.sprite.RenderUpdates()
+        self._all_terrain = pygame.sprite.RenderUpdates()
         self._movable = pygame.sprite.RenderUpdates()
 
     def init(self):
         for player in self.players:
             self._movable.add(player.tank)
-        self._unpassable.add(*[self.map.objects + self.map.unpassable])
-        self.map.render.set_background(self._unpassable)
+        self._visible_terrain.add(*[self.map.objects + self.map.unpassable])
+        self._all_terrain.add(*[self.map.objects + self.map.unpassable + self.map.limits_guard])
+        self.map.render.set_background(self._visible_terrain)
 
     def get_end_game_stats(self):
         return "Enemies killed: %d / %d" % (self.enemies_killed, self.enemeis_to_kill)
@@ -294,7 +317,7 @@ class World (object):
             return GAME_WON
 
         bullets = self._bullets
-        unpassable = self._unpassable
+        unpassable = self._all_terrain
 
         self.map.render.clear([bullets, self._movable])
 
@@ -322,7 +345,8 @@ class World (object):
 
         tanks = pygame.sprite.RenderUpdates(*(players_tanks + self.enemies))
 
-        bullet_stoppers = players_tanks + self.map.objects + self.enemies + bullets.sprites()
+        bullet_stoppers = players_tanks + self.map.objects + self.enemies + \
+            bullets.sprites() + self.map.limits_guard
         bullet_stoppers = pygame.sprite.Group(bullet_stoppers)
 
         collisions = pygame.sprite.groupcollide(bullets, bullet_stoppers, False, False)

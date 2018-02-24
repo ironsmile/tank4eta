@@ -253,3 +253,11 @@ class Water (NonMovableObject):
         path = texture_path('water.png')
         Water.image = texture_loader.load_texture(path)
         NonMovableObject.__init__(self, position, texture_loader)
+
+
+class EndWorldium(NonMovableObject):
+
+    def __init__(self, position, texture_loader):
+        path = texture_path('end_worldium.png')
+        EndWorldium.image = texture_loader.load_texture(path)
+        NonMovableObject.__init__(self, position, texture_loader)

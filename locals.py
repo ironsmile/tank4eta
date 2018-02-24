@@ -2,6 +2,7 @@
 #-*- coding: utf8 -*-
 
 import os
+import enum
 
 FRAMES = 120
 MOVE_SPEED = 6
@@ -47,3 +48,12 @@ FONT_SERIF_PATH = os.path.join('data', 'fonts', 'ubuntu', 'Ubuntu-R.ttf')
 
 PAUSE_MENU_QUIT = 1
 PAUSE_MENU_RESUME = 2
+
+
+class Terrain(enum.Enum):
+    '''
+    This class is used while populating the pathfinding matrix
+    '''
+    passable_see_through = 0
+    unpassable_no_see_through = 1
+    unpassable_see_through = 2
