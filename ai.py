@@ -60,7 +60,7 @@ class ZombieDriver (Random):
     thought or self preservation mechanism!
     '''
 
-    fire_chance = 2
+    fire_chance = 3
     moving_chance = 80
     turning_chance = 5
 
@@ -138,7 +138,11 @@ class ZombieDriver (Random):
         if len(enemy.bullets) >= enemy.max_bullets:
             return
         for obj in interesting_objects:
-            if enemy.is_facing(self.map, obj):
+            if not enemy.is_facing(self.map, obj):
+                continue
+
+            firing_roll = random.randint(0, 100)
+            if firing_roll < self.fire_chance:
                 enemy.fire()
 
     def continue_path(self, enemy, grid_pos):
