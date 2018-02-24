@@ -46,10 +46,47 @@ class Map (object):
     def is_visible(self, source, direction, target):
         '''
         Tests wether an object at `source` can see the `target` while facing `direction`.
-        Water and forest are considered as a see through obojects.
-        !TODO: actually implement it.
+        Water and forest are considered as a see through objects.
+
+        @param source pygame.Rect
+        @param direction one of DIRECTION_UP, DIRECTION_DOWN, DIRECTION_RIGHT, DIRECTION_LEFT
+        @param target pygame.Rect
+
+        @returns boolean
         '''
-        return True
+        if direction == DIRECTION_NONE:
+            return False
+
+        targets = set()
+        check_coords = self.world_to_grid_coords(source.centerx, source.centery)
+        target_coords = self.world_to_grid_coords(target.centerx, target.centery)
+
+        targets.add(target_coords)
+
+        if direction in [DIRECTION_DOWN, DIRECTION_UP]:
+            targets.add((target_coords[0] - 1, target_coords[1]))
+            targets.add((target_coords[0] + 1, target_coords[1]))
+        else:
+            targets.add((target_coords[0], target_coords[1] - 1))
+            targets.add((target_coords[0], target_coords[1] + 1))
+
+        while 42:
+            if check_coords in targets:
+                return True
+
+            if check_coords[0] < 0 or check_coords[0] >= self.x_boxes * 2 - 1:
+                return False
+
+            if check_coords[1] < 0 or check_coords[1] >= self.y_boxes * 2 - 1:
+                return False
+
+            node = self.grid.node(*check_coords)
+            if not node.walkable:
+                return False
+
+            check_coords = self.direction_grid_coords(check_coords, direction)
+
+        return False
 
     def direction_grid_coords(self, pos, direction):
         '''

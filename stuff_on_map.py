@@ -3,7 +3,6 @@
 
 import random
 import logging
-import random
 
 from objects import *
 from pygame.locals import *
@@ -36,6 +35,10 @@ class BasicTank(MovableObject):
         MovableObject.update(self, deltat)
 
     def is_facing(self, world_map, obj):
+        '''
+        @param world_map Map object
+        @param obj pygame.Rect
+        '''
         return world_map.is_visible(self.rect, self.facing, obj)
 
     def process_events(self, events):

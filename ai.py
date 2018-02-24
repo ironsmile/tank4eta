@@ -62,7 +62,7 @@ class ZombieDriver (Random):
 
     fire_chance = 2
     moving_chance = 80
-    turning_chance = 10
+    turning_chance = 5
 
     def __init__(self, world):
         self.world = world
