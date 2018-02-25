@@ -9,11 +9,12 @@ class Gamepad (object):
 
     def __init__(self, joystick):
         self.joystick = joystick
+        self.moving_on_axis = None
 
     def process_events(self, events):
         event_queue = []
         for event in events:
-            if event.type not in [JOYBUTTONDOWN, JOYHATMOTION]:
+            if event.type not in [JOYBUTTONDOWN, JOYHATMOTION, JOYAXISMOTION]:
                 continue
             if event.joy != self.joystick.get_id():
                 continue
@@ -21,19 +22,34 @@ class Gamepad (object):
                 event_queue.append(EVENT_FIRE)
                 continue
 
-            if not event.type == JOYHATMOTION:
-                continue
-
-            if event.value == JOY_CENTERED:
-                event_queue.append(EVENT_STOP)
-            elif event.value == JOY_RIGHT:
-                event_queue.append(EVENT_MOVE_RIGHT)
-            elif event.value == JOY_LEFT:
-                event_queue.append(EVENT_MOVE_LEFT)
-            elif event.value == JOY_UP:
-                event_queue.append(EVENT_MOVE_UP)
-            elif event.value == JOY_DOWN:
-                event_queue.append(EVENT_MOVE_DOWN)
+            if event.type == JOYHATMOTION:
+                if event.value == JOY_CENTERED:
+                    event_queue.append(EVENT_STOP)
+                elif event.value == JOY_RIGHT:
+                    event_queue.append(EVENT_MOVE_RIGHT)
+                elif event.value == JOY_LEFT:
+                    event_queue.append(EVENT_MOVE_LEFT)
+                elif event.value == JOY_UP:
+                    event_queue.append(EVENT_MOVE_UP)
+                elif event.value == JOY_DOWN:
+                    event_queue.append(EVENT_MOVE_DOWN)
+            elif event.type == JOYAXISMOTION:
+                if event.value > -0.05 and event.value < 0.05 and \
+                        event.axis == self.moving_on_axis:
+                    event_queue.append(EVENT_STOP)
+                    self.moving_on_axis = None
+                elif event.axis == 1 and event.value < -0.05:
+                    event_queue.append(EVENT_MOVE_UP)
+                    self.moving_on_axis = event.axis
+                elif event.axis == 1 and event.value > 0.05:
+                    event_queue.append(EVENT_MOVE_DOWN)
+                    self.moving_on_axis = event.axis
+                elif event.axis == 0 and event.value < -0.05:
+                    event_queue.append(EVENT_MOVE_LEFT)
+                    self.moving_on_axis = event.axis
+                elif event.axis == 0 and event.value > 0.05:
+                    event_queue.append(EVENT_MOVE_RIGHT)
+                    self.moving_on_axis = event.axis
 
         return event_queue
 
