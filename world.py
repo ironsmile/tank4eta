@@ -25,6 +25,7 @@ class Map (object):
         self.unpassable = []
         self.objects = []
         self.limits_guard = []
+        self.un_flags = []
         self.box_size = SQUARE_SIZE
         self.scaled_box_size = SQUARE_SIZE
         self.x_boxes = 0
@@ -226,6 +227,8 @@ class Map (object):
                 elif square == '~':
                     self.populate_matrix(x, y, Terrain.unpassable_see_through)
                     self.unpassable.append(Water(coords, self.texture_loader))
+                elif square == 'f':
+                    self.un_flags.append(UnFlag(coords, self.texture_loader))
                 x += 1
             y += 1
 
@@ -303,6 +306,7 @@ class World (object):
         self.ai = ai.ZombieDriver(self)
         self.enemies_killed = 0
         self.enemeis_to_kill = 20
+        self.un_flags = []
 
         self._bullets = pygame.sprite.RenderUpdates()
         self._visible_terrain = pygame.sprite.RenderUpdates()
@@ -312,10 +316,12 @@ class World (object):
     def init(self):
         for player in self.players:
             self._movable.add(player.tank)
-        self._visible_terrain.add(*[self.map.objects + self.map.unpassable])
+        self._visible_terrain.add(*[self.map.objects + self.map.unpassable + self.map.un_flags])
         self._all_terrain.add(*[self.map.objects + self.map.unpassable +
-                self.map.limits_guard])
+                self.map.limits_guard + self.map.un_flags])
         self.map.render.set_background(self._visible_terrain)
+        for flag in self.map.un_flags:
+            self.un_flags.append(flag)
 
     def get_end_game_stats(self):
         return "Enemies killed: %d / %d" % (self.enemies_killed, self.enemeis_to_kill)
@@ -354,7 +360,7 @@ class World (object):
         tanks = pygame.sprite.RenderUpdates(*(players_tanks + self.enemies))
 
         bullet_stoppers = players_tanks + self.map.objects + self.enemies + \
-            bullets.sprites() + self.map.limits_guard
+            bullets.sprites() + self.map.limits_guard + self.map.un_flags
         bullet_stoppers = pygame.sprite.Group(bullet_stoppers)
 
         collisions = pygame.sprite.groupcollide(bullets, bullet_stoppers, False, False)
@@ -371,6 +377,8 @@ class World (object):
             for collided in collided_with:
                 if collided == bullet:
                     continue
+                if isinstance(collided, UnFlag):
+                    return GAME_OVER
                 if not isinstance(collided, BasicTank):
                     continue
                 if collided is bullet.owner:

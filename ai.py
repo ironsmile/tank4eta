@@ -79,7 +79,10 @@ class ZombieDriver (Random):
         for player in self.world.players:
             if player.tank is None:
                 continue
-            interesting_objects.append(player.tank.rect)
+            interesting_objects.append((player.tank.rect, 1))
+
+        for flag in self.world.un_flags:
+            interesting_objects.append((flag.rect, 1.5))
 
         for enemy in enemies:
             self.process_enemy(enemy, deltat, interesting_objects)
@@ -95,14 +98,15 @@ class ZombieDriver (Random):
             return
 
         heat_obj = None
-        heat_dist = math.inf
-        for obj in interesting_objects:
+        heat_weight = 0
+        for obj, weight in interesting_objects:
             dist = math.sqrt(
                 abs(own_coords.centerx - obj.centerx) ** 2 +
                 abs(own_coords.centery - obj.centery) ** 2
             )
-            if dist < heat_dist:
-                heat_dist = dist
+            obj_weight = (1 / dist) * weight
+            if obj_weight > heat_weight:
+                heat_weight = obj_weight
                 heat_obj = obj
 
         if heat_obj is None:
@@ -137,7 +141,7 @@ class ZombieDriver (Random):
     def fire_at_will(self, enemy, deltat, interesting_objects):
         if len(enemy.bullets) >= enemy.max_bullets:
             return
-        for obj in interesting_objects:
+        for obj, weight in interesting_objects:
             if not enemy.is_facing(self.map, obj):
                 continue
 

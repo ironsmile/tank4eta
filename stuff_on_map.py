@@ -255,6 +255,14 @@ class Water (NonMovableObject):
         NonMovableObject.__init__(self, position, texture_loader)
 
 
+class UnFlag (NonMovableObject):
+
+    def __init__(self, position, texture_loader):
+        path = texture_path('un_flag.png')
+        UnFlag.image = texture_loader.load_texture(path)
+        NonMovableObject.__init__(self, position, texture_loader)
+
+
 class EndWorldium(NonMovableObject):
 
     def __init__(self, position, texture_loader):

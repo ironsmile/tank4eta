@@ -28,7 +28,7 @@
     <key>settings</key>
     <dict>
         <key>foreground</key>
-        <string>#79b5ae</string>
+        <string>#4c5e5d</string>
     </dict>
 </dict>
 <dict>
@@ -40,5 +40,16 @@
     <dict>
         <key>foreground</key>
         <string>#82ef04</string>
+    </dict>
+</dict>
+<dict>
+    <key>name</key>
+    <string>tank4eta spawnpoint</string>
+    <key>scope</key>
+    <string>tank4eta.map objects.terrain.flag</string>
+    <key>settings</key>
+    <dict>
+        <key>foreground</key>
+        <string>#2790DB</string>
     </dict>
 </dict>

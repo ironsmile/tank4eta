@@ -79,17 +79,18 @@ Everyone can create maps for the game. A map is just a text file with a name end
 #    wwwwwwwwwww     #
 #    w        w      #
 #         w          #
-#     p   w  p       #
+#     p  fw  p       #
 ######################
 ```
 
 The map is encompassed in a rectangle of the border characters - `#`. Every single character inside of this rectangle represents an object on the map. The game world is composed of squares and a character represents such a square. New lines should be in unix format, that is to say just the newline character - `\n`. Here is a breakdown of the meaning of all characters:
 
 * `#` - border character, it will be ignored in the final map. It is only useful to define the boundaries of the map.
-* `p` - spot on which a player tank can spawn
-* `e` - spot on which an enemy tank can spawn
+* `p` - spot on which a player tank can spawn **(required)**
+* `e` - spot on which an enemy tank can spawn **(required)**
 * `w` - brick wall
 * `~` - water
+* `f` - the UN flag
 * ` ` _(space)_ - empty rectangle
 
 Maps must be placed in `data/maps` directory and have a name like `my-new-level.map` so that the game would recognize and load them.

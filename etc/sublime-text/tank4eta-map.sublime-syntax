@@ -13,6 +13,9 @@ contexts:
     - match: '~'
       scope: object.terrain.water
 
+    - match: 'f'
+      scope: objects.terrain.flag
+
     - match: '#'
       scope: control.border
 
