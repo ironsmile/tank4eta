@@ -94,6 +94,8 @@ The map is encompassed in a rectangle of the border characters - `#`. Every sing
 
 Maps must be placed in `data/maps` directory and have a name like `my-new-level.map` so that the game would recognize and load them.
 
+Sublime Text syntax file and theme colours for editing maps can be found in [this repo](etc/sublime-text).
+
 ### Credits
 
 In creating this I've used the following open parts:

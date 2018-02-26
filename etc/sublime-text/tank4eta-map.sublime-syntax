@@ -1,0 +1,20 @@
+%YAML 1.2
+---
+# See http://www.sublimetext.com/docs/3/syntax.html
+name: tank4eta map
+file_extensions:
+  - map
+scope: tank4eta.map
+contexts:
+  main:
+    - match: 'w'
+      scope: object.terrain.wall
+
+    - match: '~'
+      scope: object.terrain.water
+
+    - match: '#'
+      scope: control.border
+
+    - match: '(p|e)'
+      scope: objects.meta.spawn

@@ -1,0 +1,44 @@
+<dict>
+    <key>name</key>
+    <string>tank4eta wall</string>
+    <key>scope</key>
+    <string>tank4eta.map object.terrain.wall</string>
+    <key>settings</key>
+    <dict>
+        <key>foreground</key>
+        <string>#FF0000</string>
+    </dict>
+</dict>
+<dict>
+    <key>name</key>
+    <string>tank4eta water</string>
+    <key>scope</key>
+    <string>tank4eta.map object.terrain.water</string>
+    <key>settings</key>
+    <dict>
+        <key>foreground</key>
+        <string>#0055AA</string>
+    </dict>
+</dict>
+<dict>
+    <key>name</key>
+    <string>tank4eta border</string>
+    <key>scope</key>
+    <string>tank4eta.map control.border</string>
+    <key>settings</key>
+    <dict>
+        <key>foreground</key>
+        <string>#79b5ae</string>
+    </dict>
+</dict>
+<dict>
+    <key>name</key>
+    <string>tank4eta spawnpoint</string>
+    <key>scope</key>
+    <string>tank4eta.map objects.meta.spawn</string>
+    <key>settings</key>
+    <dict>
+        <key>foreground</key>
+        <string>#82ef04</string>
+    </dict>
+</dict>
