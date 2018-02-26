@@ -64,25 +64,28 @@ Unfortunatelly as of `v1.0.0` they cannot be rebinded.
 Everyone can create maps for the game. A map is just a text file with a name ending in `.map`. So, here is an example map:
 
 ```
-wwwwwwwwwwwwwwwwwwww
-w    e  w w  w  e  w
-wwwwww  w e  w www w
-w         ww w  ww w
-w   ~~~~  ww   ~w  w
-w www  w   ~~~~~~ ww
-w      w e      w ww
-w  ~~~~~~~~~~~     w
-w           w  www w
-w~~~~~~~~~  w      w
-w           www wwww
-w   wwwwwwwwwww    w
-w   w        w     w
-w     p    p       w
-wwwwwwwwwwwwwwwwwwww
+######################
+#w  e          e    w#
+#w                  w#
+#wwwwww  w e  w www w#
+#          ww w  ww  #
+#    ~~~~  ww   ~w   #
+#  www  w   ~~~~~~ w #
+#       w e      w w #
+#   ~~~~~~~~~~~      #
+#            w  www  #
+# ~~~~~~~~~  w       #
+#            www www #
+#    wwwwwwwwwww     #
+#    w        w      #
+#         w          #
+#     p   w  p       #
+######################
 ```
 
-Every single character represents some object on the map. The game world is composed of rectangles and a character represents such a rectangle. New lines should be in unix format, that is to say just the newline character - `\n`. Here is a breakdown of the meaning of all characters:
+The map is encompassed in a rectangle of the border characters - `#`. Every single character inside of this rectangle represents an object on the map. The game world is composed of squares and a character represents such a square. New lines should be in unix format, that is to say just the newline character - `\n`. Here is a breakdown of the meaning of all characters:
 
+* `#` - border character, it will be ignored in the final map. It is only useful to define the boundaries of the map.
 * `p` - spot on which a player tank can spawn
 * `e` - spot on which an enemy tank can spawn
 * `w` - brick wall

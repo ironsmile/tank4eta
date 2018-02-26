@@ -179,6 +179,9 @@ class Map (object):
 
         y = 1
         for row in self.map_str.splitlines():
+            row = row.strip('#')
+            if len(row) < 1:
+                continue
             if y > self.y_boxes:
                 self.y_boxes = y
             if len(row) > self.x_boxes:
@@ -206,6 +209,9 @@ class Map (object):
     def place_objects(self):
         y = 0
         for row in self.map_str.splitlines():
+            row = row.strip('#')
+            if len(row) < 1:
+                continue
             x = 0
             for square in row:
                 coords = self.real_coords(x, y)
@@ -220,8 +226,8 @@ class Map (object):
                     self.populate_matrix(x, y, Terrain.unpassable_see_through)
                     self.unpassable.append(Water(coords, self.texture_loader))
                 x += 1
-
             y += 1
+
         if len(self.player_starts) < 1:
             raise MapLogicException("No player starting positions found")
 
@@ -306,7 +312,8 @@ class World (object):
         for player in self.players:
             self._movable.add(player.tank)
         self._visible_terrain.add(*[self.map.objects + self.map.unpassable])
-        self._all_terrain.add(*[self.map.objects + self.map.unpassable + self.map.limits_guard])
+        self._all_terrain.add(*[self.map.objects + self.map.unpassable +
+                self.map.limits_guard])
         self.map.render.set_background(self._visible_terrain)
 
     def get_end_game_stats(self):
