@@ -84,7 +84,7 @@ class Render (object):
         pygame.display.flip()
 
     def clear_screen(self):
-        self.screen.fill(BACKGROUND_COLOUR)
+        self.screen.fill(BLACK)
         pygame.display.flip()
 
     def debug_display(self, display, name=None):
