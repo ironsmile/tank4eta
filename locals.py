@@ -4,7 +4,7 @@
 import os
 import enum
 
-FRAMES = 120
+FRAMES = 60
 MOVE_SPEED = 6
 ENEMY_MOVE_SPEED = 3.5
 BULLET_SPEED = 18
