@@ -32,7 +32,7 @@ class Render (object):
             initial=True
         )
         self.set_render_resolution(RESOLUTION)
-        if sys.platform.startswith('win'):
+        if sys.platform.startswith('win') or sys.platform.startswith('linux'):
             self.should_flip = True
 
     def set_render_resolution(self, resolution):
