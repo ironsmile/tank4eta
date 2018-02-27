@@ -33,6 +33,7 @@ def main():
 
     available_maps = glob.glob(os.path.join(MAPS_DIR, '*.map'))
     available_maps = [os.path.basename(m) for m in available_maps]
+    available_maps.sort()
 
     selected = {
         'players_count': 1,
