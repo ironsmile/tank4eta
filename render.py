@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 #-*- coding: utf8 -*-
 
+import sys
 import time
 import pygame
 import logging
@@ -18,7 +19,7 @@ class Render (object):
         pygame.display.init()
         pygame.display.set_caption("tank4eta")
         self.fullscreen = FULLSCREEN
-
+        self.should_flip = False
         self.show_fps = False
         self.fps = 0
         self.ndi = pygame.display.Info()
@@ -31,6 +32,8 @@ class Render (object):
             initial=True
         )
         self.set_render_resolution(RESOLUTION)
+        if sys.platform.startswith('win'):
+            self.should_flip = True
 
     def set_render_resolution(self, resolution):
         if self.render_resolution == resolution:
@@ -59,6 +62,8 @@ class Render (object):
     def update(self, changed):
         self.draw_fps()
         pygame.display.update(changed)
+        if self.should_flip:
+            pygame.display.flip()
 
     def draw_fps(self):
         if not self.show_fps:
@@ -163,13 +168,13 @@ class Render (object):
             self.resolution = (self.ndi.current_w, self.ndi.current_h)
             self.screen = pygame.display.set_mode(
                 self.resolution,
-                pygame.FULLSCREEN | pygame.HWSURFACE
+                pygame.FULLSCREEN | pygame.DOUBLEBUF | pygame.HWSURFACE
             )
         else:
             self.resolution = RESOLUTION
             self.screen = pygame.display.set_mode(
                 self.resolution,
-                pygame.HWSURFACE
+                pygame.DOUBLEBUF | pygame.HWSURFACE
             )
 
         self.display_info = pygame.display.Info()
