@@ -19,7 +19,7 @@ class Render (object):
         pygame.display.set_caption("tank4eta")
         self.fullscreen = FULLSCREEN
 
-        self.show_fps = True
+        self.show_fps = False
         self.fps = 0
         self.ndi = pygame.display.Info()
         self.debug_display(self.ndi, "native")

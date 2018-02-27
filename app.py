@@ -15,6 +15,7 @@ import sys
 import glob
 import world
 import pygame
+import argparse
 import pygame.joystick
 import controllers
 import textures
@@ -24,7 +25,7 @@ import time
 eventer = EventManager()
 
 
-def main():
+def main(args):
     os.chdir(os.path.dirname(os.path.realpath(__file__)))
     pygame.init()
 
@@ -43,6 +44,9 @@ def main():
     }
 
     render = Render()
+
+    if args.debug:
+        render.show_fps = True
 
     while 42:
         selected = main_menu(render, available_maps, selected)
@@ -274,5 +278,17 @@ def pause_menu(render):
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.ERROR)
-    main()
+    parser = argparse.ArgumentParser(description='The game with tanks!.')
+    parser.add_argument('-D', dest='debug', action='store_true',
+                        default=False,
+                        help='Start the game in debug mode')
+
+    args = parser.parse_args()
+
+    loggingLevel = logging.ERROR
+
+    if args.debug:
+        loggingLevel = logging.DEBUG
+
+    logging.basicConfig(level=loggingLevel)
+    main(args)
