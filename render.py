@@ -163,13 +163,13 @@ class Render (object):
             self.resolution = (self.ndi.current_w, self.ndi.current_h)
             self.screen = pygame.display.set_mode(
                 self.resolution,
-                pygame.DOUBLEBUF | pygame.FULLSCREEN | pygame.HWSURFACE
+                pygame.FULLSCREEN | pygame.HWSURFACE
             )
         else:
             self.resolution = RESOLUTION
             self.screen = pygame.display.set_mode(
                 self.resolution,
-                pygame.DOUBLEBUF | pygame.HWSURFACE
+                pygame.HWSURFACE
             )
 
         self.display_info = pygame.display.Info()
