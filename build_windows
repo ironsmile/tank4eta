@@ -1,2 +1,5 @@
-pyinstaller.exe --add-data 'data;data' -n tank4eta --noconsole -i .\etc\icon.ico .\app.py
-
+#!/usr/bin/env bash
+# When using cmd.exe one should run the following:
+# pyinstaller.exe --add-data 'data;data' -n tank4eta --noconsole -i .\etc\icon.ico .\app.py
+# When using saner command line like git-bash or wfl use the following:
+pyinstaller --add-data 'data;data' -n tank4eta --noconsole -i ./etc/icon.ico ./app.py
