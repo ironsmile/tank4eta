@@ -108,5 +108,5 @@ class FullSizeExplosion(Animation):
 class PanzerTankMovement(Animation):
     directory = os.path.join(TEXTURES_DIR, 'panzer')
     _cls_frames = []
-    frame_time = 30
+    frame_time = 20
     _looped = True
