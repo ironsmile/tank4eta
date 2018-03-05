@@ -27,6 +27,10 @@ eventer = EventManager()
 
 def main(args):
     os.chdir(os.path.dirname(os.path.realpath(__file__)))
+
+    # Hint the window manager to put the window in the center of the screen
+    os.putenv('SDL_VIDEO_CENTERED', '1')
+
     pygame.init()
 
     # Ignore mouse motion (greatly reduces resources when not needed)
