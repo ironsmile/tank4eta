@@ -289,4 +289,3 @@ class Map (object):
     def build_grid(self):
         self.grid = Grid(matrix=self._matrix)
         return self.grid
-

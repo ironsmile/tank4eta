@@ -6,6 +6,7 @@ import math
 import random
 
 from stuff_on_map import *
+from animations import BulletExplosion, FullSizeExplosion
 
 
 class World (object):
@@ -25,6 +26,7 @@ class World (object):
         self._visible_terrain = pygame.sprite.RenderUpdates()
         self._all_terrain = pygame.sprite.RenderUpdates()
         self._movable = pygame.sprite.RenderUpdates()
+        self._animations = pygame.sprite.RenderUpdates()
 
     def init(self):
         for player in self.players:
@@ -46,7 +48,11 @@ class World (object):
         bullets = self._bullets
         unpassable = self._all_terrain
 
-        self.map.render.clear([bullets, self._movable])
+        self.map.render.clear([bullets, self._movable, self._animations])
+        for anim in self._animations:
+            if anim.finished:
+                self._animations.remove(anim)
+        self._animations.update(deltat)
 
         players_tanks = []
         alive_enemies = len(self.enemies)
@@ -87,6 +93,11 @@ class World (object):
             bullet.explode_sound()
             bullets.remove(bullet)
 
+            #!TODO: move the explosion at the boundary where the bullet met the obsticle,
+            # not at the bullet center.
+            explsion_animation = BulletExplosion(bullet.rect.center)
+            self._animations.add(explsion_animation)
+
             for collided in collided_with:
                 if collided == bullet:
                     continue
@@ -104,6 +115,8 @@ class World (object):
                     orphan.owner = None
 
                 self._movable.remove(collided)
+                explsion_animation = FullSizeExplosion(collided.rect.center)
+                self._animations.add(explsion_animation)
 
                 if isinstance(collided, EnemyTank):
                     self.enemies.remove(collided)
@@ -149,7 +162,7 @@ class World (object):
                     break
 
 
-        self._drawables = [self._movable, bullets]
+        self._drawables = [self._movable, bullets, self._animations]
         return GAME_CONTINUE
 
     def spawn_enemy(self):

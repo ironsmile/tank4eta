@@ -1,0 +1,85 @@
+#!/usr/bin/env python
+#-*- coding: utf8 -*-
+
+import os
+import glob
+from objects import Object
+from locals import TEXTURES_DIR
+
+
+class AnimationException(Exception):
+    pass
+
+
+class Animation(Object):
+    passable = True
+    movable = True
+    frames_count = 0
+    frame_time = 40  # ms
+    directory = None
+    texture_loader = None
+
+    def __init__(self, position):
+        Object.__init__(self)
+        self.frame = 0
+        self._position = position
+        self.load_frame()
+        self._finished = False
+        self._looped = False
+        self._current_frame_time = 0
+
+    def update(self, deltat):
+        if self._finished:
+            return
+        self._current_frame_time += deltat
+        if self._current_frame_time < self.frame_time:
+            return
+        self.frame += 1
+        if self.frame >= self.frames_count:
+            if self._looped:
+                self.frame = 0
+            else:
+                self._finished = True
+                return
+        self._current_frame_time -= self.frame_time
+        self.load_frame()
+
+    def load_frame(self):
+        self.image = self.frames[self.frame]
+        self.rect = self.image.get_rect()
+        self.rect.center = self._position
+
+    @classmethod
+    def load_animation(cls, texture_loader):
+        if cls.directory is None:
+            raise AnimationException(
+                'Animation of class {} does not have frams directory'.
+                format(cls))
+
+        cls.texture_loader = texture_loader
+
+        images = glob.glob(os.path.join(cls.directory, '*.png'))
+        images.sort()
+
+        cls.frames_count = len(images)
+        if cls.frames_count < 1:
+            raise AnimationException('No images found for animation')
+
+        for image in images:
+            cls.frames.append(cls.texture_loader.load_texture(image))
+
+    @property
+    def finished(self):
+        return self._finished
+
+
+class BulletExplosion(Animation):
+    directory = os.path.join(TEXTURES_DIR, 'animation_bullet_explosion')
+    frames = []
+    frame_time = 30
+
+
+class FullSizeExplosion(Animation):
+    directory = os.path.join(TEXTURES_DIR, 'animation_full_explosion')
+    frames = []
+    frame_time = 40
