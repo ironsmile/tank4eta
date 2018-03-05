@@ -8,7 +8,7 @@ from objects import *
 from pygame.locals import *
 from locals import *
 from utils import *
-from animations import PanzerTankMovement, BasicTankMovement
+from animations import PanzerTankMovement, BasicTankMovement, EnemyOneMovement, EnemyTwoMovement
 
 
 class BasicTank(MovableObject):
@@ -33,6 +33,13 @@ class BasicTank(MovableObject):
 
     def update(self, deltat):
         self.fire_timeout += deltat
+
+        if self.direction != DIRECTION_NONE:
+            self._move_animation.play()
+
+        self._move_animation.update(deltat)
+        self.image = self._move_animation.current_frame()
+
         MovableObject.update(self, deltat)
 
     def is_facing(self, world_map, obj):
@@ -63,6 +70,22 @@ class BasicTank(MovableObject):
     def _fire(self):
         self.fire()
 
+    def calculate_images(self):
+        self._move_animations = {
+            DIRECTION_DOWN: self._move_animation,
+            DIRECTION_LEFT: self._move_animation.rotate(270),
+            DIRECTION_UP: self._move_animation.rotate(180),
+            DIRECTION_RIGHT: self._move_animation.rotate(90),
+        }
+
+    def rotate(self, direction):
+        self._move_animation = self._move_animations[direction]
+        self.image = self._move_animation.current_frame()
+
+    def stop(self):
+        self._move_animation.stop()
+        MovableObject.stop(self)
+
 
 class EnemyTank(BasicTank):
 
@@ -71,7 +94,12 @@ class EnemyTank(BasicTank):
 
     def __init__(self, position, texture_loader):
         num = random.randint(1, 2)
-        self.image = texture_path("enemy-%d.png" % num)
+        looks = {
+            1: EnemyOneMovement,
+            2: EnemyTwoMovement,
+        }
+        self._move_animation = looks[num](position)
+        self.image = self._move_animation.current_frame()
         BasicTank.__init__(self, position, texture_loader)
         if EnemyTank.explosion_sound is None:
             path = sound_path('explosion_enemy.wav')
@@ -172,34 +200,15 @@ class Tank(BasicTank):
             self.event_map[event]()
 
     def stop(self):
-        MovableObject.stop(self)
+        BasicTank.stop(self)
         self.engine.stop()
         self.engine_working = False
-        self._move_animation.stop()
 
     def update(self, delta):
         if self.direction != DIRECTION_NONE and not self.engine_working:
             self.engine.play(loops=-1)
             self.engine_working = True
-
-        if self.direction != DIRECTION_NONE:
-            self._move_animation.play()
-
-        MovableObject.update(self, delta)
-        self._move_animation.update(delta)
-        self.image = self._move_animation.current_frame()
-
-    def calculate_images(self):
-        self._move_animations = {
-            DIRECTION_DOWN: self._move_animation,
-            DIRECTION_LEFT: self._move_animation.rotate(270),
-            DIRECTION_UP: self._move_animation.rotate(180),
-            DIRECTION_RIGHT: self._move_animation.rotate(90),
-        }
-
-    def rotate(self, direction):
-        self._move_animation = self._move_animations[direction]
-        self.image = self._move_animation.current_frame()
+        BasicTank.update(self, delta)
 
 
 class Bullet(MovableObject):
