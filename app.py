@@ -175,6 +175,7 @@ def game_loop(render, players_count, map_name):
     BulletExplosion.load_animation(texture_loader)
     FullSizeExplosion.load_animation(texture_loader)
     PanzerTankMovement.load_animation(texture_loader)
+    BasicTankMovement.load_animation(texture_loader)
 
     players = []
 

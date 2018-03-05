@@ -8,7 +8,7 @@ from objects import *
 from pygame.locals import *
 from locals import *
 from utils import *
-from animations import PanzerTankMovement
+from animations import PanzerTankMovement, BasicTankMovement
 
 
 class BasicTank(MovableObject):
@@ -134,16 +134,20 @@ class Tank(BasicTank):
 
     def __init__(self, position, texture_loader):
         global _player_tank_number
-        num = (_player_tank_number % 3) + 1
+        num = (_player_tank_number % 2) + 1
         _player_tank_number += 1
 
         sounds = {
             1: 'didi_engine_01.wav',
             2: 'doycho.wav',
-            3: 'didi_engine_01.wav',
         }
 
-        self._move_animation = PanzerTankMovement(position)
+        looks = {
+            1: PanzerTankMovement,
+            2: BasicTankMovement,
+        }
+
+        self._move_animation = looks[num](position)
         self.image = self._move_animation.current_frame()
         self.engine = pygame.mixer.Sound(sound_path(sounds[num]))
         self.engine_working = False

@@ -15,7 +15,6 @@ class AnimationException(Exception):
 class Animation(Object):
     passable = True
     movable = True
-    frames_count = 0
     frame_time = 40  # ms
     directory = None
     texture_loader = None
@@ -27,9 +26,10 @@ class Animation(Object):
         self.frame = 0
         self._position = position
         self.frames = self._cls_frames[:]
-        self.load_frame()
-        self._finished = False
+        self.frames_count = len(self.frames)
         self._current_frame_time = 0
+        self._finished = False
+        self.load_frame()
 
     def update(self, deltat):
         if self._finished:
@@ -43,6 +43,7 @@ class Animation(Object):
                 self.frame = 0
             else:
                 self._finished = True
+                self.frame -= self.frames_count - 1
                 return
         self._current_frame_time -= self.frame_time
         self.load_frame()
@@ -53,6 +54,9 @@ class Animation(Object):
         self.rect.center = self._position
 
     def rotate(self, degrees):
+        '''
+            Returns a rotated animation from this one.
+        '''
         new_frames = {}
         for ind, frame in enumerate(self.frames):
             new_frames[ind] = pygame.transform.rotate(frame, degrees)
@@ -76,13 +80,13 @@ class Animation(Object):
                 'Animation of class {} does not have frams directory'.
                 format(cls))
 
+        cls._cls_frames.clear()
         cls.texture_loader = texture_loader
 
         images = glob.glob(os.path.join(cls.directory, '*.png'))
         images.sort()
 
-        cls.frames_count = len(images)
-        if cls.frames_count < 1:
+        if len(images) < 1:
             raise AnimationException('No images found for animation')
 
         for image in images:
@@ -106,7 +110,14 @@ class FullSizeExplosion(Animation):
 
 
 class PanzerTankMovement(Animation):
-    directory = os.path.join(TEXTURES_DIR, 'panzer')
+    directory = os.path.join(TEXTURES_DIR, 'player-panzer')
+    _cls_frames = []
+    frame_time = 20
+    _looped = True
+
+
+class BasicTankMovement(Animation):
+    directory = os.path.join(TEXTURES_DIR, 'player-basic')
     _cls_frames = []
     frame_time = 20
     _looped = True
