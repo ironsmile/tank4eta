@@ -41,7 +41,22 @@ class World (object):
     def get_end_game_stats(self):
         return "Enemies killed: %d / %d" % (self.enemies_killed, self.enemeis_to_kill)
 
+    def tick_only_animations(self, deltat, events):
+        '''
+            Progress the currently active animations and nothing else.
+        '''
+        self.map.render.clear([self._movable, self._bullets, self._animations])
+        for anim in self._animations:
+            if anim.finished:
+                self._animations.remove(anim)
+        self._animations.update(deltat)
+        self._drawables = [self._movable, self._bullets, self._animations]
+
     def tick(self, deltat, events):
+        '''
+            Progresses the game world forward. This includes moving the game objects, processing
+            events from players, trying for collisions and checking the game objectives.
+        '''
         if self.enemies_killed >= self.enemeis_to_kill:
             return GAME_WON
 
@@ -115,6 +130,11 @@ class World (object):
                 if collided == bullet:
                     continue
                 if isinstance(collided, UnFlag):
+                    self.map.un_flags.remove(collided)
+                    self._visible_terrain.remove(collided)
+                    self.map.render.set_background(self._visible_terrain)
+                    explosion_animation = FullSizeExplosion(collided.rect.center)
+                    self._animations.add(explosion_animation)
                     return GAME_OVER
                 if not isinstance(collided, BasicTank):
                     continue
@@ -179,6 +199,9 @@ class World (object):
 
         self._drawables = [self._movable, bullets, self._animations]
         return GAME_CONTINUE
+
+    def active_animations_count(self):
+        return len(self._animations)
 
     def spawn_enemy(self):
         player_objects = []

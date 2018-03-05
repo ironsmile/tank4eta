@@ -210,6 +210,7 @@ def game_loop(render, players_count, map_name):
     game_world.init()
 
     clock = pygame.time.Clock()
+    end_message = None
 
     while 42:
         deltat = clock.tick(FRAMES)
@@ -219,8 +220,7 @@ def game_loop(render, players_count, map_name):
             pygame.mixer.pause()
             selected = pause_menu(render)
             if selected == PAUSE_MENU_QUIT:
-                stats = game_world.get_end_game_stats()
-                render.draw_end_game_screen("You Gave Up! Why?", stats)
+                end_message = "You Gave Up! Why?"
                 break
             else:
                 render.draw_background()
@@ -230,16 +230,27 @@ def game_loop(render, players_count, map_name):
 
         game_state = game_world.tick(deltat, events)
         if game_state == GAME_OVER:
-            stats = game_world.get_end_game_stats()
-            render.draw_end_game_screen("GAME OVER. You've lost!", stats)
+            end_message = "GAME OVER. You've lost!"
             break
         if game_state == GAME_WON:
-            stats = game_world.get_end_game_stats()
-            render.draw_end_game_screen("Yey! You've won!", stats)
+            end_message = "Yey! You've won!"
             break
         render.update_fps(clock)
         render.draw(game_world.get_drawables())
 
+    for player in players:
+        if player.tank is not None:
+            player.tank.stop()
+
+    while game_world.active_animations_count() > 0:
+        deltat = clock.tick(FRAMES)
+        events = eventer.get_events()
+        game_world.tick_only_animations(deltat, events)
+        render.update_fps(clock)
+        render.draw(game_world.get_drawables())
+
+    stats = game_world.get_end_game_stats()
+    render.draw_end_game_screen(end_message, stats)
     time.sleep(3)
 
 
