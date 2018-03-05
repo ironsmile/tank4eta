@@ -221,6 +221,7 @@ class Bullet(MovableObject):
 
         rx, ry = self.rect.center
         self.rect.center = (rx + diff * dx, ry + diff * dy)
+        self.real_center = self.rect.center
 
     def explode_sound(self):
         self.explosion_sound.play()

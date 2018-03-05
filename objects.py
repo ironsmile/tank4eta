@@ -24,6 +24,7 @@ class MovableObject (Object):
         self.image = self.image_src
         self.rect = self.image.get_rect()
         self.rect.center = position
+        self.real_center = position
         self.direction = DIRECTION_NONE
         self.calculate_images()
         self.set_movement_speed(MOVE_SPEED)
@@ -49,16 +50,18 @@ class MovableObject (Object):
 
     def undo(self):
         self.rect.center = self.previous_position
+        self.real_center = self.rect.center
 
     def change_axis(self, new_axis):
         if new_axis == self.moving_on_axis:
             return
         x, y = self.rect.center
-        self.previous_position = self.rect.center
+        self.previous_position = self.real_center
         if self.moving_on_axis != AXIS_Y:
             self.rect.center = (self.round_position_coord(x), y)
         else:
             self.rect.center = (x, self.round_position_coord(y))
+        self.real_center = self.rect.center
         self.moving_on_axis = new_axis
 
     def round_position_coord(self, num):
@@ -91,11 +94,12 @@ class MovableObject (Object):
         dt = delta / 33.3
 
         if self.direction != DIRECTION_NONE:
-            x, y = self.rect.center
+            x, y = self.real_center
             dx, dy = self.movements[self.direction]
-            dx = round(self.texture_loader.scale_to_screen(dx * dt))
-            dy = round(self.texture_loader.scale_to_screen(dy * dt))
-            self.rect.center = (x + dx, y + dy)
+            dx = self.texture_loader.scale_to_screen(dx) * dt
+            dy = self.texture_loader.scale_to_screen(dy) * dt
+            self.real_center = (x + dx, y + dy)
+            self.rect.center = (round(self.real_center[0]), round(self.real_center[1]))
 
     def calculate_direction(self, x, y):
         '''
