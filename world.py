@@ -93,10 +93,23 @@ class World (object):
             bullet.explode_sound()
             bullets.remove(bullet)
 
-            #!TODO: move the explosion at the boundary where the bullet met the obsticle,
-            # not at the bullet center.
-            explsion_animation = BulletExplosion(bullet.rect.center)
-            self._animations.add(explsion_animation)
+            non_self = None
+            for obj in collided_with:
+                if obj is bullet:
+                    continue
+                non_self = obj
+
+            ex, ey = bullet.rect.center
+            if bullet.direction == DIRECTION_LEFT:
+                ex = non_self.rect.centerx + non_self.rect.width * 0.5
+            if bullet.direction == DIRECTION_RIGHT:
+                ex = non_self.rect.centerx - non_self.rect.width * 0.5
+            if bullet.direction == DIRECTION_UP:
+                ey = non_self.rect.centery + non_self.rect.height * 0.5
+            if bullet.direction == DIRECTION_DOWN:
+                ey = non_self.rect.centery - non_self.rect.height * 0.5
+            explosion_animation = BulletExplosion((ex, ey))
+            self._animations.add(explosion_animation)
 
             for collided in collided_with:
                 if collided == bullet:
@@ -115,8 +128,8 @@ class World (object):
                     orphan.owner = None
 
                 self._movable.remove(collided)
-                explsion_animation = FullSizeExplosion(collided.rect.center)
-                self._animations.add(explsion_animation)
+                explosion_animation = FullSizeExplosion(collided.rect.center)
+                self._animations.add(explosion_animation)
 
                 if isinstance(collided, EnemyTank):
                     self.enemies.remove(collided)

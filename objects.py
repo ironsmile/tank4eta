@@ -13,6 +13,19 @@ class Object (pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
 
+    def position_front_of(self, other, direction):
+        dx, dy = other.movements[direction]
+        if dx:
+            dx = dx / abs(dx)
+            diff = other.rect.width / 2 + self.rect.width / 2 + 1
+        if dy:
+            dy = dy / abs(dy)
+            diff = other.rect.height / 2 + self.rect.height / 2 + 1
+
+        rx, ry = self.rect.center
+        self.rect.center = (rx + diff * dx, ry + diff * dy)
+        self.real_center = self.rect.center
+
 
 class MovableObject (Object):
     passable = False

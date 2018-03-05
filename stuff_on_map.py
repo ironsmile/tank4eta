@@ -200,7 +200,7 @@ class Bullet(MovableObject):
         self.move(self.direction)
         self.rect = self.image.get_rect()
         self.rect.center = owner.rect.center
-        self.position_front_of_owner()
+        self.position_front_of(self.owner, self.owner.facing)
 
         if Bullet.fire_sound is None:
             Bullet.fire_sound = pygame.mixer.Sound(sound_path('didi_gunfire_01.wav'))
@@ -209,19 +209,6 @@ class Bullet(MovableObject):
             Bullet.explosion_sound = pygame.mixer.Sound(sound_path('didi_explode_01.wav'))
 
         self.fire_sound.play(loops=0, maxtime=0, fade_ms=0)
-
-    def position_front_of_owner(self):
-        dx, dy = self.owner.movements[self.owner.facing]
-        if dx:
-            dx = dx / abs(dx)
-            diff = self.owner.rect.width / 2 + self.rect.width / 2 + 1
-        if dy:
-            dy = dy / abs(dy)
-            diff = self.owner.rect.height / 2 + self.rect.height / 2 + 1
-
-        rx, ry = self.rect.center
-        self.rect.center = (rx + diff * dx, ry + diff * dy)
-        self.real_center = self.rect.center
 
     def explode_sound(self):
         self.explosion_sound.play()
