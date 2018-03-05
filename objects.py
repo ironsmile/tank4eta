@@ -33,7 +33,10 @@ class MovableObject (Object):
 
     def __init__(self, image, position, texture_loader):
         Object.__init__(self)
-        self.image_src = texture_loader.load_texture(image)
+        if isinstance(image, pygame.Surface):
+            self.image_src = image
+        else:
+            self.image_src = texture_loader.load_texture(image)
         self.image = self.image_src
         self.rect = self.image.get_rect()
         self.rect.center = position
@@ -96,6 +99,9 @@ class MovableObject (Object):
 
         self.direction = direction
         self.facing = direction
+        self.rotate(direction)
+
+    def rotate(self, direction):
         self.image = self.images[direction]
 
     def stop(self):

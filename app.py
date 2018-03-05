@@ -10,7 +10,7 @@ from render import Render
 from event_manage import EventManager
 from menu import cMenu, EVENT_CHANGE_STATE
 from fonts import serif_normal
-from animations import BulletExplosion, FullSizeExplosion
+from animations import BulletExplosion, FullSizeExplosion, PanzerTankMovement
 import os
 import sys
 import glob
@@ -174,6 +174,7 @@ def game_loop(render, players_count, map_name):
 
     BulletExplosion.load_animation(texture_loader)
     FullSizeExplosion.load_animation(texture_loader)
+    PanzerTankMovement.load_animation(texture_loader)
 
     players = []
 

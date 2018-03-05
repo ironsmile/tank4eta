@@ -8,6 +8,7 @@ from objects import *
 from pygame.locals import *
 from locals import *
 from utils import *
+from animations import PanzerTankMovement
 
 
 class BasicTank(MovableObject):
@@ -142,14 +143,8 @@ class Tank(BasicTank):
             3: 'didi_engine_01.wav',
         }
 
-        textures = {
-            1: 'panzer.png',
-            2: 'tank-of-love.png',
-            3: 'tank.png',
-        }
-
-        texture_image = textures[num]
-        self.image = texture_path(texture_image)
+        self._move_animation = PanzerTankMovement(position)
+        self.image = self._move_animation.current_frame()
         self.engine = pygame.mixer.Sound(sound_path(sounds[num]))
         self.engine_working = False
         BasicTank.__init__(self, position, texture_loader)
@@ -176,13 +171,31 @@ class Tank(BasicTank):
         MovableObject.stop(self)
         self.engine.stop()
         self.engine_working = False
+        self._move_animation.stop()
 
-    def update(self, delta=None):
+    def update(self, delta):
         if self.direction != DIRECTION_NONE and not self.engine_working:
             self.engine.play(loops=-1)
             self.engine_working = True
 
+        if self.direction != DIRECTION_NONE:
+            self._move_animation.play()
+
         MovableObject.update(self, delta)
+        self._move_animation.update(delta)
+        self.image = self._move_animation.current_frame()
+
+    def calculate_images(self):
+        self._move_animations = {
+            DIRECTION_DOWN: self._move_animation,
+            DIRECTION_LEFT: self._move_animation.rotate(270),
+            DIRECTION_UP: self._move_animation.rotate(180),
+            DIRECTION_RIGHT: self._move_animation.rotate(90),
+        }
+
+    def rotate(self, direction):
+        self._move_animation = self._move_animations[direction]
+        self.image = self._move_animation.current_frame()
 
 
 class Bullet(MovableObject):

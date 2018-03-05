@@ -3,6 +3,7 @@
 
 import os
 import glob
+import pygame.transform
 from objects import Object
 from locals import TEXTURES_DIR
 
@@ -19,13 +20,15 @@ class Animation(Object):
     directory = None
     texture_loader = None
 
+    _looped = False
+
     def __init__(self, position):
         Object.__init__(self)
         self.frame = 0
         self._position = position
+        self.frames = self._cls_frames[:]
         self.load_frame()
         self._finished = False
-        self._looped = False
         self._current_frame_time = 0
 
     def update(self, deltat):
@@ -49,6 +52,23 @@ class Animation(Object):
         self.rect = self.image.get_rect()
         self.rect.center = self._position
 
+    def rotate(self, degrees):
+        new_frames = {}
+        for ind, frame in enumerate(self.frames):
+            new_frames[ind] = pygame.transform.rotate(frame, degrees)
+        obj = self.__class__(self._position)
+        obj.frames = new_frames
+        return obj
+
+    def current_frame(self):
+        return self.frames[self.frame]
+
+    def stop(self):
+        self._finished = True
+
+    def play(self):
+        self._finished = False
+
     @classmethod
     def load_animation(cls, texture_loader):
         if cls.directory is None:
@@ -66,7 +86,7 @@ class Animation(Object):
             raise AnimationException('No images found for animation')
 
         for image in images:
-            cls.frames.append(cls.texture_loader.load_texture(image))
+            cls._cls_frames.append(cls.texture_loader.load_texture(image))
 
     @property
     def finished(self):
@@ -75,11 +95,18 @@ class Animation(Object):
 
 class BulletExplosion(Animation):
     directory = os.path.join(TEXTURES_DIR, 'animation_bullet_explosion')
-    frames = []
+    _cls_frames = []
     frame_time = 30
 
 
 class FullSizeExplosion(Animation):
     directory = os.path.join(TEXTURES_DIR, 'animation_full_explosion')
-    frames = []
+    _cls_frames = []
     frame_time = 40
+
+
+class PanzerTankMovement(Animation):
+    directory = os.path.join(TEXTURES_DIR, 'panzer')
+    _cls_frames = []
+    frame_time = 30
+    _looped = True
