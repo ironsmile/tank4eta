@@ -141,7 +141,7 @@ class Map (object):
         if in_box_coef < 0.25 and grid_ind > 0:
             grid_ind -= 1
 
-        if in_box_coef > 0.75 and grid_ind < (boxes_count * 2 - 1):
+        if in_box_coef >= 0.75 and grid_ind < (boxes_count * 2 - 1):
             grid_ind += 1
 
         return grid_ind
