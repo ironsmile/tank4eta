@@ -119,19 +119,19 @@ class PanzerTankMovement(Animation):
 class BasicTankMovement(Animation):
     directory = os.path.join(TEXTURES_DIR, 'player-basic')
     _cls_frames = []
-    frame_time = 20
+    frame_time = 30
     _looped = True
 
 
 class EnemyOneMovement(Animation):
     directory = os.path.join(TEXTURES_DIR, 'enemy-1')
     _cls_frames = []
-    frame_time = 20
+    frame_time = 30
     _looped = True
 
 
 class EnemyTwoMovement(Animation):
     directory = os.path.join(TEXTURES_DIR, 'enemy-2')
     _cls_frames = []
-    frame_time = 20
+    frame_time = 30
     _looped = True
