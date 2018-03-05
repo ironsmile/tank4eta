@@ -166,8 +166,8 @@ class Map (object):
         the screen.
         '''
         bs = self.scaled_box_size
-        wx = ((x + 1) * bs - round(bs / 2))
-        wy = ((y + 1) * bs - round(bs / 2))
+        wx = ((x + 1) * bs - round(bs * 0.5))
+        wy = ((y + 1) * bs - round(bs * 0.5))
         return (wx, wy)
 
     def load(self, map_file):
