@@ -133,10 +133,12 @@ class World (object):
 
                 if isinstance(collided, EnemyTank):
                     self.enemies.remove(collided)
+                    collided.stop()
                     collided.explode_sound()
                     self.enemies_killed += 1
                 if isinstance(collided, Tank):
                     tanks.remove(collided)
+                    collided.stop()
                     for player in self.players:
                         if player.tank is collided:
                             player.tank.explode_sound()
