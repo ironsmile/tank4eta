@@ -14,6 +14,7 @@ import os
 import sys
 import glob
 import world
+import world_map
 import pygame
 import argparse
 import pygame.joystick
@@ -167,7 +168,7 @@ def main_menu(render, available_maps, selected):
 
 def game_loop(render, players_count, map_name):
     texture_loader = textures.Loader()
-    play_map = world.Map(map_path(map_name), render, texture_loader)
+    play_map = world_map.Map(map_path(map_name), render, texture_loader)
     play_map.build_grid()
 
     players = []
