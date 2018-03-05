@@ -173,10 +173,9 @@ class Map (object):
     def load(self, map_file):
         '''
         Loads a map file and calculates the game and screen world resolutions.
-        !TODO: add try+catch, stat of map file for 0 bytes, too large
         '''
         mapf = open(map_file, 'r')
-        self.map_str = mapf.read()
+        self.map_str = mapf.read(100 * 1024)
         mapf.close()
 
         y = 1
