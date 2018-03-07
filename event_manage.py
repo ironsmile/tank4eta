@@ -25,7 +25,8 @@ class EventManager (object):
                 pygame.quit()
                 sys.exit(0)
 
-            if event.type == pygame.KEYDOWN and event.key in [K_ESCAPE, K_PAUSE]:
+            if event.type == pygame.KEYDOWN and event.key in [K_ESCAPE, K_PAUSE] or \
+                event.type == pygame.JOYBUTTONDOWN and event.button == 5:
                 self._stopped = True
                 continue
 

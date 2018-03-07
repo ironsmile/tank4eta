@@ -34,6 +34,9 @@ def main(args):
     os.putenv('SDL_VIDEO_CENTERED', '1')
 
     pygame.init()
+    pygame.joystick.init()
+    for i in range(pygame.joystick.get_count()):
+        pygame.joystick.Joystick(i).init()
 
     # Ignore mouse motion (greatly reduces resources when not needed)
     pygame.event.set_blocked(pygame.MOUSEMOTION)
@@ -136,13 +139,13 @@ def main_menu(render, available_maps, selected):
             selected['toggle_fullscreen'] = True
             break
 
-        if e.type == KEYUP and e.key == K_ESCAPE and back_menu is not None:
+        if is_back_button(e) and back_menu is not None:
             state = OPTION_DEFAULT_STATE
 
         # Update the menu, based on which "state" we are in - When using the menu
         # in a more complex program, definitely make the states global variables
         # so that you can refer to them by a name
-        if e.type == pygame.KEYDOWN or e.type == EVENT_CHANGE_STATE:
+        if is_menu_event(e):
             if state == OPTION_DEFAULT_STATE:
                 back_menu = None
                 changed_regions_list, state = menu.update(e, state)
@@ -187,12 +190,10 @@ def game_loop(render, players_count, map_name):
         players.append(player)
 
     keyboard_controllers = controllers.keyboard_controls()
-    pygame.joystick.init()
     for i in range(pygame.joystick.get_count()):
         if i >= len(players):
             break
         j = pygame.joystick.Joystick(i)
-        j.init()
         players[i].controller = controllers.Gamepad(j)
 
     for player in players:
@@ -290,7 +291,7 @@ def pause_menu(render):
         # Get the next event
         e = eventer.wait()
 
-        if e.type == pygame.KEYDOWN or e.type == EVENT_CHANGE_STATE:
+        if is_menu_event(e):
             if state == OPTION_DEFAULT_STATE:
                 changed_regions_list, state = menu.update(e, state)
             elif state == PAUSE_MENU_RESUME:
@@ -299,6 +300,21 @@ def pause_menu(render):
                 return PAUSE_MENU_QUIT
 
         pygame.display.update(changed_regions_list)
+
+
+def is_back_button(e):
+    return (e.type == KEYUP and e.key == K_ESCAPE) or \
+            (e.type == pygame.JOYBUTTONDOWN and e.button == 1)
+
+
+def is_menu_event(e):
+    motion_events_types = [
+        pygame.KEYDOWN,
+        pygame.JOYHATMOTION,
+        pygame.JOYBUTTONDOWN,
+        pygame.JOYAXISMOTION
+    ]
+    return e.type in motion_events_types or e.type == EVENT_CHANGE_STATE
 
 
 if __name__ == '__main__':

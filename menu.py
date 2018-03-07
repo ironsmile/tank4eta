@@ -76,6 +76,7 @@
 import logging
 import pygame
 import fonts
+from locals import JOY_CENTERED, JOY_UP, JOY_DOWN, JOY_RIGHT, JOY_LEFT
 
 
 #-------------------------------------------------------------------------------
@@ -602,33 +603,38 @@ class cMenu:
       s = self.selection
       n = self.change_number
 
-      if e.key == pygame.K_DOWN:
+      dead_zone = 0.5
+
+      if (e.type == pygame.KEYDOWN and e.key == pygame.K_DOWN) or \
+            (e.type == pygame.JOYHATMOTION and e.value == JOY_DOWN) or \
+            (e.type == pygame.JOYAXISMOTION and e.axis == 1 and e.value > dead_zone):
          if (o == 'vertical') and ((s + 1) % n != 0):
             self.selection += 1
          elif o == 'horizontal':
             self.selection += n
-      elif e.key == pygame.K_UP:
+      elif (e.type == pygame.KEYDOWN and e.key == pygame.K_UP) or \
+            (e.type == pygame.JOYHATMOTION and e.value == JOY_UP) or \
+            (e.type == pygame.JOYAXISMOTION and e.axis == 1 and e.value < -dead_zone):
          if (o == 'vertical') and ((s) % n != 0):
             self.selection -= 1
          elif o == 'horizontal':
             self.selection -= n
-      elif e.key == pygame.K_RIGHT:
+      elif (e.type == pygame.KEYDOWN and e.key == pygame.K_RIGHT) or \
+            (e.type == pygame.JOYHATMOTION and e.value == JOY_RIGHT) or \
+            (e.type == pygame.JOYAXISMOTION and e.axis == 0 and e.value > dead_zone):
          if o == 'vertical':
             self.selection += n
          elif (o == 'horizontal') and ((s + 1) % n != 0):
             self.selection += 1
-      elif e.key == pygame.K_LEFT:
+      elif (e.type == pygame.KEYDOWN and e.key == pygame.K_LEFT) or \
+            (e.type == pygame.JOYHATMOTION and e.value == JOY_LEFT) or \
+            (e.type == pygame.JOYAXISMOTION and e.axis == 0 and e.value < -dead_zone):
          if o == 'vertical':
             self.selection -= n
          elif (o == 'horizontal') and ((s) % n != 0):
             self.selection -= 1
-      elif e.key == pygame.K_r:
-         original_contained_rect = self.remove_buttons([s])
-         if self.selection -1 >= 0:
-            self.selection -= 1
-            self.selection_prev -= 1
-         redraw_full_menu = True
-      elif e.key == pygame.K_RETURN:
+      elif (e.type == pygame.KEYDOWN and e.key == pygame.K_RETURN) or \
+            (e.type == pygame.JOYBUTTONDOWN and e.button == 0):
          return [None], self.menu_items[s]['state']
 
       if self.selection >= len(self.menu_items) or self.selection < 0:

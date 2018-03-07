@@ -22,6 +22,10 @@ class Gamepad (object):
                 event_queue.append(EVENT_FIRE)
                 continue
 
+            # The dead zone for analog inputs. Everything below this value would
+            # be considered a random noise.
+            dead_zone = 0.5
+
             if event.type == JOYHATMOTION:
                 if event.value == JOY_CENTERED:
                     event_queue.append(EVENT_STOP)
@@ -34,20 +38,20 @@ class Gamepad (object):
                 elif event.value == JOY_DOWN:
                     event_queue.append(EVENT_MOVE_DOWN)
             elif event.type == JOYAXISMOTION:
-                if event.value > -0.05 and event.value < 0.05 and \
+                if event.value > -dead_zone and event.value < dead_zone and \
                         event.axis == self.moving_on_axis:
                     event_queue.append(EVENT_STOP)
                     self.moving_on_axis = None
-                elif event.axis == 1 and event.value < -0.05:
+                elif event.axis == 1 and event.value < -dead_zone:
                     event_queue.append(EVENT_MOVE_UP)
                     self.moving_on_axis = event.axis
-                elif event.axis == 1 and event.value > 0.05:
+                elif event.axis == 1 and event.value > dead_zone:
                     event_queue.append(EVENT_MOVE_DOWN)
                     self.moving_on_axis = event.axis
-                elif event.axis == 0 and event.value < -0.05:
+                elif event.axis == 0 and event.value < -dead_zone:
                     event_queue.append(EVENT_MOVE_LEFT)
                     self.moving_on_axis = event.axis
-                elif event.axis == 0 and event.value > 0.05:
+                elif event.axis == 0 and event.value > dead_zone:
                     event_queue.append(EVENT_MOVE_RIGHT)
                     self.moving_on_axis = event.axis
 
