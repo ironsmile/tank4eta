@@ -23,6 +23,7 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 SILVER = (160, 160, 160)
 YELLOW = (255, 255, 0)
+ORANGE = (252, 158, 27)
 
 MAPS_DIR = os.path.join('data', 'maps')
 SOUNDS_DIR = os.path.join('data', 'sounds')

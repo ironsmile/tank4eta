@@ -15,6 +15,7 @@ import os
 import sys
 import glob
 import world
+import config
 import world_map
 import pygame
 import argparse
@@ -23,12 +24,28 @@ import controllers
 import textures
 import logging
 import time
+import gettext
 
+gettext.install('tank4eta')
 eventer = EventManager()
 
 
 def main(args):
     os.chdir(os.path.dirname(os.path.realpath(__file__)))
+
+    desired_lang = os.environ.get('LANGUAGE', 'en')[:2]
+    cfg = config.Parse()
+
+    if 'language' in cfg:
+        desired_lang = cfg['language']
+
+    lang = gettext.translation(
+        'tank4eta',
+        localedir='data/lang',
+        languages=[desired_lang],
+        fallback=True
+    )
+    lang.install()
 
     # Hint the window manager to put the window in the center of the screen
     os.putenv('SDL_VIDEO_CENTERED', '1')
@@ -52,7 +69,7 @@ def main(args):
         'toggle_fullscreen': False
     }
 
-    render = Render()
+    render = Render(fullscreen=cfg.get('fullscreen', False))
 
     if args.debug:
         render.show_fps = True
@@ -87,22 +104,16 @@ def main_menu(render, available_maps, selected):
     render.clear_screen()
 
     menu = cMenu(50, 50, 20, 5, 'vertical', 100, render.screen, [
-        ('1 player', OPTION_ONE_PLAYER, None),
-        ('2 players', OPTION_TWO_PLAYERS, None),
-        ('Exit', OPTION_EXIT, None),
+        (_('1 player'), OPTION_ONE_PLAYER, None),
+        (_('2 players'), OPTION_TWO_PLAYERS, None),
+        (_('Exit'), OPTION_EXIT, None),
     ])
-    menu.set_font(serif_normal)
-    menu.set_center(True, True)
-    menu.set_alignment('center', 'center')
-    menu.set_refresh_whole_surface_on_load(True)
+    configure_menu(menu)
 
     mapSelectMenu = cMenu(50, 50, 20, 5, 'vertical', 100, render.screen, list(zip(
         map_names, available_maps, [None] * len(available_maps)
     )))
-    mapSelectMenu.set_font(serif_normal)
-    mapSelectMenu.set_center(True, True)
-    mapSelectMenu.set_alignment('center', 'center')
-    mapSelectMenu.set_refresh_whole_surface_on_load(True)
+    configure_menu(mapSelectMenu)
 
     # Create the state variables (make them different so that the user event is
     # triggered at the start of the "while 1" loop so that the initial display
@@ -130,7 +141,7 @@ def main_menu(render, available_maps, selected):
             render.clear_screen()
 
             if state in [OPTION_ONE_PLAYER, OPTION_TWO_PLAYERS]:
-                render.show_menu_instruction('Select Level')
+                render.show_menu_instruction(_('Select Level'))
 
         # Get the next event
         e = eventer.wait()
@@ -186,7 +197,7 @@ def game_loop(render, players_count, map_name):
 
     for i in range(players_count):
         player = Player()
-        player.name = 'Player %d' % i
+        player.name = _('Player %d') % i
         players.append(player)
 
     keyboard_controllers = controllers.keyboard_controls()
@@ -209,7 +220,7 @@ def game_loop(render, players_count, map_name):
 
     for player in players:
         if player.tank is None:
-            raise Exception("Not enough start points for players!")
+            raise Exception(_("Not enough start points for players!"))
 
     game_world = world.World(play_map, players, texture_loader)
     game_world.init()
@@ -225,7 +236,7 @@ def game_loop(render, players_count, map_name):
             pygame.mixer.pause()
             selected = pause_menu(render)
             if selected == PAUSE_MENU_QUIT:
-                end_message = "You Gave Up! Why?"
+                end_message = _("You Gave Up! Why?")
                 break
             else:
                 render.draw_background()
@@ -235,10 +246,10 @@ def game_loop(render, players_count, map_name):
 
         game_state = game_world.tick(deltat, events)
         if game_state == GAME_OVER:
-            end_message = "GAME OVER. You've lost!"
+            end_message = _("GAME OVER. You've lost!")
             break
         if game_state == GAME_WON:
-            end_message = "Yey! You've won!"
+            end_message = _("Yey! You've won!")
             break
         render.update_fps(clock)
         render.draw(game_world.get_drawables())
@@ -263,16 +274,13 @@ def pause_menu(render):
     OPTION_DEFAULT_STATE = 0
 
     menu = cMenu(50, 50, 20, 5, 'vertical', 100, render.screen, [
-        ('Resume', PAUSE_MENU_RESUME, None),
-        ('Quit Game', PAUSE_MENU_QUIT, None),
+        (_('Resume'), PAUSE_MENU_RESUME, None),
+        (_('Quit Game'), PAUSE_MENU_QUIT, None),
     ])
-    menu.set_font(serif_normal)
-    menu.set_center(True, True)
-    menu.set_alignment('center', 'center')
-    menu.set_refresh_whole_surface_on_load(True)
+    configure_menu(menu)
 
     # cleanup the display from any leftover stuff
-    render.show_menu_instruction('Game Paused')
+    render.show_menu_instruction(_('Game Paused'))
 
     state = OPTION_DEFAULT_STATE
     prev_state = PAUSE_MENU_RESUME
@@ -315,6 +323,14 @@ def is_menu_event(e):
         pygame.JOYAXISMOTION
     ]
     return e.type in motion_events_types or e.type == EVENT_CHANGE_STATE
+
+
+def configure_menu(menu):
+    menu.set_font(serif_normal)
+    menu.set_center(True, True)
+    menu.set_alignment('center', 'center')
+    menu.set_refresh_whole_surface_on_load(True)
+    menu.set_selected_color(ORANGE)
 
 
 if __name__ == '__main__':

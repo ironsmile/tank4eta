@@ -1,0 +1,69 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2018-03-07 23:30+EET\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+#: app.py:92
+msgid "1 player"
+msgstr ""
+
+#: app.py:93
+msgid "2 players"
+msgstr ""
+
+#: app.py:94
+msgid "Exit"
+msgstr ""
+
+#: app.py:135
+msgid "Select Level"
+msgstr ""
+
+#: app.py:191
+msgid "Player %d"
+msgstr ""
+
+#: app.py:214
+msgid "Not enough start points for players!"
+msgstr ""
+
+#: app.py:230
+msgid "You Gave Up! Why?"
+msgstr ""
+
+#: app.py:240
+msgid "GAME OVER. You've lost!"
+msgstr ""
+
+#: app.py:243
+msgid "Yey! You've won!"
+msgstr ""
+
+#: app.py:268
+msgid "Resume"
+msgstr ""
+
+#: app.py:269
+msgid "Quit Game"
+msgstr ""
+
+#: app.py:277
+msgid "Game Paused"
+msgstr ""
+
+#: world.py:42
+msgid "Enemies killed: %d / %d"
+msgstr ""
+

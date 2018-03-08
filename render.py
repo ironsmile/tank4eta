@@ -10,15 +10,14 @@ import fonts
 from locals import *
 
 RESOLUTION = (1024, 768)
-FULLSCREEN = False
 
 
 class Render (object):
 
-    def __init__(self):
+    def __init__(self, fullscreen=False):
         pygame.display.init()
         pygame.display.set_caption("tank4eta")
-        self.fullscreen = FULLSCREEN
+        self.fullscreen = fullscreen
         self.should_flip = False
         self.show_fps = False
         self.fps = 0

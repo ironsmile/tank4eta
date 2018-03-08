@@ -1,0 +1,70 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: 2018-03-08 00:18+0200\n"
+"PO-Revision-Date: 2018-03-08 00:29+0200\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+"X-Generator: Poedit 1.8.7.1\n"
+"Last-Translator: \n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"Language: ja\n"
+
+#: app.py:92
+msgid "1 player"
+msgstr "一選手"
+
+#: app.py:93
+msgid "2 players"
+msgstr "二選手"
+
+#: app.py:94
+msgid "Exit"
+msgstr "出口"
+
+#: app.py:135
+msgid "Select Level"
+msgstr "選び出てマップ"
+
+#: app.py:191
+msgid "Player %d"
+msgstr "選手 %d"
+
+#: app.py:214
+msgid "Not enough start points for players!"
+msgstr ""
+
+#: app.py:230
+msgid "You Gave Up! Why?"
+msgstr ""
+
+#: app.py:240
+msgid "GAME OVER. You've lost!"
+msgstr ""
+
+#: app.py:243
+msgid "Yey! You've won!"
+msgstr ""
+
+#: app.py:268
+msgid "Resume"
+msgstr " レジューム "
+
+#: app.py:269
+msgid "Quit Game"
+msgstr "辞める"
+
+#: app.py:277
+msgid "Game Paused"
+msgstr "懸"
+
+#: world.py:42
+msgid "Enemies killed: %d / %d"
+msgstr "殺された敵: %d / %d"

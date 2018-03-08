@@ -9,3 +9,4 @@ build/*
 app.spec
 tank4eta.spec
 profiles/*
+config.json

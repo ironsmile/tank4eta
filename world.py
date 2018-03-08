@@ -39,7 +39,7 @@ class World (object):
             self.un_flags.append(flag)
 
     def get_end_game_stats(self):
-        return "Enemies killed: %d / %d" % (self.enemies_killed, self.enemeis_to_kill)
+        return _("Enemies killed: %d / %d") % (self.enemies_killed, self.enemeis_to_kill)
 
     def tick_only_animations(self, deltat, events):
         '''
