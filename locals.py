@@ -24,6 +24,7 @@ WHITE = (255, 255, 255)
 SILVER = (160, 160, 160)
 YELLOW = (255, 255, 0)
 ORANGE = (252, 158, 27)
+BLUE = (30, 50, 107)
 
 MAPS_DIR = os.path.join('data', 'maps')
 SOUNDS_DIR = os.path.join('data', 'sounds')
@@ -47,9 +48,6 @@ GAME_WON = 1
 GAME_OVER = -1
 
 FONT_SERIF_PATH = os.path.join('data', 'fonts', 'ubuntu', 'Ubuntu-R.ttf')
-
-PAUSE_MENU_QUIT = 1
-PAUSE_MENU_RESUME = 2
 
 
 class Terrain(enum.Enum):
