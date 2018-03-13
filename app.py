@@ -368,7 +368,7 @@ def game_loop(cfg, render, players_count, map_name):
 
     stats = game_world.get_end_game_stats()
     render.draw_end_game_screen(end_message, stats)
-    time.sleep(3)
+    time.sleep(2)
 
 
 class PauseMenu(Object):
