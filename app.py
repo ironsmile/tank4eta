@@ -15,6 +15,7 @@ import controllers
 import fonts
 import gettext
 import glob
+import language
 import logging
 import menu
 import os
@@ -41,7 +42,7 @@ def main(args):
     else:
         cfg['language'] = desired_lang
 
-    select_language(desired_lang)
+    language.select(desired_lang)
 
     # Hint the window manager to put the window in the center of the screen
     os.putenv('SDL_VIDEO_CENTERED', '1')
@@ -83,7 +84,7 @@ def main(args):
             selected['toggle_fullscreen'] = None
             continue
         if selected['language'] is not None:
-            select_language(selected['language'])
+            language.select(selected['language'])
             selected['language'] = None
             continue
         if selected['back_to_main_menu']:
@@ -96,20 +97,6 @@ def main(args):
     render.quit()
     pygame.quit()
     sys.exit(0)
-
-
-def select_language(desired_lang):
-    lang = gettext.translation(
-        'tank4eta',
-        localedir='data/lang',
-        languages=[desired_lang],
-        fallback=True
-    )
-    lang.install()
-    if desired_lang == 'jp':
-        fonts.switch_to_japanese()
-    else:
-        fonts.switch_to_western()
 
 
 def game_loop(cfg, render, players_count, map_name):
