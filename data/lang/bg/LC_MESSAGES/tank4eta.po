@@ -5,66 +5,106 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tank4eta\n"
-"POT-Creation-Date: 2018-03-08 00:10+0200\n"
-"PO-Revision-Date: 2018-03-08 00:11+0200\n"
+"POT-Creation-Date: 2018-03-13 00:21+0200\n"
+"PO-Revision-Date: 2018-03-13 00:21+0200\n"
+"Last-Translator: \n"
 "Language-Team: Doychin Atanasov <ironsmile@gmail.com>\n"
+"Language: bg\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: pygettext.py 1.5\n"
 "X-Generator: Poedit 1.8.7.1\n"
-"Last-Translator: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"Language: bg\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 
-#: app.py:92
-msgid "1 player"
-msgstr "1 играч"
-
-#: app.py:93
-msgid "2 players"
-msgstr "2 играча"
-
-#: app.py:94
-msgid "Exit"
-msgstr "Изход"
-
-#: app.py:135
+#: app.py:130
 msgid "Select Level"
 msgstr "Избери ниво"
 
-#: app.py:191
+#: app.py:132
+msgid "Level:"
+msgstr "Ниво:"
+
+#: app.py:137 app.py:249
+msgid "Back"
+msgstr "Назад"
+
+#: app.py:211
+msgid "Windowed"
+msgstr "В прозорец"
+
+#: app.py:212
+msgid "Fullscreen"
+msgstr "Цял екран"
+
+#: app.py:222
+msgid "Japanese"
+msgstr "японски"
+
+#: app.py:235
+msgid "Settings"
+msgstr "Настройки"
+
+#: app.py:237
+msgid "Screen:"
+msgstr "Екран:"
+
+#: app.py:243
+msgid "Language:"
+msgstr "Език:"
+
+#: app.py:248
+msgid "Apply Settings"
+msgstr "Приложи"
+
+#: app.py:251
+msgid "Main Menu"
+msgstr "Главно меню"
+
+#: app.py:253
+msgid "1 player"
+msgstr "1 играч"
+
+#: app.py:257
+msgid "2 players"
+msgstr "2 играча"
+
+#: app.py:261
+msgid "Exit"
+msgstr "Изход"
+
+#: app.py:297
 msgid "Player %d"
 msgstr "Играч %d"
 
-#: app.py:214
+#: app.py:320
 msgid "Not enough start points for players!"
 msgstr "Няма достатъчно стартови точки за играчи!"
 
-#: app.py:230
+#: app.py:337
 msgid "You Gave Up! Why?"
 msgstr "Отказа се! Защо?"
 
-#: app.py:240
+#: app.py:348
 msgid "GAME OVER. You've lost!"
 msgstr "КРАЙ. Ти загуби!"
 
-#: app.py:243
+#: app.py:351
 msgid "Yey! You've won!"
 msgstr "Ура! Ти спечели!"
 
-#: app.py:268
+#: app.py:400
+msgid "Game Paused"
+msgstr "Пауза"
+
+#: app.py:407
 msgid "Resume"
 msgstr "Продължи"
 
-#: app.py:269
+#: app.py:408
 msgid "Quit Game"
 msgstr "Спри играта"
-
-#: app.py:277
-msgid "Game Paused"
-msgstr "Пауза"
 
 #: world.py:42
 msgid "Enemies killed: %d / %d"

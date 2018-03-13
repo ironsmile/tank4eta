@@ -33,6 +33,8 @@ class Render (object):
         self.set_render_resolution(RESOLUTION)
         if sys.platform.startswith('win') or sys.platform.startswith('linux'):
             self.should_flip = True
+        self.normal_font = fonts.serif_normal
+        self.big_font = fonts.serif_big
 
     def set_render_resolution(self, resolution):
         if self.render_resolution == resolution:
@@ -68,7 +70,7 @@ class Render (object):
         if not self.show_fps:
             return
         fps_text = "{0}".format(int(self.fps))
-        fps_sprite = fonts.serif_normal.render(fps_text, 1, YELLOW)
+        fps_sprite = self.normal_font.render(fps_text, 1, YELLOW)
         fps_rect = fps_sprite.get_rect()
         self.aspect_surface.blit(self.background, (0, 0), fps_rect)
         self.aspect_surface.blit(fps_sprite, (0, 0))
@@ -76,12 +78,12 @@ class Render (object):
 
     def draw_end_game_screen(self, text, stats_text):
         self.screen.fill(BACKGROUND_COLOUR)
-        title_text_rect = fonts.serif_big.render(text, 1, WHITE)
+        title_text_rect = self.big_font.render(text, 1, WHITE)
         title_x = (self.screen.get_width() - title_text_rect.get_width()) / 2
         title_y = (self.screen.get_height() - title_text_rect.get_height()) / 2
         self.screen.blit(title_text_rect, (title_x, title_y))
 
-        stats_text_rect = fonts.serif_normal.render(stats_text, 1, SILVER)
+        stats_text_rect = self.normal_font.render(stats_text, 1, SILVER)
         text_x = (self.screen.get_width() - stats_text_rect.get_width()) / 2
         text_y = (self.screen.get_height() - stats_text_rect.get_height()) / 2 + 50
         self.screen.blit(stats_text_rect, (text_x, text_y))

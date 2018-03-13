@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2018-03-07 23:30+EET\n"
+"POT-Creation-Date: 2018-03-13 00:20+EET\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,52 +15,92 @@ msgstr ""
 "Generated-By: pygettext.py 1.5\n"
 
 
-#: app.py:92
-msgid "1 player"
-msgstr ""
-
-#: app.py:93
-msgid "2 players"
-msgstr ""
-
-#: app.py:94
-msgid "Exit"
-msgstr ""
-
-#: app.py:135
+#: app.py:130
 msgid "Select Level"
 msgstr ""
 
-#: app.py:191
-msgid "Player %d"
+#: app.py:132
+msgid "Level:"
 msgstr ""
 
-#: app.py:214
-msgid "Not enough start points for players!"
+#: app.py:137 app.py:249
+msgid "Back"
 msgstr ""
 
-#: app.py:230
-msgid "You Gave Up! Why?"
+#: app.py:211
+msgid "Windowed"
 msgstr ""
 
-#: app.py:240
-msgid "GAME OVER. You've lost!"
+#: app.py:212
+msgid "Fullscreen"
+msgstr ""
+
+#: app.py:222
+msgid "Japanese"
+msgstr ""
+
+#: app.py:235
+msgid "Settings"
+msgstr ""
+
+#: app.py:237
+msgid "Screen:"
 msgstr ""
 
 #: app.py:243
+msgid "Language:"
+msgstr ""
+
+#: app.py:248
+msgid "Apply Settings"
+msgstr ""
+
+#: app.py:251
+msgid "Main Menu"
+msgstr ""
+
+#: app.py:253
+msgid "1 player"
+msgstr ""
+
+#: app.py:257
+msgid "2 players"
+msgstr ""
+
+#: app.py:261
+msgid "Exit"
+msgstr ""
+
+#: app.py:297
+msgid "Player %d"
+msgstr ""
+
+#: app.py:320
+msgid "Not enough start points for players!"
+msgstr ""
+
+#: app.py:337
+msgid "You Gave Up! Why?"
+msgstr ""
+
+#: app.py:348
+msgid "GAME OVER. You've lost!"
+msgstr ""
+
+#: app.py:351
 msgid "Yey! You've won!"
 msgstr ""
 
-#: app.py:268
+#: app.py:400
+msgid "Game Paused"
+msgstr ""
+
+#: app.py:407
 msgid "Resume"
 msgstr ""
 
-#: app.py:269
+#: app.py:408
 msgid "Quit Game"
-msgstr ""
-
-#: app.py:277
-msgid "Game Paused"
 msgstr ""
 
 #: world.py:42

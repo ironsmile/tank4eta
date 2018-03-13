@@ -42,14 +42,10 @@ def main(args):
 
     if 'language' in cfg:
         desired_lang = cfg['language']
+    else:
+        cfg['language'] = desired_lang
 
-    lang = gettext.translation(
-        'tank4eta',
-        localedir='data/lang',
-        languages=[desired_lang],
-        fallback=True
-    )
-    lang.install()
+    select_language(desired_lang)
 
     # Hint the window manager to put the window in the center of the screen
     os.putenv('SDL_VIDEO_CENTERED', '1')
@@ -70,9 +66,10 @@ def main(args):
         'players_count': 1,
         'map': available_maps[0],
         'exit': False,
-        'toggle_fullscreen': False,
+        'toggle_fullscreen': None,
         'language': None,
-        'fullscreen': False
+        'fullscreen': False,
+        'back_to_main_menu': False,
     }
 
     render = Render(fullscreen=cfg.get('fullscreen', False))
@@ -84,11 +81,19 @@ def main(args):
         selected = main_menu(cfg, render, available_maps, selected)
         if selected['exit']:
             break
-        if selected['toggle_fullscreen']:
-            render.toggle_full_screen()
+        if selected['toggle_fullscreen'] is not None:
+            render.toggle_full_screen(selected['toggle_fullscreen'])
+            selected['toggle_fullscreen'] = None
+            continue
+        if selected['language'] is not None:
+            select_language(selected['language'])
+            selected['language'] = None
+            continue
+        if selected['back_to_main_menu']:
+            selected['back_to_main_menu'] = False
             continue
         pygame.mixer.init(buffer=512)
-        game_loop(render, players_count=selected['players_count'], map_name=selected['map'])
+        game_loop(cfg, render, players_count=selected['players_count'], map_name=selected['map'])
         pygame.mixer.stop()
 
     render.quit()
@@ -96,121 +101,185 @@ def main(args):
     sys.exit(0)
 
 
+def select_language(desired_lang):
+    lang = gettext.translation(
+        'tank4eta',
+        localedir='data/lang',
+        languages=[desired_lang],
+        fallback=True
+    )
+    lang.install()
+
+
+class MainMenu(Object):
+
+    def __init__(self, cfg):
+        self.cfg = cfg
+        self.exit_pressed = False
+        self.apply_selected = False
+        self.game_started = False
+        self.settings_changed = False
+        self.back_button_pressed = False
+        self.selected = {}
+
+    def on_select_players(self, render, count, available_maps):
+        logging.debug('selected %d player', count)
+        self.selected['players_count'] = count
+
+        menu_args = self.get_menu_args(render)
+        l_menu = pygameMenu.Menu(render.screen, title=_('Select Level'), **menu_args)
+        l_menu.add_selector(
+            _('Level:'),
+            [m for m in zip(available_maps, available_maps)],
+            None,  # onchange
+            self.on_game_start
+        )
+        l_menu.add_option(_('Back'), self.on_back_button)
+
+        while True:
+            events = pygame.event.get()
+            l_menu.mainloop(events)
+            if self.game_started:
+                break
+            if self.back_button_pressed:
+                self.back_button_pressed = False
+                break
+
+    def on_back_button(self):
+        self.back_button_pressed = True
+
+    def exitted(self):
+        return self.exit_pressed
+
+    def on_apply_settings(self):
+        self.apply_selected = True
+        if not self.settings_changed:
+            return
+        config.Store(self.cfg)
+        self.settings_changed = False
+
+    def on_exit(self):
+        self.exit_pressed = True
+
+    def on_screen_setting_change(self, c):
+        if c is ScreenSetting.windowed and self.cfg.get('fullscreen', False):
+            logging.debug('Changed to windowed')
+            self.cfg['fullscreen'] = False
+            self.settings_changed = True
+            self.selected['toggle_fullscreen'] = False
+        if c is ScreenSetting.fullscreen and not self.cfg.get('fullscreen', False):
+            logging.debug('Changed to fullscreen')
+            self.cfg['fullscreen'] = True
+            self.settings_changed = True
+            self.selected['toggle_fullscreen'] = True
+
+    def on_language_setting_change(self, c):
+        if self.cfg.get('langauge', None) == c:
+            return
+        logging.debug('Selected language %s', c)
+        self.cfg['language'] = c
+        self.settings_changed = True
+        self.selected['language'] = c
+
+    def on_game_start(self, selected_map):
+        self.selected['map'] = selected_map
+        self.game_started = True
+
+    def get_menu_args(self, render):
+        font_path = FONT_SERIF_PATH
+        if self.cfg.get('language', 'en') == 'jp':
+            font_path = FONT_EASTERN_PATH
+        return {
+            'window_width': render.screen.get_width(),
+            'window_height': render.screen.get_height(),
+            'menu_width': render.screen.get_width(),
+            'menu_height': render.screen.get_height(),
+            'font': font_path,
+            'onclose': PYGAME_MENU_DISABLE_CLOSE,
+            'dopause': False,
+            'color_selected': ORANGE,
+            'menu_color_title': SILVER,
+            'menu_color': BACKGROUND_COLOUR,
+        }
+
+
 def main_menu(cfg, render, available_maps, selected):
-    OPTION_DEFAULT_STATE = 0
-    OPTION_ONE_PLAYER = 1
-    OPTION_TWO_PLAYERS = 2
-    OPTION_SETTINGS = 5
-    OPTION_EXIT = 4
-    OPTION_SETTINGS_FULLSCREEN = 6
-    OPTION_SETTINGS_WINDOWED = 10
-    OPTION_CHANGE_LANGUAGE_BG = 7
-    OPTION_CHANGE_LANGUAGE_EN = 9
-    OPTION_BACK = 8
-    OPTION_SETTINGS_APPLY = 5
+    mm_obj = MainMenu(cfg)
+    menu_args = mm_obj.get_menu_args(render)
 
-    selected['toggle_fullscreen'] = False
+    screen_settings = [
+        (_('Windowed'), ScreenSetting.windowed),
+        (_('Fullscreen'), ScreenSetting.fullscreen),
+    ]
 
-    map_names = [m[:-4] for m in available_maps]
+    # Make sure the value from cfg is currently selected
+    if cfg.get('fullscreen'):
+        screen_settings.reverse()
 
-    # cleanup the display from any leftover stuff
-    render.clear_screen()
+    language_settings = [
+        ('български', 'bg'),
+        ('English', 'en'),
+        (_('Japanese'), 'jp'),
+    ]
 
-    menu = cMenu(50, 50, 20, 5, 'vertical', 100, render.screen, [
-        (_('1 player'), OPTION_ONE_PLAYER, None),
-        (_('2 players'), OPTION_TWO_PLAYERS, None),
-        (_('Settings'), OPTION_SETTINGS, None),
-        (_('Exit'), OPTION_EXIT, None),
-    ])
-    configure_menu(menu)
+    # Make sure the value from cfg is currently selected
+    if 'en' == cfg.get('language', 'en'):
+        lng = language_settings.pop(1)
+        language_settings.insert(0, lng)
 
-    optionsMenu = cMenu(50, 50, 20, 5, 'Horizontal', 2, render.screen, [
-        (_('Fullscreen'), OPTION_SETTINGS_FULLSCREEN, None),
-        (_('Windowed'), OPTION_SETTINGS_WINDOWED, None),
-        ('български', OPTION_CHANGE_LANGUAGE_BG, None),
-        ('English', OPTION_CHANGE_LANGUAGE_EN, None),
-        (_('Back'), OPTION_BACK, None),
-        (_('Apply'), OPTION_SETTINGS_APPLY, None),
-    ])
-    configure_menu(optionsMenu)
+    # Make sure the value from cfg is currently selected
+    if 'jp' == cfg.get('language', 'en'):
+        lng = language_settings.pop(2)
+        language_settings.insert(0, lng)
 
-    mapSelectMenu = cMenu(50, 50, 20, 5, 'vertical', 100, render.screen, list(zip(
-        map_names, available_maps, [None] * len(available_maps)
-    )))
-    configure_menu(mapSelectMenu)
+    s_menu = pygameMenu.Menu(render.screen, title=_('Settings'), **menu_args)
+    s_menu.add_selector(
+        _('Screen:'),
+        screen_settings,
+        mm_obj.on_screen_setting_change,
+        None  # onreturn
+    )
+    s_menu.add_selector(
+        _('Language:'),
+        language_settings,
+        mm_obj.on_language_setting_change,
+        None  # onreturn
+    )
+    s_menu.add_option(_('Apply Settings'), mm_obj.on_apply_settings)
+    s_menu.add_option(_('Back'), PYGAME_MENU_BACK)
 
-    # Create the state variables (make them different so that the user event is
-    # triggered at the start of the "while 1" loop so that the initial display
-    # does not wait for user input)
-    state = OPTION_DEFAULT_STATE
-    prev_state = OPTION_ONE_PLAYER
+    m_menu = pygameMenu.Menu(render.screen, title=_('Main Menu'), **menu_args)
+    m_menu.add_option(
+        _('1 player'), mm_obj.on_select_players,
+        render, 1, available_maps
+    )
+    m_menu.add_option(
+        _('2 players'), mm_obj.on_select_players,
+        render, 2, available_maps
+    )
+    m_menu.add_option(s_menu.get_title(), s_menu)
+    m_menu.add_option(_('Exit'), mm_obj.on_exit)
 
-    # changed_regions_list is the list of pygame.Rect's that will tell pygame where to
-    # update the screen (there is no point in updating the entire screen if only
-    # a small portion of it changed!)
-    changed_regions_list = []
-
-    back_menu = None
-
-    # the meny while loop
-    while 42:
-        # Check if the state has changed, if it has, then post a user event to
-        # the queue to force the menu to be shown at least once
-        if prev_state != state:
-            pygame.event.post(pygame.event.Event(
-                EVENT_CHANGE_STATE,
-                key=OPTION_DEFAULT_STATE
-            ))
-            prev_state = state
-            render.clear_screen()
-
-            if state in [OPTION_ONE_PLAYER, OPTION_TWO_PLAYERS]:
-                render.show_menu_instruction(_('Select Level'))
-
-        # Get the next event
-        e = eventer.wait()
-
-        if e.type == KEYUP and e.key == K_F11:
-            selected['toggle_fullscreen'] = True
+    while True:
+        events = pygame.event.get()
+        m_menu.mainloop(events)
+        if mm_obj.exitted():
+            selected['exit'] = True
+            break
+        if mm_obj.apply_selected:
+            mm_obj.apply_selected = False
+            selected['back_to_main_menu'] = True
+            break
+        if mm_obj.game_started:
+            mm_obj.game_started = False
             break
 
-        if is_back_button(e) and back_menu is not None:
-            state = OPTION_DEFAULT_STATE
-
-        # Update the menu, based on which "state" we are in - When using the menu
-        # in a more complex program, definitely make the states global variables
-        # so that you can refer to them by a name
-        if is_menu_event(e):
-            if state == OPTION_DEFAULT_STATE or state == OPTION_BACK:
-                back_menu = None
-                changed_regions_list, state = menu.update(e, state)
-            elif state == OPTION_ONE_PLAYER:
-                selected['players_count'] = 1
-                back_menu = menu
-                changed_regions_list, state = mapSelectMenu.update(e, state)
-            elif state == OPTION_TWO_PLAYERS:
-                selected['players_count'] = 2
-                back_menu = menu
-                changed_regions_list, state = mapSelectMenu.update(e, state)
-            elif state == OPTION_SETTINGS:
-                back_menu = menu
-                changed_regions_list, state = optionsMenu.update(e, state)
-            elif state in available_maps:
-                selected['map'] = state
-                break
-            elif state == OPTION_EXIT:
-                selected['exit'] = True
-                break
-            elif state == OPTION_SETTINGS_APPLY:
-                state = OPTION_BACK
-
-        # Update the screen
-        pygame.display.update(changed_regions_list)
+    selected.update(mm_obj.selected)
 
     return selected
 
 
-def game_loop(render, players_count, map_name):
+def game_loop(cfg, render, players_count, map_name):
     texture_loader = textures.Loader()
     play_map = world_map.Map(map_path(map_name), render, texture_loader)
     play_map.build_grid()
@@ -251,6 +320,7 @@ def game_loop(render, players_count, map_name):
         if player.tank is None:
             raise Exception(_("Not enough start points for players!"))
 
+    render.clear_screen()
     game_world = world.World(play_map, players, texture_loader)
     game_world.init()
 
@@ -263,11 +333,12 @@ def game_loop(render, players_count, map_name):
 
         if eventer.game_stopped():
             pygame.mixer.pause()
-            selected = pause_menu(render)
+            selected = pause_menu(cfg, render)
             if selected == PauseMenu.PAUSE_MENU_QUIT:
                 end_message = _("You Gave Up! Why?")
                 break
             else:
+                render.clear_screen()
                 render.draw_background()
                 pygame.mixer.unpause()
                 clock.tick()
@@ -315,15 +386,21 @@ class PauseMenu(Object):
             self.quit = True
 
 
-def pause_menu(render):
+def pause_menu(cfg, render):
     pm = PauseMenu()
+
+    font_path = FONT_SERIF_PATH
+    if cfg.get('language', 'en') == 'jp':
+        font_path = FONT_EASTERN_PATH
 
     p_menu = pygameMenu.Menu(
         render.screen,
-        window_width=render.aspect_resolution[0],
-        window_height=render.aspect_resolution[1],
+        window_width=render.screen.get_width(),
+        window_height=render.screen.get_height(),
+        menu_width=render.screen.get_width(),
+        menu_height=render.screen.get_height(),
         menu_alpha=1,
-        font=FONT_SERIF_PATH,
+        font=font_path,
         onclose=PYGAME_MENU_DISABLE_CLOSE,
         title=_('Game Paused'),
         dopause=False,
@@ -342,29 +419,6 @@ def pause_menu(render):
             return PauseMenu.PAUSE_MENU_RESUME
         if pm.quit:
             return PauseMenu.PAUSE_MENU_QUIT
-
-
-def is_back_button(e):
-    return (e.type == KEYUP and e.key == K_ESCAPE) or \
-            (e.type == pygame.JOYBUTTONDOWN and e.button == 1)
-
-
-def is_menu_event(e):
-    motion_events_types = [
-        pygame.KEYDOWN,
-        pygame.JOYHATMOTION,
-        pygame.JOYBUTTONDOWN,
-        pygame.JOYAXISMOTION
-    ]
-    return e.type in motion_events_types or e.type == EVENT_CHANGE_STATE
-
-
-def configure_menu(menu):
-    menu.set_font(serif_normal)
-    menu.set_center(True, True)
-    menu.set_alignment('center', 'center')
-    menu.set_refresh_whole_surface_on_load(True)
-    menu.set_selected_color(ORANGE)
 
 
 if __name__ == '__main__':

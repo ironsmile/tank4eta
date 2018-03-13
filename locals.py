@@ -48,6 +48,7 @@ GAME_WON = 1
 GAME_OVER = -1
 
 FONT_SERIF_PATH = os.path.join('data', 'fonts', 'ubuntu', 'Ubuntu-R.ttf')
+FONT_EASTERN_PATH = os.path.join('data', 'fonts', 'noto', 'NotoSerifCJKjp-Regular.otf')
 
 
 class Terrain(enum.Enum):
@@ -57,3 +58,8 @@ class Terrain(enum.Enum):
     passable_see_through = 0
     unpassable_no_see_through = 1
     unpassable_see_through = 2
+
+
+class ScreenSetting(enum.Enum):
+    windowed = 0
+    fullscreen = 1
