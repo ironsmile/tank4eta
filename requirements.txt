@@ -1,1 +1,2 @@
 pygame==1.9.3
+git+https://github.com/ppizarror/pygame-menu.git#egg=pygameMenu

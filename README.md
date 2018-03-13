@@ -103,7 +103,7 @@ In creating this I've used the following open parts:
 
 * The [PyGame engine](http://www.pygame.org/)
 * [Ubuntu font](https://design.ubuntu.com/font/)
-* Scott Barlow's excellent [menu library](https://code.google.com/archive/p/python-pygame-menu-class/)
+* [pygame-menu](https://github.com/ppizarror/pygame-menu) by Pablo Pizarro R.
 * [Python Pathfinder](https://github.com/brean/python-pathfinding) by Andreas Bresser
 
 All the professional sounds in this game are the result of long and meticulous work by me and my closest people. So I am thankful for all the help I've received in this department!
