@@ -57,6 +57,7 @@ def main(args):
 
     # Ignore mouse motion (greatly reduces resources when not needed)
     pygame.event.set_blocked(pygame.MOUSEMOTION)
+    pygame.mouse.set_visible(False)
 
     available_maps = glob.glob(os.path.join(MAPS_DIR, '*.map'))
     available_maps = [os.path.basename(m) for m in available_maps]
