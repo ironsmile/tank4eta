@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 #-*- coding: utf8 -*-
 
-import sys
-import pygame
 from pygame.locals import *
+import pygame
+import sys
 
 
 class EventManager (object):

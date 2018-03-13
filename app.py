@@ -1,30 +1,30 @@
 #!/usr/bin/env python
 #-*- coding: utf8 -*-
 
-from stuff_on_map import *
-from pygame.locals import *
-from locals import *
-from utils import *
-from player import Player
-from render import Render
-from event_manage import EventManager
 from animations import *
-import os
-import sys
-import glob
-import menu
-import world
-import fonts
-import config
-import world_map
-import pygame
+from event_manage import EventManager
+from locals import *
+from player import Player
+from pygame.locals import *
+from render import Render
+from stuff_on_map import *
+from utils import *
 import argparse
-import pygame.joystick
+import config
 import controllers
-import textures
-import logging
-import time
+import fonts
 import gettext
+import glob
+import logging
+import menu
+import os
+import pygame
+import pygame.joystick
+import sys
+import textures
+import time
+import world
+import world_map
 
 gettext.install('tank4eta')
 eventer = EventManager()

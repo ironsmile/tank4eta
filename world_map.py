@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 #-*- coding: utf8 -*-
 
-import math
 from pathfinding.core.grid import Grid
 from stuff_on_map import *
+import math
 
 SQUARE_SIZE = 64
 

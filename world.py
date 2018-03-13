@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 #-*- coding: utf8 -*-
 
+from animations import BulletExplosion, FullSizeExplosion
+from stuff_on_map import *
 import ai
 import math
 import random
-
-from stuff_on_map import *
-from animations import BulletExplosion, FullSizeExplosion
 
 
 class World (object):

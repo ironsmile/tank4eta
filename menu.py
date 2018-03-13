@@ -1,14 +1,13 @@
 #!/usr/bin/env python
 #-*- coding: utf8 -*-
 
+from locals import *
+from pygameMenu.locals import *
 import config
 import fonts
 import logging
 import pygame
 import pygameMenu
-
-from locals import *
-from pygameMenu.locals import *
 
 
 class MainMenu(object):

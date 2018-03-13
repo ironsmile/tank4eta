@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 #-*- coding: utf8 -*-
 
-import os
-import glob
-import pygame.transform
-from objects import Object
 from locals import TEXTURES_DIR
+from objects import Object
+import glob
+import os
+import pygame.transform
 
 
 class AnimationException(Exception):

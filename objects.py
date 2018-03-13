@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 #-*- coding: utf8 -*-
 
-from pygame.locals import *
 from locals import *
+from pygame.locals import *
 import pygame
 
 

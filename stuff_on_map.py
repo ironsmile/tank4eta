@@ -1,14 +1,13 @@
 #!/usr/bin/env python
 #-*- coding: utf8 -*-
 
-import random
-import logging
-
+from animations import PanzerTankMovement, BasicTankMovement, EnemyOneMovement, EnemyTwoMovement
+from locals import *
 from objects import *
 from pygame.locals import *
-from locals import *
 from utils import *
-from animations import PanzerTankMovement, BasicTankMovement, EnemyOneMovement, EnemyTwoMovement
+import logging
+import random
 
 
 class BasicTank(MovableObject):

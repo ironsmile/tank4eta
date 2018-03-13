@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 #-*- coding: utf8 -*-
 
-import os
 import enum
+import os
 
 FRAMES = 120
 MOVE_SPEED = 6
