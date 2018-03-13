@@ -35,7 +35,9 @@ class MainMenu(object):
         )
         l_menu.add_option(_('Back'), self.on_back_button)
 
-        while True:
+        clck = pygame.time.Clock()
+        while 42:
+            clck.tick(60)
             events = pygame.event.get()
             l_menu.mainloop(events)
             if self.game_started:
@@ -156,7 +158,9 @@ def main_menu(cfg, render, available_maps, selected):
     m_menu.add_option(s_menu.get_title(), s_menu)
     m_menu.add_option(_('Exit'), mm_obj.on_exit)
 
-    while True:
+    clck = pygame.time.Clock()
+    while 42:
+        clck.tick(60)
         events = pygame.event.get()
         m_menu.mainloop(events)
         if mm_obj.exitted():
@@ -213,7 +217,9 @@ def pause_menu(cfg, render):
     p_menu.add_option(_('Resume'), pm.on_select, pm.PAUSE_MENU_RESUME)
     p_menu.add_option(_('Quit Game'), pm.on_select, pm.PAUSE_MENU_QUIT)
 
-    while True:
+    clck = pygame.time.Clock()
+    while 42:
+        clck.tick(60)
         events = pygame.event.get()
         p_menu.mainloop(events)
         if pm.resume:
