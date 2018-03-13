@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2018-03-13 00:20+EET\n"
+"POT-Creation-Date: 2018-03-13 20:39+EET\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,95 +15,107 @@ msgstr ""
 "Generated-By: pygettext.py 1.5\n"
 
 
-#: app.py:130
-msgid "Select Level"
-msgstr ""
-
-#: app.py:132
-msgid "Level:"
-msgstr ""
-
-#: app.py:137 app.py:249
-msgid "Back"
-msgstr ""
-
-#: app.py:211
-msgid "Windowed"
-msgstr ""
-
-#: app.py:212
-msgid "Fullscreen"
-msgstr ""
-
-#: app.py:222
-msgid "Japanese"
-msgstr ""
-
-#: app.py:235
-msgid "Settings"
-msgstr ""
-
-#: app.py:237
-msgid "Screen:"
-msgstr ""
-
-#: app.py:243
-msgid "Language:"
-msgstr ""
-
-#: app.py:248
-msgid "Apply Settings"
-msgstr ""
-
-#: app.py:251
-msgid "Main Menu"
-msgstr ""
-
-#: app.py:253
-msgid "1 player"
-msgstr ""
-
-#: app.py:257
-msgid "2 players"
-msgstr ""
-
-#: app.py:261
-msgid "Exit"
-msgstr ""
-
-#: app.py:297
+#: app.py:123
 msgid "Player %d"
 msgstr ""
 
-#: app.py:320
+#: app.py:146
 msgid "Not enough start points for players!"
 msgstr ""
 
-#: app.py:337
+#: app.py:163
 msgid "You Gave Up! Why?"
 msgstr ""
 
-#: app.py:348
+#: app.py:174
 msgid "GAME OVER. You've lost!"
 msgstr ""
 
-#: app.py:351
+#: app.py:177
 msgid "Yey! You've won!"
 msgstr ""
 
-#: app.py:400
+#: menu.py:87
+msgid "Windowed"
+msgstr ""
+
+#: menu.py:88
+msgid "Fullscreen"
+msgstr ""
+
+#: menu.py:98
+msgid "Japanese"
+msgstr ""
+
+#: menu.py:111
+msgid "Settings"
+msgstr ""
+
+#: menu.py:113
+msgid "Screen:"
+msgstr ""
+
+#: menu.py:119
+msgid "Language:"
+msgstr ""
+
+#: menu.py:124
+msgid "Apply Settings"
+msgstr ""
+
+#: menu.py:125 menu.py:144
+msgid "Back"
+msgstr ""
+
+#: menu.py:127
+msgid "Select Level"
+msgstr ""
+
+#: menu.py:128
+msgid "Start Game"
+msgstr ""
+
+#: menu.py:130
+msgid "Level:"
+msgstr ""
+
+#: menu.py:136
+msgid "Players:"
+msgstr ""
+
+#: menu.py:138
+msgid "1 player"
+msgstr ""
+
+#: menu.py:139
+msgid "2 players"
+msgstr ""
+
+#: menu.py:146
+msgid "Main Menu"
+msgstr ""
+
+#: menu.py:147
+msgid "New Game"
+msgstr ""
+
+#: menu.py:149
+msgid "Exit"
+msgstr ""
+
+#: menu.py:201
 msgid "Game Paused"
 msgstr ""
 
-#: app.py:407
+#: menu.py:208
 msgid "Resume"
 msgstr ""
 
-#: app.py:408
+#: menu.py:209
 msgid "Quit Game"
 msgstr ""
 
-#: world.py:42
+#: world.py:41
 msgid "Enemies killed: %d / %d"
 msgstr ""
 

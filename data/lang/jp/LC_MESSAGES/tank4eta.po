@@ -5,10 +5,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2018-03-13 00:21+0200\n"
-"PO-Revision-Date: 2018-03-13 00:21+0200\n"
+"POT-Creation-Date: 2018-03-13 20:41+0200\n"
+"PO-Revision-Date: 2018-03-13 20:46+0200\n"
 "Last-Translator: \n"
-"Language-Team: \n"
+"Language-Team: Doychin Atanasov <ironsmile@gmail.com>\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -16,95 +16,108 @@ msgstr ""
 "Generated-By: pygettext.py 1.5\n"
 "X-Generator: Poedit 1.8.7.1\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+"X-Poedit-SourceCharset: UTF-8\n"
 
-#: app.py:130
-msgid "Select Level"
-msgstr "選び出てマップ"
-
-#: app.py:132
-msgid "Level:"
-msgstr "マップ:"
-
-#: app.py:137 app.py:249
-msgid "Back"
-msgstr "帰る"
-
-#: app.py:211
-msgid "Windowed"
-msgstr "ウィンドウ"
-
-#: app.py:212
-msgid "Fullscreen"
-msgstr "全画面"
-
-#: app.py:222
-msgid "Japanese"
-msgstr "日本語"
-
-#: app.py:235
-msgid "Settings"
-msgstr "設定"
-
-#: app.py:237
-msgid "Screen:"
-msgstr " スクリーン :"
-
-#: app.py:243
-msgid "Language:"
-msgstr "言葉"
-
-#: app.py:248
-msgid "Apply Settings"
-msgstr "設定を保存する"
-
-#: app.py:251
-msgid "Main Menu"
-msgstr "品書き"
-
-#: app.py:253
-msgid "1 player"
-msgstr "一選手"
-
-#: app.py:257
-msgid "2 players"
-msgstr "二選手"
-
-#: app.py:261
-msgid "Exit"
-msgstr "出口"
-
-#: app.py:297
+#: app.py:123
 msgid "Player %d"
 msgstr "選手 %d"
 
-#: app.py:320
+#: app.py:146
 msgid "Not enough start points for players!"
 msgstr ""
 
-#: app.py:337
+#: app.py:163
 msgid "You Gave Up! Why?"
 msgstr ""
 
-#: app.py:348
+#: app.py:174
 msgid "GAME OVER. You've lost!"
 msgstr ""
 
-#: app.py:351
+#: app.py:177
 msgid "Yey! You've won!"
 msgstr ""
 
-#: app.py:400
+#: menu.py:87
+msgid "Windowed"
+msgstr "ウィンドウ"
+
+#: menu.py:88
+msgid "Fullscreen"
+msgstr "全画面"
+
+#: menu.py:98
+msgid "Japanese"
+msgstr "日本語"
+
+#: menu.py:111
+msgid "Settings"
+msgstr "設定"
+
+#: menu.py:113
+msgid "Screen:"
+msgstr "スクリーン:"
+
+#: menu.py:119
+msgid "Language:"
+msgstr "言葉"
+
+#: menu.py:124
+msgid "Apply Settings"
+msgstr "設定を保存する"
+
+#: menu.py:125 menu.py:144
+msgid "Back"
+msgstr "帰る"
+
+#: menu.py:127
+msgid "Select Level"
+msgstr "選び出てマップ"
+
+#: menu.py:128
+msgid "Start Game"
+msgstr "ゲームをスタート"
+
+#: menu.py:130
+msgid "Level:"
+msgstr "マップ:"
+
+#: menu.py:136
+msgid "Players:"
+msgstr "選手:"
+
+#: menu.py:138
+msgid "1 player"
+msgstr "一選手"
+
+#: menu.py:139
+msgid "2 players"
+msgstr "二選手"
+
+#: menu.py:146
+msgid "Main Menu"
+msgstr "品書き"
+
+#: menu.py:147
+msgid "New Game"
+msgstr "新しいゲーム"
+
+#: menu.py:149
+msgid "Exit"
+msgstr "出口"
+
+#: menu.py:201
 msgid "Game Paused"
 msgstr "懸"
 
-#: app.py:407
+#: menu.py:208
 msgid "Resume"
 msgstr "レジューム"
 
-#: app.py:408
+#: menu.py:209
 msgid "Quit Game"
 msgstr "辞める"
 
-#: world.py:42
+#: world.py:41
 msgid "Enemies killed: %d / %d"
 msgstr "殺された敵: %d / %d"

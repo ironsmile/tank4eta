@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tank4eta\n"
-"POT-Creation-Date: 2018-03-13 00:21+0200\n"
-"PO-Revision-Date: 2018-03-13 00:21+0200\n"
+"POT-Creation-Date: 2018-03-13 20:40+0200\n"
+"PO-Revision-Date: 2018-03-13 20:41+0200\n"
 "Last-Translator: \n"
 "Language-Team: Doychin Atanasov <ironsmile@gmail.com>\n"
 "Language: bg\n"
@@ -18,94 +18,106 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 
-#: app.py:130
-msgid "Select Level"
-msgstr "Избери ниво"
-
-#: app.py:132
-msgid "Level:"
-msgstr "Ниво:"
-
-#: app.py:137 app.py:249
-msgid "Back"
-msgstr "Назад"
-
-#: app.py:211
-msgid "Windowed"
-msgstr "В прозорец"
-
-#: app.py:212
-msgid "Fullscreen"
-msgstr "Цял екран"
-
-#: app.py:222
-msgid "Japanese"
-msgstr "японски"
-
-#: app.py:235
-msgid "Settings"
-msgstr "Настройки"
-
-#: app.py:237
-msgid "Screen:"
-msgstr "Екран:"
-
-#: app.py:243
-msgid "Language:"
-msgstr "Език:"
-
-#: app.py:248
-msgid "Apply Settings"
-msgstr "Приложи"
-
-#: app.py:251
-msgid "Main Menu"
-msgstr "Главно меню"
-
-#: app.py:253
-msgid "1 player"
-msgstr "1 играч"
-
-#: app.py:257
-msgid "2 players"
-msgstr "2 играча"
-
-#: app.py:261
-msgid "Exit"
-msgstr "Изход"
-
-#: app.py:297
+#: app.py:123
 msgid "Player %d"
 msgstr "Играч %d"
 
-#: app.py:320
+#: app.py:146
 msgid "Not enough start points for players!"
 msgstr "Няма достатъчно стартови точки за играчи!"
 
-#: app.py:337
+#: app.py:163
 msgid "You Gave Up! Why?"
 msgstr "Отказа се! Защо?"
 
-#: app.py:348
+#: app.py:174
 msgid "GAME OVER. You've lost!"
 msgstr "КРАЙ. Ти загуби!"
 
-#: app.py:351
+#: app.py:177
 msgid "Yey! You've won!"
 msgstr "Ура! Ти спечели!"
 
-#: app.py:400
+#: menu.py:87
+msgid "Windowed"
+msgstr "В прозорец"
+
+#: menu.py:88
+msgid "Fullscreen"
+msgstr "Цял екран"
+
+#: menu.py:98
+msgid "Japanese"
+msgstr "японски"
+
+#: menu.py:111
+msgid "Settings"
+msgstr "Настройки"
+
+#: menu.py:113
+msgid "Screen:"
+msgstr "Екран:"
+
+#: menu.py:119
+msgid "Language:"
+msgstr "Език:"
+
+#: menu.py:124
+msgid "Apply Settings"
+msgstr "Приложи"
+
+#: menu.py:125 menu.py:144
+msgid "Back"
+msgstr "Назад"
+
+#: menu.py:127
+msgid "Select Level"
+msgstr "Избери ниво"
+
+#: menu.py:128
+msgid "Start Game"
+msgstr "Стартирай играта"
+
+#: menu.py:130
+msgid "Level:"
+msgstr "Ниво:"
+
+#: menu.py:136
+msgid "Players:"
+msgstr "Играчи:"
+
+#: menu.py:138
+msgid "1 player"
+msgstr "1 играч"
+
+#: menu.py:139
+msgid "2 players"
+msgstr "2 играча"
+
+#: menu.py:146
+msgid "Main Menu"
+msgstr "Главно меню"
+
+#: menu.py:147
+msgid "New Game"
+msgstr "Нова игра"
+
+#: menu.py:149
+msgid "Exit"
+msgstr "Изход"
+
+#: menu.py:201
 msgid "Game Paused"
 msgstr "Пауза"
 
-#: app.py:407
+#: menu.py:208
 msgid "Resume"
 msgstr "Продължи"
 
-#: app.py:408
+#: menu.py:209
 msgid "Quit Game"
 msgstr "Спри играта"
 
-#: world.py:42
+#: world.py:41
 msgid "Enemies killed: %d / %d"
 msgstr "Убити врагове: %d / %d"
