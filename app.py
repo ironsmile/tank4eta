@@ -9,12 +9,12 @@ from player import Player
 from render import Render
 from event_manage import EventManager
 from menu import cMenu, EVENT_CHANGE_STATE
-from fonts import serif_normal
 from animations import *
 import os
 import sys
 import glob
 import world
+import fonts
 import config
 import world_map
 import pygame
@@ -109,6 +109,10 @@ def select_language(desired_lang):
         fallback=True
     )
     lang.install()
+    if desired_lang == 'jp':
+        fonts.switch_to_japanese()
+    else:
+        fonts.switch_to_western()
 
 
 class MainMenu(Object):
@@ -186,15 +190,12 @@ class MainMenu(Object):
         self.game_started = True
 
     def get_menu_args(self, render):
-        font_path = FONT_SERIF_PATH
-        if self.cfg.get('language', 'en') == 'jp':
-            font_path = FONT_EASTERN_PATH
         return {
             'window_width': render.screen.get_width(),
             'window_height': render.screen.get_height(),
             'menu_width': render.screen.get_width(),
             'menu_height': render.screen.get_height(),
-            'font': font_path,
+            'font': fonts.get_serif_path(),
             'onclose': PYGAME_MENU_DISABLE_CLOSE,
             'dopause': False,
             'color_selected': ORANGE,
@@ -389,10 +390,6 @@ class PauseMenu(Object):
 def pause_menu(cfg, render):
     pm = PauseMenu()
 
-    font_path = FONT_SERIF_PATH
-    if cfg.get('language', 'en') == 'jp':
-        font_path = FONT_EASTERN_PATH
-
     p_menu = pygameMenu.Menu(
         render.screen,
         window_width=render.screen.get_width(),
@@ -400,7 +397,7 @@ def pause_menu(cfg, render):
         menu_width=render.screen.get_width(),
         menu_height=render.screen.get_height(),
         menu_alpha=1,
-        font=font_path,
+        font=fonts.get_serif_path(),
         onclose=PYGAME_MENU_DISABLE_CLOSE,
         title=_('Game Paused'),
         dopause=False,
