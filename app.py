@@ -8,7 +8,6 @@ from utils import *
 from player import Player
 from render import Render
 from event_manage import EventManager
-from menu import cMenu, EVENT_CHANGE_STATE
 from animations import *
 import os
 import sys
