@@ -67,7 +67,7 @@ def main(args):
         'toggle_fullscreen': None,
         'language': None,
         'fullscreen': False,
-        'back_to_main_menu': False,
+        'new_settings_applied': False,
     }
 
     render = Render(fullscreen=cfg.get('fullscreen', False))
@@ -76,6 +76,7 @@ def main(args):
         render.show_fps = True
 
     while 42:
+        selected['new_settings_applied'] = False
         selected = menu.main_menu(cfg, render, available_maps, selected)
         if selected['exit']:
             break
@@ -87,11 +88,15 @@ def main(args):
             language.select(selected['language'])
             selected['language'] = None
             continue
-        if selected['back_to_main_menu']:
-            selected['back_to_main_menu'] = False
+        if selected['new_settings_applied']:
             continue
         pygame.mixer.init(buffer=512)
-        game_loop(cfg, render, players_count=selected['players_count'], map_name=selected['map'])
+        game_loop(
+            cfg,
+            render,
+            players_count=selected['players_count'],
+            map_name=selected['map']
+        )
         pygame.mixer.stop()
 
     render.quit()

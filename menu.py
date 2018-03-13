@@ -18,36 +18,15 @@ class MainMenu(object):
         self.apply_selected = False
         self.game_started = False
         self.settings_changed = False
-        self.back_button_pressed = False
         self.selected = {}
 
-    def on_select_players(self, render, count, available_maps):
-        logging.debug('selected %d player', count)
+    def on_select_players(self, count):
+        logging.debug('selected %d player(s)', count)
         self.selected['players_count'] = count
 
-        menu_args = self.get_menu_args(render)
-        l_menu = pygameMenu.Menu(render.screen, title=_('Select Level'), **menu_args)
-        l_menu.add_selector(
-            _('Level:'),
-            [m for m in zip(available_maps, available_maps)],
-            None,  # onchange
-            self.on_game_start
-        )
-        l_menu.add_option(_('Back'), self.on_back_button)
-
-        clck = pygame.time.Clock()
-        while 42:
-            clck.tick(60)
-            events = pygame.event.get()
-            l_menu.mainloop(events)
-            if self.game_started:
-                break
-            if self.back_button_pressed:
-                self.back_button_pressed = False
-                break
-
-    def on_back_button(self):
-        self.back_button_pressed = True
+    def on_select_map(self, game_map):
+        logging.debug('selected map: %s', game_map)
+        self.selected['map'] = game_map
 
     def exitted(self):
         return self.exit_pressed
@@ -82,8 +61,7 @@ class MainMenu(object):
         self.settings_changed = True
         self.selected['language'] = c
 
-    def on_game_start(self, selected_map):
-        self.selected['map'] = selected_map
+    def on_game_start(self):
         self.game_started = True
 
     def get_menu_args(self, render):
@@ -146,15 +124,27 @@ def main_menu(cfg, render, available_maps, selected):
     s_menu.add_option(_('Apply Settings'), mm_obj.on_apply_settings)
     s_menu.add_option(_('Back'), PYGAME_MENU_BACK)
 
+    l_menu = pygameMenu.Menu(render.screen, title=_('Select Level'), **menu_args)
+    l_menu.add_option(_('Start Game'), mm_obj.on_game_start)
+    l_menu.add_selector(
+        _('Level:'),
+        [m for m in zip(available_maps, available_maps)],
+        mm_obj.on_select_map,
+        None  # onreturn
+    )
+    l_menu.add_selector(
+        _('Players:'),
+        [
+            (_('1 player'), 1),
+            (_('2 players'), 2),
+        ],
+        mm_obj.on_select_players,
+        None  # onreturn
+    )
+    l_menu.add_option(_('Back'), PYGAME_MENU_BACK)
+
     m_menu = pygameMenu.Menu(render.screen, title=_('Main Menu'), **menu_args)
-    m_menu.add_option(
-        _('1 player'), mm_obj.on_select_players,
-        render, 1, available_maps
-    )
-    m_menu.add_option(
-        _('2 players'), mm_obj.on_select_players,
-        render, 2, available_maps
-    )
+    m_menu.add_option(_('New Game'), l_menu)
     m_menu.add_option(s_menu.get_title(), s_menu)
     m_menu.add_option(_('Exit'), mm_obj.on_exit)
 
@@ -168,12 +158,13 @@ def main_menu(cfg, render, available_maps, selected):
             break
         if mm_obj.apply_selected:
             mm_obj.apply_selected = False
-            selected['back_to_main_menu'] = True
+            selected['new_settings_applied'] = True
             break
         if mm_obj.game_started:
             mm_obj.game_started = False
             break
 
+    m_menu.disable()
     selected.update(mm_obj.selected)
 
     return selected
