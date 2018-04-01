@@ -73,9 +73,9 @@ Everyone can create maps for the game. A map is just a text file with a name end
 #  www  w   ~~~~~~ w #
 #       w e      w w #
 #   ~~~~~~~~~~~      #
-#            w  www  #
-# ~~~~~~~~~  w       #
-#            www www #
+#sssssssssss w  www  #
+#s~~~~~~~~~s w       #
+#sssssssssss www www #
 #    wwwwwwwwwww     #
 #    w        w      #
 #         w          #
@@ -89,6 +89,8 @@ The map is encompassed in a rectangle of the border characters - `#`. Every sing
 * `p` - spot on which a player tank can spawn **(required)**
 * `e` - spot on which an enemy tank can spawn **(required)**
 * `w` - brick wall
+* `i` - ice
+* `s` - sand
 * `~` - water
 * `f` - the UN flag
 * ` ` _(space)_ - empty rectangle

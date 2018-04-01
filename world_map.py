@@ -19,6 +19,7 @@ class MapLogicException(Exception):
 class Map (object):
 
     def __init__(self, map_file, render, texture_loader):
+        self.passable = []
         self.unpassable = []
         self.objects = []
         self.limits_guard = []
@@ -223,6 +224,10 @@ class Map (object):
                 elif square == '~':
                     self.populate_matrix(x, y, Terrain.unpassable_see_through)
                     self.unpassable.append(Water(coords, self.texture_loader))
+                elif square == 's':
+                    self.passable.append(Sand(coords, self.texture_loader))
+                elif square == 'i':
+                    self.passable.append(Ice(coords, self.texture_loader))
                 elif square == 'f':
                     self.un_flags.append(UnFlag(coords, self.texture_loader))
                 x += 1

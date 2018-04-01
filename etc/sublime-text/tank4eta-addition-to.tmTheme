@@ -18,6 +18,8 @@
     <dict>
         <key>foreground</key>
         <string>#0055AA</string>
+        <key>background</key>
+        <string>#86a0ff</string>
     </dict>
 </dict>
 <dict>
@@ -44,12 +46,56 @@
 </dict>
 <dict>
     <key>name</key>
-    <string>tank4eta spawnpoint</string>
+    <string>tank4eta unflag</string>
     <key>scope</key>
     <string>tank4eta.map objects.terrain.flag</string>
     <key>settings</key>
     <dict>
         <key>foreground</key>
         <string>#2790DB</string>
+    </dict>
+</dict>
+<dict>
+    <key>name</key>
+    <string>tank4eta sand</string>
+    <key>scope</key>
+    <string>tank4eta.map objects.terrain.sand</string>
+    <key>settings</key>
+    <dict>
+        <key>foreground</key>
+        <string>#ffd29c</string>
+    </dict>
+</dict>
+<dict>
+    <key>name</key>
+    <string>tank4eta ice</string>
+    <key>scope</key>
+    <string>tank4eta.map objects.terrain.ice</string>
+    <key>settings</key>
+    <dict>
+        <key>foreground</key>
+        <string>#c3c6f1</string>
+    </dict>
+</dict>
+<dict>
+    <key>name</key>
+    <string>tank4eta hill</string>
+    <key>scope</key>
+    <string>tank4eta.map objects.terrain.hill</string>
+    <key>settings</key>
+    <dict>
+        <key>foreground</key>
+        <string>#ab8563</string>
+    </dict>
+</dict>
+<dict>
+    <key>name</key>
+    <string>tank4eta canapy</string>
+    <key>scope</key>
+    <string>tank4eta.map objects.terrain.canapy</string>
+    <key>settings</key>
+    <dict>
+        <key>foreground</key>
+        <string>#8bbc56</string>
     </dict>
 </dict>

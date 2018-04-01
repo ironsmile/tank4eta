@@ -16,6 +16,18 @@ contexts:
     - match: 'f'
       scope: objects.terrain.flag
 
+    - match: 'i'
+      scope: objects.terrain.ice
+
+    - match: 's'
+      scope: objects.terrain.sand
+
+    - match: 'h'
+      scope: objects.terrain.hill
+
+    - match: 'c'
+      scope: objects.terrain.canapy
+
     - match: '#'
       scope: control.border
 

@@ -268,6 +268,26 @@ class Water (NonMovableObject):
         NonMovableObject.__init__(self, position, texture_loader)
 
 
+class Sand (NonMovableObject):
+
+    passable = True
+
+    def __init__(self, position, texture_loader):
+        path = texture_path('sand.png')
+        Sand.image = texture_loader.load_texture(path)
+        NonMovableObject.__init__(self, position, texture_loader)
+
+
+class Ice (NonMovableObject):
+
+    passable = True
+
+    def __init__(self, position, texture_loader):
+        path = texture_path('ice.png')
+        Ice.image = texture_loader.load_texture(path)
+        NonMovableObject.__init__(self, position, texture_loader)
+
+
 class UnFlag (NonMovableObject):
 
     def __init__(self, position, texture_loader):

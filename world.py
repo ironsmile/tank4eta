@@ -23,16 +23,19 @@ class World (object):
 
         self._bullets = pygame.sprite.RenderUpdates()
         self._visible_terrain = pygame.sprite.RenderUpdates()
-        self._all_terrain = pygame.sprite.RenderUpdates()
+        self._all_unpassable = pygame.sprite.RenderUpdates()
+        self._all_passable = pygame.sprite.RenderUpdates()
         self._movable = pygame.sprite.RenderUpdates()
         self._animations = pygame.sprite.RenderUpdates()
 
     def init(self):
         for player in self.players:
             self._movable.add(player.tank)
-        self._visible_terrain.add(*[self.map.objects + self.map.unpassable + self.map.un_flags])
-        self._all_terrain.add(*[self.map.objects + self.map.unpassable +
+        self._visible_terrain.add(*[self.map.objects + self.map.unpassable +
+                self.map.un_flags + self.map.passable])
+        self._all_unpassable.add(*[self.map.objects + self.map.unpassable +
                 self.map.limits_guard + self.map.un_flags])
+        self._all_passable.add(*self.map.passable)
         self.map.render.set_background(self._visible_terrain)
         for flag in self.map.un_flags:
             self.un_flags.append(flag)
@@ -60,7 +63,7 @@ class World (object):
             return GAME_WON
 
         bullets = self._bullets
-        unpassable = self._all_terrain
+        unpassable = self._all_unpassable
 
         self.map.render.clear([bullets, self._movable, self._animations])
         for anim in self._animations:
