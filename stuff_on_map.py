@@ -22,6 +22,7 @@ class BasicTank(MovableObject):
         self.stop()
         self.bullets = []
         self.fire_timeout = 0
+        self.speed_modifier = 1
 
     def fire(self):
         if len(self.bullets) >= self.max_bullets:

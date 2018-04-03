@@ -44,6 +44,7 @@ class MovableObject (Object):
         self.direction = DIRECTION_NONE
         self.calculate_images()
         self.set_movement_speed(MOVE_SPEED)
+        self.reset_speed_modifier()
         self.moving_on_axis = None
         self.facing = DIRECTION_NONE
         self.texture_loader = texture_loader
@@ -107,6 +108,15 @@ class MovableObject (Object):
     def stop(self):
         self.direction = DIRECTION_NONE
 
+    def set_speed_modifier(self, modif):
+        self.speed_modifier = modif
+
+    def reset_speed_modifier(self):
+        self.speed_modifier = 1
+
+    def get_movement_speeds(self):
+        return [s * self.speed_modifier for s in self.movements[self.direction]]
+
     def update(self, delta):
 
         self.previous_position = self.rect.center
@@ -114,7 +124,7 @@ class MovableObject (Object):
 
         if self.direction != DIRECTION_NONE:
             x, y = self.real_center
-            dx, dy = self.movements[self.direction]
+            dx, dy = self.get_movement_speeds()
             dx = self.texture_loader.scale_to_screen(dx) * dt
             dy = self.texture_loader.scale_to_screen(dy) * dt
             self.real_center = (x + dx, y + dy)

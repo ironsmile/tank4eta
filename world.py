@@ -169,6 +169,25 @@ class World (object):
         bullets.update(deltat)
 
         for tank in tanks:
+            tank.reset_speed_modifier()
+            collisions = pygame.sprite.spritecollide(tank, self._all_passable, False, False)
+
+            has_sand = False
+            has_ice = False
+            for collision in collisions:
+                if isinstance(collision, Sand):
+                    has_sand = True
+                    break
+                if isinstance(collision, Ice):
+                    has_ice = True
+
+            if has_sand:
+                tank.set_speed_modifier(0.7)
+
+            if has_ice:
+                tank.set_speed_modifier(1.2)
+
+        for tank in tanks:
             other_tanks = [t for t in tanks if t != tank]
             previously_collided = pygame.sprite.spritecollide(tank, other_tanks, False, False)
 
