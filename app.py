@@ -12,7 +12,6 @@ from utils import *
 import argparse
 import config
 import controllers
-import fonts
 import gettext
 import glob
 import language
